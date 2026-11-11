@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#101a19" />
+  <title>Stillwater — Path of the Immortal</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ctext y='50' font-size='52'%3E%E9%81%93%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Ma+Shan+Zheng&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#" aria-label="Stillwater home">
+        <span class="brand-mark">道</span>
+        <span class="brand-copy"><strong>STILLWATER</strong><small>PATH OF THE IMMORTAL</small></span>
+      </a>
+      <div class="sect-label">YOUR SANCTUARY</div>
+      <nav class="main-nav" aria-label="Main navigation">
+        <button class="nav-item active" data-view="cultivate"><span class="nav-icon">◉</span><span>Cultivate</span><span class="nav-dot"></span></button>
+        <button class="nav-item" data-view="techniques"><span class="nav-icon">☯</span><span>Techniques</span><span class="nav-count" id="techCount">0/3</span></button>
+        <button class="nav-item" data-view="expeditions"><span class="nav-icon">⌁</span><span>Expeditions</span><span class="nav-dot hidden" id="expDot"></span></button>
+        <button class="nav-item" data-view="alchemy"><span class="nav-icon">⚗</span><span>Alchemy</span></button>
+        <button class="nav-item" data-view="codex"><span class="nav-icon">▤</span><span>Codex</span></button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="sect-card">
+          <div class="sect-emblem">青</div>
+          <div><small>SECT</small><strong>Azure Cloud</strong><span>Outer disciple</span></div>
+          <span class="online-dot"></span>
+        </div>
+        <div class="sidebar-foot"><span>DAY <b id="dayCount">01</b></span><span class="weather"><i></i> MISTY</span></div>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <div class="mobile-brand"><span class="brand-mark">道</span><b>STILLWATER</b></div>
+        <div class="breadcrumb"><span>AZURE CLOUD SECT</span><i>/</i><b id="crumbTitle">CULTIVATION GROVE</b></div>
+        <div class="top-right">
+          <div class="resource-pill"><span class="resource-icon stone">◇</span><span><b id="stones">25</b><small>SPIRIT STONES</small></span><button class="plus-btn" data-view="expeditions" aria-label="Find spirit stones">+</button></div>
+          <button class="sound-btn" id="soundToggle" aria-label="Toggle focus mode">◖<span>FOCUS</span></button>
+          <button class="avatar" title="Your cultivator">林</button>
+        </div>
+      </header>
+
+      <section class="view active" id="view-cultivate">
+        <div class="welcome-row">
+          <div><div class="eyebrow"><span class="eyebrow-line"></span> THE LONG ROAD BEGINS</div><h1>Your path unfolds, <em>Wanderer.</em></h1><p class="subtitle">Still your breath. Gather the world's vital essence.</p></div>
+          <div class="day-chip"><span class="sun-mark">☼</span><span><small>IN THE MORTAL REALM</small><b>Day <span id="welcomeDay">1</span> of your journey</b></span></div>
+        </div>
+
+        <div class="cultivation-grid">
+          <article class="hero-card">
+            <div class="hero-art" aria-label="A moonlit mountain sanctuary">
+              <div class="art-grain"></div><div class="moon"></div><div class="halo"></div>
+              <div class="mountains mountain-back"></div><div class="mountains mountain-mid"></div><div class="mountains mountain-front"></div>
+              <div class="pine pine-one">♠</div><div class="pine pine-two">♠</div><div class="pavilion"><span>亭</span></div>
+              <div class="mist mist-a"></div><div class="mist mist-b"></div>
+              <div class="art-caption"><span>青雲峰 · AZURE CLOUD PEAK</span><i>✦</i></div>
+              <div class="streak s1"></div><div class="streak s2"></div>
+            </div>
+            <div class="hero-content">
+              <div class="realm-line"><div><div class="eyebrow">CURRENT REALM</div><h2 id="realmName">Mortal</h2></div><div class="stage-badge" id="stageBadge">凡人 <span>01</span></div></div>
+              <div class="progress-label"><span>QI ACCUMULATED</span><b><span id="qiText">0</span><i> / </i><span id="qiGoal">100</span></b></div>
+              <div class="qi-track"><div class="qi-fill" id="qiFill"></div><span class="qi-glint"></span></div>
+              <div class="qi-foot"><span><i class="tiny-spark">✦</i> <b id="qiRate">0.8</b> qi / sec</span><span id="qiPercent">0%</span></div>
+              <div class="hero-actions"><button class="primary-btn" id="meditateBtn"><span class="btn-symbol">◉</span><span><b id="meditateLabel">Begin Meditation</b><small id="meditateHint">LET THE QI FLOW THROUGH YOU</small></span><span class="btn-arrow">↗</span></button><button class="breakthrough-btn" id="breakthroughBtn" disabled><span class="break-icon">↑</span><span><b>Break Through</b><small id="breakHint">GATHER MORE QI</small></span></button></div>
+              <div class="insight"><span class="insight-icon">✧</span><p id="insightText">“The journey of a thousand miles begins beneath one's feet.”</p><span class="insight-source">— OLD MASTER</span></div>
+            </div>
+          </article>
+
+          <div class="right-stack">
+            <article class="panel attributes-panel">
+              <div class="panel-heading"><div><div class="eyebrow">YOUR INNER WORLD</div><h3>Vital signs</h3></div><span class="pulse-mark">✧</span></div>
+              <div class="stat-list">
+                <div class="stat-row"><span class="stat-icon qi-icon">◉</span><span class="stat-name">Qi control</span><div class="stat-meter"><i id="controlMeter"></i></div><b id="controlStat">1</b></div>
+                <div class="stat-row"><span class="stat-icon spirit-icon">✧</span><span class="stat-name">Spirit</span><div class="stat-meter"><i id="spiritMeter"></i></div><b id="spiritStat">1</b></div>
+                <div class="stat-row"><span class="stat-icon body-icon">◈</span><span class="stat-name">Body</span><div class="stat-meter"><i id="bodyMeter"></i></div><b id="bodyStat">1</b></div>
+              </div>
+              <div class="stats-note"><span>✦</span><span>Balanced foundations lead to a longer path.</span></div>
+            </article>
+            <article class="panel daily-panel">
+              <div class="panel-heading"><div><div class="eyebrow">A DISCIPLE'S DUTY</div><h3>Daily practice</h3></div><span class="task-progress" id="taskProgress">0 / 3</span></div>
+              <div class="task-list">
+                <div class="task-row" id="taskMeditate"><span class="task-check">✓</span><span><b>Settle your breath</b><small>Meditate for 30 seconds</small></span><span class="task-reward">◇ 8</span></div>
+                <div class="task-row" id="taskQi"><span class="task-check">✓</span><span><b>Gather essence</b><small>Accumulate 100 qi</small></span><span class="task-reward">◇ 12</span></div>
+                <div class="task-row" id="taskTrip"><span class="task-check">✓</span><span><b>Venture beyond</b><small>Complete an expedition</small></span><span class="task-reward">◇ 15</span></div>
+              </div>
+              <button class="text-link" id="dailyClaim" disabled>Daily reward claimed <span>→</span></button>
+            </article>
+          </div>
+        </div>
+        <div class="lower-grid">
+          <article class="panel path-panel"><div class="panel-heading"><div><div class="eyebrow">THE IMMORTAL LADDER</div><h3>Realms of cultivation</h3></div><button class="small-link" data-view="codex">VIEW CODEX ↗</button></div><div class="realm-path" id="realmPath"></div></article>
+          <article class="panel next-panel"><div class="panel-heading"><div><div class="eyebrow">YOUR NEXT MILESTONE</div><h3 id="nextTitle">First breath</h3></div><span class="milestone-icon">✦</span></div><p id="nextText">Gather 100 qi and take your first step into the cultivation world.</p><div class="next-foot"><span id="nextReward">REWARD <b>+10 spirit stones</b></span><span id="nextProgress">0 / 100 qi</span></div><div class="mini-track"><i id="nextFill"></i></div></article>
+        </div>
+      </section>
+
+      <section class="view subview" id="view-techniques"></section>
+      <section class="view subview" id="view-expeditions"></section>
+      <section class="view subview" id="view-alchemy"></section>
+      <section class="view subview" id="view-codex"></section>
+      <footer class="footer"><span>☯ &nbsp; In stillness, the way reveals itself.</span><span>YOUR PROGRESS IS SAVED AUTOMATICALLY <i>•</i> <span id="saveStatus">SYNCED</span></span></footer>
+    </main>
+  </div>
+  <nav class="mobile-nav" aria-label="Mobile navigation">
+    <button class="active" data-view="cultivate"><i>◉</i>Cultivate</button><button data-view="techniques"><i>☯</i>Arts</button><button data-view="expeditions"><i>⌁</i>Travel</button><button data-view="alchemy"><i>⚗</i>Alchemy</button><button data-view="codex"><i>▤</i>Codex</button>
+  </nav>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="modal-backdrop" id="modalBackdrop" hidden><div class="modal" role="dialog" aria-modal="true"><button class="modal-close" id="modalClose">×</button><div class="modal-symbol" id="modalSymbol">✧</div><div class="eyebrow" id="modalEyebrow">REALM BREAKTHROUGH</div><h2 id="modalTitle">The threshold awaits</h2><p id="modalText"></p><div class="modal-actions" id="modalActions"></div></div></div>
+  <script src="game.js"></script>
+</body>
+</html>
