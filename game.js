@@ -132,6 +132,63 @@
     { id: 'voidrift', name: 'The Shifting Void Rift', icon: '虛', desc: 'A wound in the world. Void dust gathers where reality thins.', duration: 180, reward: 260, loot: { voidDust: 2, ore: 3, essence: 1 }, rep: 26, req: 18 },
     { id: 'celestial', name: 'Celestial Garden Overlook', icon: '苑', desc: 'A terrace above the clouds where ancient relics bear fruit.', duration: 240, reward: 420, loot: { relic: 1, crystal: 3, essence: 2 }, rep: 38, req: 24 }
   ];
+  const worldRegions = [
+    {
+      id: 'mistwood', name: 'Mistwood Foothills', seal: '林', x: 14, y: 66, req: 0, trip: 'herbs',
+      desc: 'Dew-heavy pine and quiet deer trails below the sect. The oldest road, and the safest.',
+      landmarks: [
+        { id: 'dewspring', name: 'Dewlight Spring', seal: '泉', desc: 'A spring that gathers the first light of morning.', reward: { herb: 3, stones: 30 }, lore: 'The spring is said to remember every disciple who has ever knelt beside it.' },
+        { id: 'bellshrine', name: 'Forgotten Bell Shrine', seal: '鐘', desc: 'A bronze bell with no clapper, older than the sect.', reward: { daoPoints: 1, stones: 80 }, lore: 'Some nights the bell rings anyway. Old Shen refuses to speak of it.' },
+        { id: 'foxden', name: 'Ember Fox Den', seal: '狐', desc: 'Warm earth and small pawprints that glow faintly.', reward: { food: 2, luckBonus: 1 }, rare: true, lore: 'A fox that has learned to hide its tail has also learned to hide its intentions.' }
+      ]
+    },
+    {
+      id: 'ruins', name: 'Moonlit Ruins', seal: '月', x: 34, y: 46, req: 3, trip: 'ruins',
+      desc: 'A shrine fallen out of memory. Moonflowers open only where the roof has failed.',
+      landmarks: [
+        { id: 'courtyard', name: 'Broken Courtyard', seal: '庭', desc: 'Tiles arranged in a formation no one can read.', reward: { root: 2, stones: 70 }, lore: 'The tiles were never a floor. They were a warning.' },
+        { id: 'altar', name: 'Moon Altar', seal: '壇', desc: 'A pale altar still wet with condensation.', reward: { flower: 3, crystal: 1 }, lore: 'Offerings left here vanish before dawn, but are never taken by human hands.' },
+        { id: 'seal', name: 'Sealed Cistern', seal: '封', desc: 'A stone lid, a warm draft, and a sound like breathing.', reward: { relic: 1, stones: 160 }, rare: true, lore: 'Whatever sleeps below is not dead. The moon ensures it dreams.' }
+      ]
+    },
+    {
+      id: 'emberridge', name: 'Emberfall Ridge', seal: '炎', x: 57, y: 25, req: 8, trip: 'emberridge',
+      desc: 'Ash terraces and glowing cracks. The air tastes of iron and old lightning.',
+      landmarks: [
+        { id: 'ashfall', name: 'Ashen Falls', seal: '灰', desc: 'A waterfall of grey dust that never quite settles.', reward: { ore: 3, stones: 110 }, lore: 'The falls mark where a fire spirit was buried, still burning.' },
+        { id: 'anvil', name: 'The Cold Anvil', seal: '砧', desc: 'An anvil untouched by heat, humming at the edge of hearing.', reward: { ore: 2, crystal: 1, stones: 140 }, lore: 'The first forge master struck it once and never needed to strike it again.' },
+        { id: 'embernest', name: 'Ember Nest', seal: '巢', desc: 'A nest of black glass, warm as a heartbeat.', reward: { beastCore: 1, egg: 'rare' }, rare: true, lore: 'Something has been tending this nest for a very long time.' }
+      ]
+    },
+    {
+      id: 'mirrorlake', name: 'Mirror Lake', seal: '鏡', x: 76, y: 50, req: 13, trip: 'mirrorlake',
+      desc: 'A lake with no wind and no bottom. The reflections arrive a moment late.',
+      landmarks: [
+        { id: 'shore', name: 'Silver Shore', seal: '岸', desc: 'Pale sand that rings like glass underfoot.', reward: { flower: 3, essence: 1 }, lore: 'The shore is made of a thousand shattered reflections.' },
+        { id: 'isle', name: 'Drowned Pavilion', seal: '亭', desc: 'A pavilion below the surface, perfectly dry inside.', reward: { crystal: 2, stones: 220 }, lore: 'The pavilion has no door. Guests still arrive.' },
+        { id: 'throne', name: 'Reflection Throne', seal: '座', desc: 'A seat of black water with a crown of moonlight above it.', reward: { keys: 1, rootEssence: 1 }, rare: true, lore: 'Whoever sits here is reflected in every lake in the world.' }
+      ]
+    },
+    {
+      id: 'voidrift', name: 'Shifting Void Rift', seal: '虛', x: 88, y: 24, req: 18, trip: 'voidrift',
+      desc: 'Distance has lost its argument here. Paths fold into themselves.',
+      landmarks: [
+        { id: 'threshold', name: 'The Folded Threshold', seal: '門', desc: 'A doorway standing alone in the open air.', reward: { voidDust: 1, stones: 280 }, lore: 'The doorway opens onto the same room, no matter which side you enter.' },
+        { id: 'drift', name: 'Star Drift', seal: '星', desc: 'Small stars drift like pollen in still water.', reward: { voidDust: 2, crystal: 2 }, lore: 'Each star is a distant world, and each is empty.' },
+        { id: 'unmaking', name: 'The Unmaking Pool', seal: '無', desc: 'A pool that reflects nothing at all.', reward: { relic: 1, luckBonus: 2 }, rare: true, lore: 'Look long enough and you will forget which side of the surface you stand on.' }
+      ]
+    },
+    {
+      id: 'celestial', name: 'Celestial Garden', seal: '苑', x: 70, y: 9, req: 24, trip: 'celestial',
+      desc: 'A terrace above the clouds where fruit ripens out of season and memory.',
+      landmarks: [
+        { id: 'terrace', name: 'Cloud Terrace', seal: '臺', desc: 'A balustrade of white jade above an endless sea of cloud.', reward: { essence: 2, stones: 360 }, lore: 'From here the mortal world looks like a rumour.' },
+        { id: 'orchard', name: 'First Orchard', seal: '果', desc: 'Trees that bear fruit shaped like small, sleeping faces.', reward: { crystal: 3, flower: 3 }, lore: 'One fruit is missing from every branch. The gardeners are very patient.' },
+        { id: 'throne', name: 'Seat of Dawn', seal: '晨', desc: 'An empty seat oriented toward a sun that has not yet risen.', reward: { relic: 2, rootEssence: 2, daoPoints: 1 }, rare: true, lore: 'The first morning sat here once. It has not returned.' }
+      ]
+    }
+  ];
+
   const rootTypes = [
     { id: 'metal', name: 'Metal Spirit Root', seal: '金', rarity: 'Common', weight: 15, desc: 'Sharp and unyielding. Metal roots sharpen every edge you touch.', bonus: { attack: .07 }, ability: 'Blade Intent — +7% attack.' },
     { id: 'wood', name: 'Wood Spirit Root', seal: '木', rarity: 'Common', weight: 15, desc: 'Roots remember the earth and reach for the sun.', bonus: { qi: .05, herb: .08, hp: .04 }, ability: 'Verdant Renewal — gathering and vitality flourish.' },
@@ -332,7 +389,106 @@
     { id: 'breakPill', name: 'Tribulation Pill', seal: '劫', desc: 'Next breakthrough chance +15%.', cost: 150, grant: { breakBuff: 15 } }
   ];
 
-  /* ---------------- STATE ---------------- */
+  const pathTrees = {
+    body: {
+      name: 'Body · Iron Vessel', seal: '體', accent: '#7d9a74',
+      desc: 'Bone, blood and breath. Every rank tempers the mortal vessel and every milestone leaves a permanent mark.',
+      nodes: [
+        { lvl: 2, name: 'Sinew Binding', desc: '+6% maximum health', bonus: { hpPct: .06 } },
+        { lvl: 4, name: 'Marrow Wash', desc: '+1 guard', bonus: { guard: 1 } },
+        { lvl: 6, name: 'Bronze Skin', desc: '+10% maximum health', bonus: { hpPct: .1 } },
+        { lvl: 9, name: 'Titan Tendons', desc: '+6% attack', bonus: { attackPct: .06 } },
+        { lvl: 12, name: 'Diamond Bones', desc: '+2 guard · +8% health', bonus: { guard: 2, hpPct: .08 } },
+        { lvl: 15, name: 'Undying Body', desc: '+10% attack · +10% health', bonus: { attackPct: .1, hpPct: .1 } }
+      ]
+    },
+    spirit: {
+      name: 'Soul · Immortal Spirit', seal: '神', accent: '#8478a8',
+      desc: 'The sea of consciousness widens with each refinement. Soul milestones sharpen arts, insight and the will to break through.',
+      nodes: [
+        { lvl: 2, name: 'Clear Sea', desc: '+6% spirit-art power', bonus: { spiritPct: .06 } },
+        { lvl: 4, name: 'Bell Mind', desc: '+3% breakthrough chance', bonus: { breakPct: 3 } },
+        { lvl: 6, name: 'Soul Lantern', desc: '+10% Dao insight', bonus: { daoPct: .1 } },
+        { lvl: 9, name: 'Star Consciousness', desc: '+10% spirit-art power', bonus: { spiritPct: .1 } },
+        { lvl: 12, name: 'Mirror Spirit', desc: '+4% breakthrough · +10% qi flow', bonus: { breakPct: 4, qiPct: .1 } },
+        { lvl: 15, name: 'Immortal Soul', desc: '+15% spirit power · +15% Dao insight', bonus: { spiritPct: .15, daoPct: .15 } }
+      ]
+    },
+    qi: {
+      name: 'Qi · Flowing Breath', seal: '氣', accent: '#4f8b83',
+      desc: 'Refine the quality of breath until the world itself lends you its essence. Qi milestones accelerate every current.',
+      nodes: [
+        { lvl: 2, name: 'First Circulation', desc: '+6% qi flow', bonus: { qiPct: .06 } },
+        { lvl: 4, name: 'Dantian Bloom', desc: '+0.4 base qi / sec', bonus: { qiFlat: .4 } },
+        { lvl: 6, name: 'River Meridians', desc: '+10% qi flow', bonus: { qiPct: .1 } },
+        { lvl: 9, name: 'Spirit Dew', desc: '+1 spirit stone every 20 sec', bonus: { stonesPer: 1 } },
+        { lvl: 12, name: 'Endless Current', desc: '+15% qi flow · +0.4 base qi', bonus: { qiPct: .15, qiFlat: .4 } },
+        { lvl: 15, name: 'Heavenly Breath', desc: '+20% qi flow · +1 stone trickle', bonus: { qiPct: .2, stonesPer: 1 } }
+      ]
+    }
+  };
+  const daoMasteryNodes = [
+    { total: 6, name: 'First Harmony', desc: '+5% qi flow and attack' },
+    { total: 12, name: 'Sixfold Accord', desc: '+5% breakthrough · +1 luck' },
+    { total: 18, name: 'Wheel of Laws', desc: '+10% qi flow and attack' },
+    { total: 24, name: 'Dao Incarnate', desc: '+8% breakthrough · +2 luck' },
+    { total: 30, name: 'Heavenly Understanding', desc: '+15% qi flow and attack' }
+  ];
+  const sectVault = [
+    { id: 'herbs', name: 'Spirit Herb Bundle', seal: '草', tokens: 4, desc: 'Four spirit herbs gathered from the sect garden.', grant: { herb: 4 } },
+    { id: 'ore', name: 'Starfall Ore Cache', seal: '礦', tokens: 6, desc: 'Three chunks of starfall ore for the forge.', grant: { ore: 3 } },
+    { id: 'food', name: 'Beast Feast', seal: '飼', tokens: 5, desc: 'Two portions of spirit-rich beast food.', grant: { food: 2 } },
+    { id: 'crystal', name: 'Moon Crystal', seal: '晶', tokens: 10, desc: 'A flawless moon crystal from the sect treasury.', grant: { crystal: 1 } },
+    { id: 'key', name: 'Secret Realm Key', seal: '鑰', tokens: 15, desc: 'A key that opens one hidden realm.', grant: { keys: 1 } },
+    { id: 'essence', name: 'Root Essence', seal: '華', tokens: 18, desc: 'One drop of distilled root-marrow.', grant: { rootEssence: 1 } },
+    { id: 'egg', name: 'Mystic Egg · Rare', seal: '卵', tokens: 26, desc: 'A warm rare egg from the beast pens.', grant: { egg: 'rare' } },
+    { id: 'relic', name: 'Ancient Relic', seal: '古', tokens: 40, desc: 'A relic recovered from a fallen rival sect.', grant: { relic: 1 } }
+  ];
+  const sectDuties = [
+    { id: 'sweep', name: 'Sweep the Halls', seal: '掃', desc: 'Humble work steadies the heart. +8 merit, +3 tokens.', merit: 8, tokens: 3, qi: -10 },
+    { id: 'copy', name: 'Copy Scriptures', seal: '抄', desc: 'Patience with old ink. +40 Dao insight spread across the laws.', merit: 5, tokens: 2, dao: 40, qi: -25 },
+    { id: 'train', name: 'Train the Recruits', seal: '練', desc: 'A strong sect is a shared sect. +6 merit, +35 sect reputation power.', merit: 6, tokens: 2, stones: 40, qi: -15 }
+  ];
+  const legacyBoons = [
+    { id: 'cache', name: 'Ancestral Cache', seal: '匣', points: 3, desc: 'A sealed cache of spirit stones.', grant: { stones: 400 } },
+    { id: 'insight', name: 'Whisper of the Dao', seal: '悟', points: 4, desc: 'One point of pure Dao insight.', grant: { daoPoints: 1 } },
+    { id: 'key', name: 'Forgotten Key', seal: '鑰', points: 5, desc: 'A key to a door the world forgot.', grant: { keys: 1 } },
+    { id: 'essence', name: 'Root Marrow', seal: '華', points: 6, desc: 'Two drops of ancient root essence.', grant: { rootEssence: 2 } },
+    { id: 'tokens', name: 'Founder’s Stipend', seal: '✦', points: 7, desc: 'Sect tokens from the founder’s private purse.', grant: { tokens: 30 } }
+  ];
+  const forgeTempers = 5;
+  const TIP = {
+    qi: 'Qi is the vital essence gathered by breathing. It fuels training, spirit arts, realm breakthroughs and secret-realm doors.',
+    stones: 'Spirit stones are the common currency of the cultivation world. They buy techniques, equipment, alchemy ingredients and forge work.',
+    tokens: 'Sect tokens are earned through missions, bosses and duties. Spend them in the Armory, Vault and sect halls.',
+    merit: 'Sect merit measures your service. Enough merit promotes your rank, which grants permanent attack, qi and health bonuses.',
+    rate: 'Qi per second. Meditation raises this to its full value; idle cultivation receives 35%. Base qi grows with realm, path ranks and the Clear Heart Sutra.',
+    breakthrough: 'The chance that a realm breakthrough succeeds. Failure scatters 20% of your qi but never destroys your foundation.',
+    attack: 'The damage of a body strike before variance. It combines your weapon, gear, sect, root, Dao, companion, artifacts and path-tree bonuses.',
+    guard: 'Flat damage reduction against physical retaliation. Some bosses pierce or ignore guard.',
+    health: 'Your maximum health. It grows with realm, body training, gear, roots, Dao and path-tree milestones. At zero health you are carried to safety.',
+    crit: 'Critical strike chance. Critical hits deal 150% damage, improved by the Sword Dao and Heaven’s Edge.',
+    luck: 'Luck improves loot, rare findings, taming odds, root rarity and fortune events.',
+    gathering: 'Gathering multiplier applied to expedition and resource loot. Herbs and the Life Dao raise it.',
+    alchemy: 'Alchemy mastery is earned by brewing. It unlocks deeper recipes and improves your standing in the pavilion.',
+    dao: 'Dao insight is experience toward the six laws. Comprehending costs qi and stones; insight points can be infused directly.',
+    root: 'Your spiritual root grants a permanent elemental identity and bonuses. Grades multiply all root bonuses.',
+    meridians: 'Meridians are permanent channels opened with meridian points, qi and stones. Sets of four grant circulation bonuses.',
+    realm: 'Your cultivation realm. Each stage demands more qi and raises every foundation stat. Major realms are guarded by tribulations.',
+    stage: 'A single step on the immortal ladder. Stages 0–9 are Qi Condensation; later stages form the great realms.',
+    companion: 'The active spirit beast grants a passive bonus and strikes alongside you in every battle.',
+    weapon: 'The equipped weapon adds flat attack, modified by refinement, tempering and the Refining Armory.',
+    food: 'Beast food trains and evolves bonded companions. It is earned from alchemy, expeditions, fate and merchants.',
+    keys: 'Realm keys open secret realms. They are earned from tribulations, inheritances, expeditions, fate and the sect vault.',
+    essence: 'Root essence raises your spiritual root grade. Major breakthroughs, realms and elixirs provide it.',
+    relic: 'Ancient relics are required for inheritances and weapon awakening.',
+    maps: 'Treasure maps lead to caches, keys and rare materials. Follow one from Fate & Fortune.',
+    fragments: 'Fate fragments can reroll a pending fortune, refresh the faceless merchant or be woven into a new encounter.',
+    path: 'Path ranks are trained with qi and spirit stones. Every rank strengthens a foundation; milestones at ranks 2, 4, 6, 9, 12 and 15 grant permanent tree bonuses.',
+    spiritPower: 'Spirit-art power multiplies damage from spirit strikes, sect spells and martial arts.',
+    temper: 'Tempering adds a permanent +2% attack per temper to a forged weapon, up to five tempers.'
+  };
+
   const emptyEquipment = () => Object.fromEntries(gearCatalog.map(item => [item.id, { owned: false, level: 0 }]));
   const defaultState = () => ({
     version: 2, qi: 0, stones: 25, stage: 0, active: false, totalSeconds: 0, totalQi: 0, qiToday: 0, medSeconds: 0,
@@ -347,12 +503,12 @@
     dao: { sword: { xp: 0 }, fire: { xp: 0 }, water: { xp: 0 }, lightning: { xp: 0 }, space: { xp: 0 }, life: { xp: 0 } },
     daoPoints: 0,
     taming: { beasts: {}, active: null, eggs: { common: 0, rare: 0, epic: 0, mythic: 0 }, food: 1 },
-    inheritance: { discovered: [], trials: {}, completed: [], artifacts: [], points: 0 },
+    inheritance: { discovered: [], trials: {}, completed: [], artifacts: [], points: 0, boons: [] },
     realms: { cleared: {}, keys: 1, boss: null },
     forge: { weapons: {}, equippedWeapon: null, equippedArtifacts: [null, null] },
     sectBuildings: { meditation: 0, garden: 0, beastpen: 0, formation: 0, armory: 0, library: 0 },
     luckBonus: 0,
-    fate: { pending: null, log: [], merchant: [], merchantDate: 0, maps: 0, fragments: 0, clock: 0, encounters: 0, luckBuff: 0, luckBuffUntil: 0 },
+    fate: { pending: null, log: [], merchant: [], merchantDate: 0, merchantRefreshDate: 0, maps: 0, fragments: 0, clock: 0, encounters: 0, luckBuff: 0, luckBuffUntil: 0, offeringLuck: 0, offeringUntil: 0, divinations: 0 },
     world: { active: null, defeated: {}, tier: 1 },
     rebirth: { count: 0, points: 0, upgrades: { qi: 0, attack: 0, luck: 0, dao: 0 }, world: 0 },
     achievements: {}, hiddenFound: [],
@@ -362,12 +518,15 @@
     activeArts: ['cloudpalm'], breakBuff: 0,
     worldEvent: { id: null, ends: 0, next: 240 },
     story: { mercy: 0, npcMet: [] },
-    rankClaimDate: 0
+    rankClaimDate: 0,
+    notifications: [],
+    discoveries: { regions: {}, log: [] },
+    sectPerks: { dutyDate: 0, dutyType: '', blessing: null, blessingUntil: 0 }
   });
   let state = loadState();
   let activeView = 'cultivate';
   let toastTimer;
-  const uiTabs = { combat: 'hunt', sect: 'overview', techniques: 'passive', dao: 'roots', inherit: 'legacy', forge: 'weapons', fate: 'fortune', codex: 'realms' };
+  const uiTabs = { combat: 'hunt', sect: 'overview', techniques: 'passive', dao: 'roots', inherit: 'legacy', forge: 'weapons', fate: 'fortune', codex: 'realms', expeditions: 'mistwood' };
 
   function mergeDeep(base, extra) {
     if (Array.isArray(base)) return Array.isArray(extra) ? extra : base;
@@ -390,6 +549,13 @@
       fresh.quests.progress = fresh.quests.progress || {};
       fresh.forge.equippedArtifacts = (fresh.forge.equippedArtifacts || []).slice(0, 2);
       while (fresh.forge.equippedArtifacts.length < 2) fresh.forge.equippedArtifacts.push(null);
+      if (!Array.isArray(fresh.notifications)) fresh.notifications = [];
+      if (!fresh.discoveries || typeof fresh.discoveries !== 'object') fresh.discoveries = { regions: {}, log: [] };
+      if (!fresh.discoveries.regions) fresh.discoveries.regions = {};
+      if (!Array.isArray(fresh.discoveries.log)) fresh.discoveries.log = [];
+      if (!fresh.sectPerks) fresh.sectPerks = { dutyDate: 0, dutyType: '', blessing: null, blessingUntil: 0 };
+      if (!Array.isArray(fresh.inheritance.boons)) fresh.inheritance.boons = [];
+      if (!fresh.fate || typeof fresh.fate !== 'object') fresh.fate = { pending: null, log: [], merchant: [], merchantDate: 0, merchantRefreshDate: 0, maps: 0, fragments: 0, clock: 0, encounters: 0, luckBuff: 0, luckBuffUntil: 0, offeringLuck: 0, offeringUntil: 0, divinations: 0 };
       fresh.world.tier = Math.max(1, fresh.world.tier || 1);
       if (!sects[fresh.sectId]) fresh.sectId = 'azure';
       fresh.maxHp = Math.max(60, Number(fresh.maxHp) || 60);
@@ -489,7 +655,8 @@
     if (!w) return null;
     const owned = s.forge.weapons?.[id] || {};
     const refine = owned.refine || 0;
-    return { ...w, refine, awakened: !!owned.awakened, totalAttack: Math.round(w.attack * (1 + refine * .12) * (1 + buildingLevel('armory', s) * .03)) };
+    const temper = owned.temper || 0;
+    return { ...w, refine, temper, awakened: !!owned.awakened, totalAttack: Math.round(w.attack * (1 + refine * .12 + temper * .02) * (1 + buildingLevel('armory', s) * .03)) };
   }
   function currentEvent(s = state) {
     if (!s.worldEvent?.id) return null;
@@ -497,14 +664,15 @@
     return worldEvents.find(e => e.id === s.worldEvent.id) || null;
   }
   function luckFor(s = state) {
-    let luck = 5 + (s.upgrades?.fortune || 0) + rootBonus('luck', s) + meridianBonus('luck', s) + beastBonus('luck', s) + artifactBonus('luck', s) + rebirthUpgrade('luck', s) * 2 + (s.luckBonus || 0);
+    let luck = 5 + (s.upgrades?.fortune || 0) + rootBonus('luck', s) + meridianBonus('luck', s) + beastBonus('luck', s) + artifactBonus('luck', s) + rebirthUpgrade('luck', s) * 2 + (s.luckBonus || 0) + daoTreeBonus('luck', s);
     const ev = currentEvent(s);
     if (ev?.buff === 'luck') luck += 5;
     if ((s.fate?.luckBuffUntil || 0) > Date.now()) luck += (s.fate?.luckBuff || 0);
+    if ((s.fate?.offeringUntil || 0) > Date.now()) luck += (s.fate?.offeringLuck || 0);
     return Math.round(luck * 10) / 10;
   }
   function qiBase(s = state) {
-    return 2.5 + (s.stage || 0) * .28 + (s.upgrades?.sutra || 0) * .8 + (s.pathLevels?.spirit || 0) * .4 + (s.pathLevels?.qi || 0) * .24;
+    return 2.5 + (s.stage || 0) * .28 + (s.upgrades?.sutra || 0) * .8 + (s.pathLevels?.spirit || 0) * .4 + (s.pathLevels?.qi || 0) * .24 + pathTreeBonus('qiFlat', s);
   }
   function rateFor(s = state) {
     const base = qiBase(s);
@@ -512,7 +680,8 @@
     const mult = 1 + (s.boosts || 0) + gearStat('qi', s) + sectData(s).qi + (s.sectRank || 0) * .02
       + rootBonus('qi', s) + daoLevel('water', s) * .03 + meridianBonus('qi', s) + beastBonus('qi', s)
       + artifactBonus('qi', s) + rebirthUpgrade('qi', s) * .1 + (s.rebirth?.world || 0) * .2
-      + buildingLevel('meditation', s) * .03 + (ev?.buff === 'qi' ? .5 : 0);
+      + buildingLevel('meditation', s) * .03 + (ev?.buff === 'qi' ? .5 : 0)
+      + pathTreeBonus('qiPct', s) + daoTreeBonus('qi', s) + sectBlessing('qi', s) * .25;
     return base * mult * (s.active ? 1 : .35);
   }
   function attackDamage(base, s = state) {
@@ -520,7 +689,7 @@
     const flat = gearStat('attack', s) + (w?.totalAttack || 0);
     const mult = 1 + sectData(s).attack + (s.sectRank || 0) * .03 + rootBonus('attack', s) + daoLevel('sword', s) * .04
       + daoLevel('fire', s) * .04 + beastBonus('attack', s) + artifactBonus('attack', s) + rebirthUpgrade('attack', s) * .08 + (s.rebirth?.world || 0) * .15
-      + buildingLevel('armory', s) * .02;
+      + buildingLevel('armory', s) * .02 + pathTreeBonus('attackPct', s) + daoTreeBonus('attack', s) + sectBlessing('attack', s) * .15;
     return Math.round((base + flat) * mult);
   }
   function critChance(s = state) {
@@ -531,16 +700,16 @@
   function maxHpFor(s = state) {
     const body = 1 + (s.stage || 0) + (s.upgrades?.body || 0) * 2 + (s.pathLevels?.body || 0) * 3;
     const base = 60 + body * 5 + (s.pathLevels?.body || 0) * 12 + (s.sectRank || 0) * 10 + gearStat('health', s);
-    return Math.round(base * (1 + rootBonus('hp', s) + beastBonus('hp', s) + artifactBonus('hp', s) + daoLevel('life', s) * .03 + (s.rebirth?.world || 0) * .1));
+    return Math.round(base * (1 + rootBonus('hp', s) + beastBonus('hp', s) + artifactBonus('hp', s) + daoLevel('life', s) * .03 + (s.rebirth?.world || 0) * .1 + pathTreeBonus('hpPct', s)));
   }
   function guardFor(s = state) {
-    return Math.floor((s.pathLevels?.body || 0) / 2 + gearStat('guard', s) + meridianBonus('guard', s) + rootBonus('guard', s) + artifactBonus('guard', s) + beastBonus('guard', s) + daoLevel('life', s) * .4);
+    return Math.floor((s.pathLevels?.body || 0) / 2 + gearStat('guard', s) + meridianBonus('guard', s) + rootBonus('guard', s) + artifactBonus('guard', s) + beastBonus('guard', s) + daoLevel('life', s) * .4 + pathTreeBonus('guard', s));
   }
   function harvestMult(s = state) {
     return 1 + (s.upgrades?.alchemy || 0) * .03 + rootBonus('herb', s) + daoLevel('life', s) * .04 + buildingLevel('garden', s) * .05 + beastBonus('herb', s) + (currentEvent(s)?.buff === 'herb' ? .5 : 0);
   }
   function daoGainMult(id, s = state) {
-    let m = 1 + (s.upgrades?.dao || 0) * .06 + buildingLevel('library', s) * .1 + rebirthUpgrade('dao', s) * .15 + (currentEvent(s)?.buff === 'dao' ? .5 : 0);
+    let m = 1 + (s.upgrades?.dao || 0) * .06 + buildingLevel('library', s) * .1 + rebirthUpgrade('dao', s) * .15 + (currentEvent(s)?.buff === 'dao' ? .5 : 0) + pathTreeBonus('daoPct', s);
     const root = rootData(s);
     const affinity = { fire: 'fire', water: 'water', wood: 'life', metal: 'sword', thunder: 'lightning', ice: 'water', wind: 'space' }[root?.id];
     if (affinity === id) m += .5;
@@ -554,7 +723,8 @@
   }
   function breakChance(s = state) {
     let ch = 78 + (s.upgrades?.body || 0) * 4 + Math.min(s.stage || 0, 5) + meridianBonus('break', s) * 100
-      + buildingLevel('formation', s) * 2 + rootBonus('break', s) * 100 + (s.breakBuff || 0)
+      + buildingLevel('formation', s) * 2 + rootBonus('break', s) * 100 + (s.breakBuff || 0) + pathTreeBonus('breakPct', s) + daoTreeBonus('break', s)
+      + sectBlessing('break', s) * 5
       - (isMajor((s.stage || 0) + 1) ? 18 : 0);
     return Math.round(clamp(ch, 5, 99));
   }
@@ -600,6 +770,68 @@
   }
   function allDaoLevels(s = state) { return daoPaths.map(d => daoLevel(d.id, s)); }
   function totalMastery(s = state) { return allDaoLevels(s).reduce((a, b) => a + b, 0); }
+  function pathTreeActive(pathId, node, s = state) {
+    return (s.pathLevels?.[pathId] || 0) >= node.lvl;
+  }
+  function pathTreeBonus(key, s = state) {
+    let sum = 0;
+    Object.entries(pathTrees).forEach(([pathId, tree]) => {
+      tree.nodes.forEach(node => { if (pathTreeActive(pathId, node, s)) sum += node.bonus?.[key] || 0; });
+    });
+    return sum;
+  }
+  function pathTreeNodes(pathId, s = state) {
+    return (pathTrees[pathId]?.nodes || []).filter(n => pathTreeActive(pathId, n, s)).length;
+  }
+  function daoTreeNodes(s = state) {
+    return daoMasteryNodes.filter(n => totalMastery(s) >= n.total).length;
+  }
+  function daoTreeBonus(key, s = state) {
+    const total = totalMastery(s);
+    let sum = 0;
+    if (total >= 6) sum += key === 'qi' || key === 'attack' ? .05 : 0;
+    if (total >= 12) sum += key === 'break' ? 5 : key === 'luck' ? 1 : 0;
+    if (total >= 18) sum += key === 'qi' || key === 'attack' ? .1 : 0;
+    if (total >= 24) sum += key === 'break' ? 8 : key === 'luck' ? 2 : 0;
+    if (total >= 30) sum += key === 'qi' || key === 'attack' ? .15 : 0;
+    return sum;
+  }
+  function sectBlessing(type, s = state) {
+    if (s.sectPerks?.blessing !== type) return 0;
+    if ((s.sectPerks?.blessingUntil || 0) < Date.now()) return 0;
+    return 1;
+  }
+  function spiritPowerMult(s = state) {
+    return 1 + pathTreeBonus('spiritPct', s) + (s.root?.type === 'divine' ? .05 : 0);
+  }
+  function tipAttr(text) { return ` data-tip="${String(text).replace(/"/g, '&quot;')}"`; }
+  function notify(text, kind = 'info', silent = false) {
+    if (!state.notifications) state.notifications = [];
+    state.notifications.unshift({ text, kind, at: Date.now() });
+    if (state.notifications.length > 40) state.notifications.length = 40;
+    if (!silent) showToast(text);
+  }
+  function regionData(id) { return worldRegions.find(r => r.id === id) || null; }
+  function regionState(id, s = state) {
+    if (!s.discoveries) s.discoveries = { regions: {}, log: [] };
+    if (!s.discoveries.regions) s.discoveries.regions = {};
+    if (!s.discoveries.regions[id]) s.discoveries.regions[id] = { found: [], visits: 0, surveys: 0 };
+    const r = s.discoveries.regions[id];
+    if (!Array.isArray(r.found)) r.found = [];
+    return r;
+  }
+  function regionFoundCount(id, s = state) { return regionState(id, s).found.length; }
+  function regionComplete(id, s = state) { return regionFoundCount(id, s) >= (regionData(id)?.landmarks.length || 0); }
+  function addDiscovery(regionId, landmark) {
+    const rs = regionState(regionId);
+    if (!rs.found.includes(landmark.id)) rs.found.push(landmark.id);
+    state.discoveries.log.unshift({ region: regionId, landmark: landmark.id, name: landmark.name, at: Date.now() });
+    if (state.discoveries.log.length > 30) state.discoveries.log.length = 30;
+    applyReward(landmark.reward);
+    notify(`${landmark.name} discovered in the ${regionData(regionId)?.name || 'wilds'} · ${rewardsText(landmark.reward)}`, landmark.rare ? 'rare' : 'reward');
+    if (landmark.rare) fxBurst('rare', landmark.seal, landmark.name, landmark.lore || 'A rare discovery is recorded in your journal.', rewardsText(landmark.reward));
+    else rewardFloat(`+ ${rewardsText(landmark.reward)}`);
+  }
 
   /* ---------------- DAILY / QUEST / MISSION PROGRESS ---------------- */
   function ensureDaily(s = state) {
@@ -764,7 +996,7 @@
     if (chip) chip.innerHTML = root
       ? `<span class="root-seal ${root.rarity.toLowerCase()}">${root.seal}</span><span><small>SPIRITUAL ROOT · ${ROOT_GRADES[state.root.grade].toUpperCase()}</small><b>${root.name}</b></span>`
       : `<span class="root-seal">空</span><span><small>SPIRITUAL ROOT</small><b>Unawakened</b></span>`;
-    renderRealmPath(); renderBanners(); renderChallenges(); renderQuestTracker(); renderSubView();
+    renderRealmPath(); renderBanners(); renderCharacterPanel(); renderNotifications(); renderChallenges(); renderQuestTracker(); renderSubView();
   }
   function safeCheck(trial) { try { return trial.check(state); } catch { return false; } }
   function renderRealmPath() {
@@ -772,6 +1004,65 @@
     const milestones = [0, 1, 10, 13, 16, 19, 22, 25, 28, 31, 34, 37];
     const labels = ['Mortal', 'Qi', 'Foundation', 'Core', 'Soul', 'Severing', 'Dao', 'Immortal', 'Celestial', 'Sage', 'Primordial', 'Beyond'];
     el.innerHTML = milestones.map((stage, i) => `<div class="realm-step ${state.stage >= stage ? 'passed' : ''} ${state.stage >= stage && (i === milestones.length - 1 || state.stage < milestones[i + 1]) ? 'current' : ''}"><span class="realm-node">${state.stage >= stage ? '✦' : '·'}</span><span>${labels[i]}</span></div>`).join('');
+  }
+  function timeAgo(ts) {
+    const sec = Math.max(0, Math.floor((Date.now() - (ts || Date.now())) / 1000));
+    if (sec < 45) return 'just now';
+    if (sec < 3600) return `${Math.floor(sec / 60)} min ago`;
+    if (sec < 86400) return `${Math.floor(sec / 3600)} hr ago`;
+    return `${Math.floor(sec / 86400)} d ago`;
+  }
+  function statTile(label, value, tip, cls = '') {
+    return `<div class="char-stat ${cls}"${tipAttr(tip)}><small>${label}</small><b>${value}</b></div>`;
+  }
+  function renderCharacterPanel() {
+    const el = $('characterPanel'); if (!el) return;
+    const root = rootData(), weapon = equippedWeapon(), comp = activeBeast();
+    const goal = requirement(), pct = Math.min(100, state.qi / goal * 100);
+    const equippedCount = Object.values(state.equipment || {}).filter(g => g.owned).length + (weapon ? 1 : 0) + (state.forge.equippedArtifacts || []).filter(Boolean).length;
+    const treeTotal = pathTreeNodes('body') + pathTreeNodes('spirit') + pathTreeNodes('qi');
+    el.innerHTML = `<div class="panel-heading"><div><div class="eyebrow">CULTIVATOR RECORD</div><h3>Character sheet</h3></div><span class="live-chip"><i></i>LIVE</span></div>
+      <div class="char-realm">
+        <div class="char-seal"${tipAttr(TIP.realm)}>${state.stage === 0 ? '凡' : currentBand().cn}</div>
+        <div class="char-realm-copy"><small>REALM &amp; STAGE</small><b>${realmTitle()}</b><span>Stage ${state.stage} · ${worldName()} · Day ${dayIndex()}</span></div>
+        <div class="char-realm-progress"${tipAttr('Qi accumulated toward the next realm. At 100% you may attempt a breakthrough.')}><small>NEXT THRESHOLD</small><b>${nfmt(Math.floor(state.qi))} / ${nfmt(goal)}</b><div class="mini-track"><i style="width:${pct}%"></i></div></div>
+      </div>
+      <div class="char-section-label">FOUNDATION</div>
+      <div class="char-stats">
+        ${statTile('HEALTH', `${Math.ceil(state.hp)} / ${state.maxHp}`, TIP.health)}
+        ${statTile('ATTACK', nfmt(attackDamage(0)), TIP.attack)}
+        ${statTile('GUARD', guardFor(), TIP.guard)}
+        ${statTile('CRIT', `${Math.round(critChance() * 100)}%`, TIP.crit)}
+        ${statTile('QI FLOW', `${rateFor().toFixed(1)}/s`, TIP.rate)}
+        ${statTile('BREAKTHROUGH', `${breakChance()}%`, TIP.breakthrough)}
+        ${statTile('LUCK', luckFor(), TIP.luck)}
+        ${statTile('GATHERING', `+${Math.round((harvestMult() - 1) * 100)}%`, TIP.gathering)}
+      </div>
+      <div class="char-section-label">MASTERY</div>
+      <div class="char-stats compact">
+        ${statTile('DAO LEVELS', `${totalMastery()} / 60`, `${TIP.dao} ${daoTreeNodes()} of ${daoMasteryNodes.length} harmony nodes awakened.`)}
+        ${statTile('MERIDIANS', `${openedMeridians()} / ${meridianList.length}`, TIP.meridians)}
+        ${statTile('PATH NODES', `${treeTotal} / 18`, TIP.path)}
+        ${statTile('SPIRIT POWER', `+${Math.round((spiritPowerMult() - 1) * 100)}%`, TIP.spiritPower)}
+        ${statTile('COMPANIONS', Object.keys(state.taming.beasts).length, TIP.companion)}
+        ${statTile('EQUIPPED', `${equippedCount} pieces`, TIP.weapon)}
+      </div>
+      <div class="char-loadout">
+        <span${tipAttr(TIP.root)}><i>${root ? root.seal : '空'}</i><small>ROOT</small><b>${root ? root.name : 'Unawakened'}</b></span>
+        <span${tipAttr(TIP.weapon)}><i>⚔</i><small>WEAPON</small><b>${weapon ? weapon.name : 'Bare hands'}</b></span>
+        <span${tipAttr(TIP.companion)}><i>${comp ? comp.icon : '獸'}</i><small>COMPANION</small><b>${comp ? comp.name : 'None'}</b></span>
+        <span${tipAttr('Your sect rank grants permanent bonuses and unlocks armory gear and sect buildings.')}><i>${sectData().seal}</i><small>SECT</small><b>${sectRanks[state.sectRank]?.name || 'Outer Disciple'}</b></span>
+      </div>
+      <div class="char-actions"><button class="action-btn" data-view="paths">Grow foundations</button><button class="action-btn" data-view="dao">Inner Dao</button><button class="action-btn" data-view="codex" data-tab-view="codex" data-action="tab" data-tab="collections">Collections</button></div>`;
+  }
+  function renderNotifications() {
+    const el = $('notificationPanel'); if (!el) return;
+    const icons = { breakthrough: '破', rare: '✦', beast: '獸', reward: '◇', sect: '青', forge: '⚒', fate: '運', info: '·' };
+    const rows = (state.notifications || []).slice(0, 8).map(n =>
+      `<div class="notice-row notice-${n.kind || 'info'}"><span class="notice-icon">${icons[n.kind] || '·'}</span><div><b>${n.text}</b><small>${timeAgo(n.at)}</small></div></div>`
+    ).join('');
+    el.innerHTML = `<div class="panel-heading"><div><div class="eyebrow">THE SECT WHISPERS</div><h3>Notifications</h3></div><div class="notice-head-actions"><span class="task-progress">${state.notifications?.length || 0}</span>${state.notifications?.length ? '<button class="small-link" data-action="clear-notifications">CLEAR</button>' : ''}</div></div>
+      ${rows || '<div class="notice-empty"><span>✧</span><p>No word has reached you yet. Meditate, train, or walk beyond the gate.</p></div>'}`;
   }
   function renderBanners() {
     const el = $('eventBanners'); if (!el) return;
@@ -821,22 +1112,49 @@
     document.querySelectorAll('.nav-item, .mobile-nav button').forEach(el => el.classList.toggle('active', el.dataset.view === view));
     const names = { cultivate: 'CULTIVATION GROVE', paths: 'THREE CULTIVATION PATHS', dao: 'INNER DAO', combat: 'SPIRIT BEAST GROUNDS', sect: 'AZURE CLOUD SECT', techniques: 'SECT LIBRARY', expeditions: 'BEYOND THE SECT', alchemy: 'ALCHEMY PAVILION', inherit: 'ANCIENT INHERITANCE', forge: 'THE REFINING FORGE', fate: 'FATE & FORTUNE', ascension: 'REINCARNATION & ASCENSION', codex: 'THE IMMORTAL CODEX' };
     if ($('crumbTitle')) $('crumbTitle').textContent = names[view] || names.cultivate;
+    closeMobileNav();
     render(); window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  /* ---------------- PATHS ---------------- */
+  /* ---------------- PATHS & PROGRESSION TREES ---------------- */
+  function pathTreeHtml(pathId) {
+    const tree = pathTrees[pathId];
+    const level = state.pathLevels[pathId] || 0;
+    const nextLvl = tree.nodes.find(n => level < n.lvl)?.lvl;
+    const nodes = tree.nodes.map((node, i) => {
+      const active = level >= node.lvl;
+      const next = !active && node.lvl === nextLvl;
+      return `<div class="tree-node ${active ? 'active' : next ? 'next' : 'locked'}" style="--accent:${tree.accent}"${tipAttr(`${node.name} · Rank ${node.lvl}: ${node.desc}`)}>
+        <span class="tree-dot">${active ? '✓' : node.lvl}</span>
+        <div><b>${node.name}</b><small>Rank ${node.lvl} · ${node.desc}</small></div>
+        ${active ? '<em>OPEN</em>' : next ? `<em>${node.lvl - level} RANK${node.lvl - level === 1 ? '' : 'S'} AWAY</em>` : ''}
+      </div>`;
+    }).join('');
+    return `<div class="path-tree" style="--accent:${tree.accent}">
+      <div class="path-tree-head"><span class="tree-seal">${tree.seal}</span><div><h3>${tree.name}</h3><small>RANK ${level} · ${pathTreeNodes(pathId)} / ${tree.nodes.length} NODES</small></div></div>
+      <p>${tree.desc}</p>
+      <div class="tree-track">${nodes}</div>
+    </div>`;
+  }
   function renderPaths() {
     const bodyLevel = state.pathLevels.body, spiritLevel = state.pathLevels.spirit, qiLevel = state.pathLevels.qi;
     const bodyCost = 50 + bodyLevel * 45, spiritCost = 50 + spiritLevel * 45, qiCost = 40 + qiLevel * 35;
     const cards = [
       { id: 'body', name: 'Body cultivation', seal: '體', eyebrow: 'THE IRON VESSEL', desc: 'Temper bone, blood, and breath. Body ranks increase health and empower crushing physical strikes.', level: bodyLevel, cost: bodyCost, action: 'Temper the body', good: state.qi >= bodyCost && state.stones >= 5, cls: 'body-path', label: 'BODY REALM' },
-      { id: 'spirit', name: 'Spiritual cultivation', seal: '神', eyebrow: 'THE IMMORTAL SPIRIT', desc: 'Expand your sea of consciousness. Spirit ranks strengthen spiritual arts and accelerate meditation.', level: spiritLevel, cost: spiritCost, action: 'Refine the spirit', good: state.qi >= spiritCost && state.stones >= 5, cls: 'spirit-path', label: 'SPIRIT REALM' },
-      { id: 'qi', name: 'Qi cultivation', seal: '氣', eyebrow: 'THE FLOWING BREATH', desc: 'Refine the quality of your qi. Qi ranks deepen meditation and open the meridians faster.', level: qiLevel, cost: qiCost, action: 'Circulate the qi', good: state.qi >= qiCost && state.stones >= 8, cls: 'qi-path', label: 'QI REALM' }
+      { id: 'spirit', name: 'Soul cultivation', seal: '神', eyebrow: 'THE IMMORTAL SPIRIT', desc: 'Expand your sea of consciousness. Soul ranks strengthen spiritual arts, insight and breakthroughs.', level: spiritLevel, cost: spiritCost, action: 'Refine the soul', good: state.qi >= spiritCost && state.stones >= 5, cls: 'spirit-path', label: 'SOUL REALM' },
+      { id: 'qi', name: 'Qi cultivation', seal: '氣', eyebrow: 'THE FLOWING BREATH', desc: 'Refine the quality of your qi. Qi ranks deepen meditation, stone trickles and meridian recovery.', level: qiLevel, cost: qiCost, action: 'Circulate the qi', good: state.qi >= qiCost && state.stones >= 8, cls: 'qi-path', label: 'QI REALM' }
     ];
-    const cardHtml = cards.map(c => `<article class="path-card ${c.cls}"><div class="path-seal">${c.seal}</div><div class="eyebrow">${c.eyebrow}</div><h2>${c.name}</h2><p>${c.desc}</p><div class="path-level">${c.label} <b>Rank ${c.level}</b></div><div class="inventory-row"><span>Training requirement</span><b>${nfmt(c.cost)} qi · ${c.id === 'qi' ? 8 : 5} stones</b></div><button class="action-btn" data-action="train-path" data-id="${c.id}" ${c.good ? '' : 'disabled'}>${c.action}</button><small class="subtle">Every 5 ranks grants 1 meridian point.</small></article>`).join('');
-    $('view-paths').innerHTML = `${subHead('THREE WAYS TO IMMORTALITY', 'Choose your cultivation path', 'Train the mortal vessel, refine the soul, or perfect the breath. All paths remain open, and each grants its own battle art.', '☯')}
+    const cardHtml = cards.map(c => `<article class="path-card ${c.cls}"><div class="path-seal">${c.seal}</div><div class="eyebrow">${c.eyebrow}</div><h2>${c.name}</h2><p>${c.desc}</p><div class="path-level">${c.label} <b>Rank ${c.level}</b></div><div class="inventory-row"${tipAttr(TIP.path)}><span>Training requirement</span><b>${nfmt(c.cost)} qi · ${c.id === 'qi' ? 8 : 5} stones</b></div><button class="action-btn" data-action="train-path" data-id="${c.id}" ${c.good ? '' : 'disabled'}>${c.action}</button><small class="subtle">Every 5 ranks grants 1 meridian point. Milestones open permanently at ranks 2, 4, 6, 9, 12 and 15.</small></article>`).join('');
+    const daoBranches = daoPaths.map(d => {
+      const lv = daoLevel(d.id);
+      return `<div class="dao-branch" style="--dao:${d.color}"${tipAttr(`${d.name} · Level ${lv} / 10. ${d.passive}. ${d.ability}`)}><span class="dao-branch-seal">${d.seal}</span><div class="dao-branch-body"><div><b>${d.name}</b><small>LV ${lv} / 10 · ${masteryName(lv).toUpperCase()}</small></div>${progressLine(lv, 10)}<div class="dao-stars">${[3, 6, 9].map(n => `<span class="${lv >= n ? 'on' : ''}">${lv >= n ? '✦' : '·'} <small>Lv ${n}</small></span>`).join('')}</div></div></div>`;
+    }).join('');
+    const harmony = daoMasteryNodes.map(n => `<div class="harmony-node ${totalMastery() >= n.total ? 'active' : ''}"${tipAttr(n.desc)}><span>${totalMastery() >= n.total ? '✦' : n.total}</span><div><b>${n.name}</b><small>${n.total} total Dao levels · ${n.desc}</small></div></div>`).join('');
+    $('view-paths').innerHTML = `${subHead('THREE WAYS TO IMMORTALITY', 'Cultivation paths', 'Train the mortal vessel, refine the soul, or perfect the breath. Each path is a tree of permanent milestones connected to the same progression.', '☯')}
       <div class="path-choice-grid three">${cardHtml}</div>
-      <article class="content-panel path-note"><div class="eyebrow">YOUR FOUNDATION</div><h2>Neither path is a dead end</h2><p>Body training raises health and physical damage. Spirit training improves spirit-arts damage and meditation. Qi training accelerates qi flow and meridian recovery. Invest in any—or balance all three.</p><p class="small-note">Base qi growth: ${qiBase().toFixed(1)} qi/sec at stage ${state.stage}. Every realm, spirit rank, qi rank and rank of the Clear Heart Sutra adds to it.</p><div class="feature-stats"><span>BODY RANK <b>${bodyLevel}</b></span><span>SPIRIT RANK <b>${spiritLevel}</b></span><span>QI RANK <b>${qiLevel}</b></span><span>QI FLOW <b>${rateFor().toFixed(1)} / sec</b></span><span>MAX HEALTH <b>${maxHpFor()}</b></span></div></article>
+      <div class="tree-grid">${pathTreeHtml('body')}${pathTreeHtml('spirit')}${pathTreeHtml('qi')}</div>
+      <article class="content-panel"><div class="eyebrow">THE INNER DAO TREE · ${totalMastery()} / 60 LEVELS</div><h2>Six laws, one understanding</h2><p>Every Dao is a branch of the same tree. Levels 3, 6 and 9 awaken milestones within each law. When your total mastery reaches 6, 12, 18, 24 and 30, harmony nodes open across every path.</p><div class="dao-tree">${daoBranches}</div><div class="harmony-track">${harmony}</div></article>
+      <article class="content-panel path-note"><div class="eyebrow">YOUR FOUNDATION</div><h2>Neither path is a dead end</h2><p>Body training raises health and physical damage. Soul training improves spirit-arts damage, insight and breakthroughs. Qi training accelerates qi flow, stone trickles and meridian recovery. Invest in any—or balance all three.</p><p class="small-note">Base qi growth: ${qiBase().toFixed(1)} qi/sec at stage ${state.stage}. Every realm, path rank, tree node and rank of the Clear Heart Sutra adds to it.</p><div class="feature-stats"><span>BODY RANK <b>${bodyLevel}</b></span><span>SOUL RANK <b>${spiritLevel}</b></span><span>QI RANK <b>${qiLevel}</b></span><span>QI FLOW <b>${rateFor().toFixed(1)} / sec</b></span><span>MAX HEALTH <b>${maxHpFor()}</b></span><span>TREE NODES <b>${pathTreeNodes('body') + pathTreeNodes('spirit') + pathTreeNodes('qi')} / 18</b></span></div></article>
       <article class="content-panel"><div class="eyebrow">THE HEAVENLY TRIBULATION</div><h2>Major realms are guarded</h2><p>At the threshold of every major realm, heaven sends a tribulation. Its success chance is lower than an ordinary breakthrough, but the rewards are far greater: meridian points, dao insight, realm keys and root essence. Prepare pills, formations and meridians before you step forward.</p><div class="stat-pills"><span class="stat-pill gold">Current chance · ${breakChance()}%</span><span class="stat-pill ${isMajor(state.stage + 1) ? 'red' : 'green'}">Next threshold · ${isMajor(state.stage + 1) ? 'Heavenly Tribulation' : 'Ordinary'}</span><span class="stat-pill">Meridian points · ${state.meridians.points}</span><span class="stat-pill violet">Dao insight · ${state.daoPoints}</span></div></article>`;
   }
 
@@ -867,8 +1185,36 @@
       </aside></div>`;
   }
 
-  /* ---------------- EXPEDITIONS ---------------- */
+  /* ---------------- EXPEDITIONS & WORLD MAP ---------------- */
+  function selectedRegionId() {
+    if (!worldRegions.some(r => r.id === uiTabs.expeditions)) uiTabs.expeditions = 'mistwood';
+    return uiTabs.expeditions;
+  }
+  function renderRegionMap() {
+    const nodes = worldRegions.map(region => {
+      const rs = regionState(region.id), locked = state.stage < region.req;
+      const found = rs.found.length, total = region.landmarks.length;
+      return `<button class="region-node ${selectedRegionId() === region.id ? 'selected' : ''} ${locked ? 'locked' : ''} ${found >= total ? 'complete' : ''}" style="--x:${region.x}%;--y:${region.y}%" data-action="select-region" data-id="${region.id}"${tipAttr(`${region.name} · ${locked ? `Requires stage ${region.req}` : `${found} / ${total} discoveries charted.`}`)}><span class="region-seal">${region.seal}</span><b>${region.name}</b><small>${locked ? `STAGE ${region.req}` : `${found} / ${total} FOUND`}</small></button>`;
+    }).join('');
+    return `<article class="content-panel region-panel"><div class="panel-heading"><div><div class="eyebrow">THE KNOWN WORLD · ${worldRegions.reduce((a, r) => a + regionFoundCount(r.id), 0)} / ${worldRegions.reduce((a, r) => a + r.landmarks.length, 0)} DISCOVERIES</div><h2>Region map</h2></div><span class="stat-pill gold">${worldRegions.filter(r => regionComplete(r.id)).length} fully charted</span></div><p>Chart the lands beyond the sect gate. Each region hides three discoveries; rarer places demand a deeper realm and greater luck.</p><div class="region-map"><div class="region-map-glow"></div><div class="region-ridge ridge-a"></div><div class="region-ridge ridge-b"></div><div class="region-ridge ridge-c"></div><div class="region-map-lines"></div>${nodes}</div></article>`;
+  }
+  function renderRegionDetail() {
+    const region = regionData(selectedRegionId()) || worldRegions[0];
+    const rs = regionState(region.id);
+    const locked = state.stage < region.req;
+    const found = rs.found.length, total = region.landmarks.length;
+    const surveyCost = { qi: 20 + region.req * 3, stones: 10 + region.req * 2 };
+    const canSurvey = !locked && state.qi >= surveyCost.qi && state.stones >= surveyCost.stones;
+    const landmarkRows = region.landmarks.map(lm => {
+      const known = rs.found.includes(lm.id);
+      return `<div class="landmark ${known ? 'found' : ''} ${lm.rare ? 'rare' : ''}"${tipAttr(known ? `${lm.desc} ${lm.lore}` : `An undiscovered place. Survey the region to reveal it. ${lm.rare ? 'This is a rare site.' : ''}`)}><span class="landmark-seal">${known ? lm.seal : '?'}</span><div><b>${known ? lm.name : 'Undiscovered site'}</b><small>${known ? lm.lore : lm.rare ? 'A rare site waits somewhere in this region.' : 'Somewhere beyond the marked trails.'}</small></div>${known ? `<span class="stat-pill green">${lm.rare ? 'RARE' : 'FOUND'}</span>` : '<span class="stat-pill">?</span>'}</div>`;
+    }).join('');
+    const trip = expeditions.find(t => t.id === region.trip);
+    return `<article class="content-panel region-detail"><div class="panel-heading"><div><div class="eyebrow">REGION DOSSIER · ${region.seal} ${region.seal ? region.name.toUpperCase() : ''}</div><h2>${region.name}</h2></div><span class="stat-pill ${found >= total ? 'gold' : 'green'}">${found} / ${total}</span></div><p>${region.desc}</p><div class="region-meta-row"><span>REQUIRES STAGE ${region.req}</span><span>SURVEYS ${rs.surveys || 0}</span><span>JOURNEYS ${rs.visits || 0}</span></div><div class="landmark-list">${landmarkRows}</div><div class="inline-actions"><button class="action-btn gold" data-action="survey-region" data-id="${region.id}" ${canSurvey && found < total ? '' : 'disabled'}>${locked ? `Requires stage ${region.req}` : found >= total ? 'Region fully charted' : `Survey the wilds · ${surveyCost.qi} qi · ◇ ${surveyCost.stones}`}</button>${trip ? `<button class="action-btn" data-action="start-trip" data-id="${trip.id}" ${locked || state.trip ? 'disabled' : ''}>${state.trip ? 'Already away' : `Set out · ${trip.name}`}</button>` : ''}</div><p class="small-note">Surveys cost qi and spirit stones. Luck raises the chance of finding a rare site. Every discovery grants resources and is recorded in your journal.</p></article>`;
+  }
   function renderExpeditions() {
+    const region = regionData(selectedRegionId()) || worldRegions[0];
+    const rs = regionState(region.id);
     const tripState = () => {
       if (!state.trip) return '';
       const left = Math.max(0, Math.ceil((state.trip.ends - Date.now()) / 1000));
@@ -879,12 +1225,20 @@
       const active = state.trip?.id === t.id;
       const ready = active && Date.now() >= state.trip.ends;
       const lootText = Object.entries(t.loot).map(([k, v]) => `${v} ${ingredients[k]?.name || k}`).join(' · ');
-      return `<article class="expedition-card ${locked ? 'locked-card' : ''}"><div class="expedition-art">${t.icon}</div><div><h3>${t.name}</h3><p>${t.desc}</p><div class="exp-meta"><span>◷ ${tripDuration(t)}s</span><span>◇ ${t.reward + state.stage * 2} stones</span><span>✿ ${lootText}</span>${locked ? `<span>REQUIRES STAGE ${t.req}</span>` : ''}</div>${active ? tripState() : ''}</div>${locked ? '<button class="action-btn" disabled>Locked</button>' : state.trip ? (ready && active ? '<button class="action-btn" data-action="collect-trip">Collect</button>' : `<button class="action-btn" disabled>${active ? 'In progress' : 'Away'}</button>`) : `<button class="action-btn" data-action="start-trip" data-id="${t.id}">Set out</button>`}</article>`;
+      const linked = worldRegions.find(r => r.trip === t.id);
+      return `<article class="expedition-card ${locked ? 'locked-card' : ''} ${linked?.id === region.id ? 'in-region' : ''}"><div class="expedition-art">${t.icon}</div><div><h3>${t.name}</h3><p>${t.desc}</p><div class="exp-meta"><span>◷ ${tripDuration(t)}s</span><span>◇ ${t.reward + state.stage * 2} stones</span><span>✿ ${lootText}</span>${locked ? `<span>REQUIRES STAGE ${t.req}</span>` : ''}</div>${active ? tripState() : ''}</div>${locked ? '<button class="action-btn" disabled>Locked</button>' : state.trip ? (ready && active ? '<button class="action-btn" data-action="collect-trip">Collect</button>' : `<button class="action-btn" disabled>${active ? 'In progress' : 'Away'}</button>`) : `<button class="action-btn" data-action="start-trip" data-id="${t.id}">Set out</button>`}</article>`;
     }).join('');
-    $('view-expeditions').innerHTML = `${subHead('BEYOND THE SECT WALLS', 'Expeditions', 'The world is vast. A cultivator must also walk its roads and bring back what the wilds offer.', '⌁')}
-      <div class="subview-layout"><div class="subview-main"><article class="content-panel"><div class="eyebrow">AVAILABLE JOURNEYS</div><h2>Choose a path</h2><p>Send your spirit out into the world. You can continue cultivating while an expedition is underway. Higher realms and the Space Dao shorten the road.</p>${cards}</article></div>
-      <aside class="subview-aside"><article class="feature-card"><div class="eyebrow">TRAVELER'S LEDGER</div><h3>${state.completedTrips} journeys completed</h3><p>Every safe return brings new resources to the sect. Fortune favors the well-prepared wanderer.</p><div class="feature-stats"><span>STONE YIELD <b>+${state.stage * 2} / trip</b></span><span>LUCK <b>${luckFor()}</b></span><span>GATHERING <b>+${Math.round((harvestMult() - 1) * 100)}%</b></span></div></article>
-      <article class="content-panel"><div class="eyebrow">RARE FINDS</div><h2>The road remembers</h2><p>High-luck cultivators sometimes find treasure map fragments, realm keys, mystic eggs or lost relics. Secret Realms hold even greater dangers and rewards.</p><button class="action-btn" data-view="inherit">Visit secret realms</button></article>
+    const log = (state.discoveries?.log || []).slice(0, 6).map(entry => {
+      const r = regionData(entry.region);
+      return `<div class="discovery-log-row"><span>${r?.seal || '✦'}</span><div><b>${entry.name}</b><small>${r?.name || 'Unknown region'} · ${timeAgo(entry.at)}</small></div></div>`;
+    }).join('');
+    $('view-expeditions').innerHTML = `${subHead('BEYOND THE SECT WALLS', 'Expeditions & discoveries', 'The world is vast. Chart its regions, uncover what the wilds hide, and bring back what they offer.', '⌁')}
+      ${renderRegionMap()}
+      <div class="subview-layout"><div class="subview-main">${renderRegionDetail()}
+      <article class="content-panel"><div class="eyebrow">AVAILABLE JOURNEYS</div><h2>Choose a path</h2><p>Send your spirit out into the world. You can continue cultivating while an expedition is underway. Collecting a journey also records a visit to its region. Higher realms and the Space Dao shorten the road.</p>${cards}</article></div>
+      <aside class="subview-aside"><article class="feature-card"><div class="eyebrow">TRAVELER'S LEDGER</div><h3>${state.completedTrips} journeys completed</h3><p>Every safe return brings new resources to the sect. Fortune favors the well-prepared wanderer.</p><div class="feature-stats"><span>STONE YIELD <b>+${state.stage * 2} / trip</b></span><span>LUCK <b>${luckFor()}</b></span><span>DISCOVERIES <b>${worldRegions.reduce((a, r) => a + regionFoundCount(r.id), 0)}</b></span></div></article>
+      <article class="content-panel"><div class="eyebrow">DISCOVERY JOURNAL</div><h2>The road remembers</h2>${log || '<p class="small-note">No discoveries yet. Survey a region or complete a journey to begin your journal.</p>'}</article>
+      <article class="content-panel"><div class="eyebrow">RARE FINDS</div><h2>What the wilds hide</h2><p>Rare sites hold realm keys, relics and mystic eggs. High-luck cultivators also find treasure maps, lost relics and hidden inheritances. Secret Realms hold even greater dangers and rewards.</p><button class="action-btn" data-view="inherit">Visit secret realms</button></article>
       </aside></div>`;
   }
 
@@ -983,9 +1337,11 @@
     else if (tab === 'rankings') body = renderRankings();
     else if (tab === 'buildings') body = renderBuildings();
     else if (tab === 'armory') body = renderArmory();
+    else if (tab === 'vault') body = renderSectVault();
+    else if (tab === 'duties') body = renderSectDuties();
     else body = renderSectOverview();
-    $('view-sect').innerHTML = `${subHead('THE GREAT SECTS', 'Sect Hall', 'Choose a sect, complete its missions, climb its rankings, and raise its halls.', sectData().seal)}
-      ${tabs('sect', [['overview', 'Overview'], ['missions', 'Missions'], ['rankings', 'Rankings'], ['buildings', 'Buildings'], ['armory', 'Armory']])}
+    $('view-sect').innerHTML = `${subHead('THE GREAT SECTS', 'Sect Hall', 'Choose a sect, complete its missions, climb its rankings, raise its halls, and serve its daily needs.', sectData().seal)}
+      ${tabs('sect', [['overview', 'Overview'], ['missions', 'Missions'], ['rankings', 'Rankings'], ['buildings', 'Buildings'], ['armory', 'Armory'], ['vault', 'Vault'], ['duties', 'Duties']])}
       ${body}`;
   }
   function renderSectOverview() {
@@ -1043,6 +1399,30 @@
     return `<div class="subview-layout"><div class="subview-main"><article class="content-panel"><div class="eyebrow">ARMORY · TOKENS ${nfmt(state.sectTokens)} · STONES ${nfmt(state.stones)}</div><h2>Equipment and refinement</h2><p>Buy each gear piece with sect tokens, then spend spirit stones to upgrade its bonus. Better gear is reserved for higher sect ranks; advanced weapons and artifacts are forged in the Forge.</p><div class="gear-grid">${equipment}</div></article>
     <article class="content-panel"><div class="eyebrow">CURRENT WEAPON</div><h2>${weapon ? weapon.name : 'No weapon equipped'}</h2><p>${weapon ? `${weapon.rarity} · +${weapon.totalAttack} attack · Refine ${weapon.refine}/10${weapon.awakened ? ' · Awakened' : ''}` : 'A cultivator without a weapon is still dangerous, but not as dangerous as one with a legendary blade.'}</p><button class="action-btn" data-view="forge">Open the forge</button></article></div>
     <aside class="subview-aside"><article class="feature-card"><div class="eyebrow">ARMORY KEEPER</div><h3>Tokens well spent</h3><p>Gear provides flat attack, qi flow, health and guard. Refinement in the Forge multiplies a weapon’s base attack and can awaken a unique ability. Raise your sect rank to unlock the full armory.</p><div class="feature-stats"><span>ATTACK <b>${attackDamage(0)}</b></span><span>GUARD <b>${guardFor()}</b></span><span>MAX HP <b>${maxHpFor()}</b></span></div></article></aside></div>`;
+  }
+
+  function renderSectVault() {
+    const cards = sectVault.map(item => {
+      const can = state.sectTokens >= item.tokens;
+      return `<article class="vault-card"${tipAttr(`${item.name} · ${item.desc} Grants ${rewardsText(item.grant)}.`)}><span class="vault-seal">${item.seal}</span><div><h3>${item.name}</h3><p>${item.desc}</p><small>${rewardsText(item.grant)}</small></div><button class="action-btn" data-action="buy-vault" data-id="${item.id}" ${can ? '' : 'disabled'}>✦ ${item.tokens}</button></article>`;
+    }).join('');
+    return `<div class="subview-layout"><div class="subview-main"><article class="content-panel"><div class="eyebrow">SECT VAULT · TOKENS ${nfmt(state.sectTokens)}</div><h2>Supplies of the sect</h2><p>The vault exchanges tokens for rare materials, keys, eggs and relics. Stock is permanent, but each purchase spends the tokens you have earned in service.</p><div class="vault-grid">${cards}</div></article>
+      <article class="content-panel"><div class="eyebrow">TOKEN SOURCES</div><h2>Earn what you spend</h2><p>Missions, world bosses, sect duties, ranking stipends and the daily practice reward all grant sect tokens. Higher ranks unlock more of the armory and the deeper halls.</p><div class="inline-actions"><button class="action-btn" data-action="tab" data-tab-view="sect" data-tab="missions">Mission board</button><button class="action-btn" data-action="tab" data-tab-view="sect" data-tab="duties">Daily duties</button></div></article></div>
+      <aside class="subview-aside"><article class="feature-card"><div class="eyebrow">VAULT KEEPER</div><h3>${nfmt(state.sectTokens)} tokens available</h3><p>Sect tokens are shared across the armory, the vault and the building halls. Spend them where they will carry you furthest.</p><div class="feature-stats"><span>RANK <b>${sectRanks[state.sectRank]?.name}</b></span><span>MERIT <b>${state.sectRep}</b></span><span>TOKENS <b>${nfmt(state.sectTokens)}</b></span></div></article></aside></div>`;
+  }
+  function renderSectDuties() {
+    const doneToday = state.sectPerks?.dutyDate === dayIndex();
+    const blessing = state.sectPerks?.blessing && (state.sectPerks?.blessingUntil || 0) > Date.now() ? state.sectPerks.blessing : null;
+    const cards = sectDuties.map(duty => {
+      const qiCost = Math.abs(duty.qi || 0);
+      const can = !doneToday && state.qi >= qiCost;
+      return `<article class="duty-card"${tipAttr(`${duty.name} · ${duty.desc}`)}><span class="duty-seal">${duty.seal}</span><div><h3>${duty.name}</h3><p>${duty.desc}</p><small>${duty.qi ? `${qiCost} qi · ` : ''}${duty.merit} merit · ${duty.tokens} tokens${duty.stones ? ` · ◇ ${duty.stones}` : ''}${duty.dao ? ' · Dao insight' : ''}</small></div><button class="action-btn" data-action="perform-duty" data-id="${duty.id}" ${can ? '' : 'disabled'}>${doneToday ? 'Served today' : state.qi < qiCost ? `Needs ${qiCost} qi` : 'Serve'}</button></article>`;
+    }).join('');
+    const blessingNames = { qi: '+25% qi flow', attack: '+15% attack', break: '+5% breakthrough' };
+    return `<div class="subview-layout"><div class="subview-main"><article class="content-panel"><div class="eyebrow">DAILY SERVICE · ${doneToday ? 'COMPLETE' : 'ONE DUTY PER DAY'}</div><h2>The sect asks little</h2><p>Humble work earns merit, tokens and a temporary blessing. Choose one duty each game day. The blessing lasts five minutes and applies immediately to every calculation.</p><div class="duty-list">${cards}</div></article>
+      <article class="content-panel"><div class="eyebrow">SERVICE RECORD</div><h2>What duty has taught you</h2><div class="feature-stats"><span>MERIT <b>${state.sectRep}</b></span><span>TOKENS <b>${nfmt(state.sectTokens)}</b></span><span>TODAY <b>${doneToday ? 'SERVED' : 'OPEN'}</b></span></div></article></div>
+      <aside class="subview-aside"><article class="feature-card"><div class="eyebrow">CURRENT BLESSING</div><h3>${blessing ? blessingNames[blessing] : 'No blessing active'}</h3><p>${blessing ? 'The sect’s regard follows you into cultivation and combat.' : 'Serve a duty to receive a temporary blessing from the hall elders.'}</p><div class="feature-stats"><span>DUTY DATE <b>${doneToday ? 'Today' : 'Available'}</b></span><span>RANK <b>${sectRanks[state.sectRank]?.name}</b></span></div></article>
+      <article class="content-panel"><div class="eyebrow">THE QUIET WORK</div><h2>Why sweep?</h2><p>Merit accumulates toward promotion. Each rank grants permanent attack, qi and health bonuses, and unlocks deeper armory stock and sect buildings.</p></article></aside></div>`;
   }
 
   /* ---------------- INNER DAO ---------------- */
@@ -1133,7 +1513,13 @@
       const costText = [`◇ ${nfmt(inc.cost.stones || 0)}`, ...Object.entries(inc.cost).filter(([k]) => k !== 'stones').map(([k, v]) => `${v} ${ingredients[k]?.name || k}`)].join(' · ');
       return `<article class="legacy-card ${completed ? 'completed' : discovered ? 'discovered' : ''}"><div class="legacy-head"><div class="legacy-seal">${inc.seal}</div><div><h3>${inc.name}</h3><small>${completed ? 'LEGACY CLAIMED' : discovered ? `${doneCount} / ${inc.trials.length} TRIALS PASSED` : `REQUIRES STAGE ${inc.req}`}</small></div></div><p>${inc.desc}</p><div class="stat-pills"><span class="stat-pill green">${inc.bonus}</span><span class="stat-pill violet">${artifactCatalog.find(a => a.id === inc.artifact)?.name || 'Lost artifact'}</span></div>${discovered ? `<div class="trial-list">${trialRows}</div>` : ''}${completed ? '<span class="stat-pill gold">Artifact claimed · legacy complete</span>' : discovered ? '' : `<button class="action-btn gold" data-action="discover-inheritance" data-id="${inc.id}" ${canDiscover ? '' : 'disabled'}>${state.stage < inc.req ? `Requires stage ${inc.req}` : `Enter the legacy · ${costText}`}</button>`}</article>`;
     }).join('');
-    return `<div class="subview-layout"><div class="subview-main"><article class="content-panel"><div class="eyebrow">THE UNCLAIMED PAST</div><h2>Five legacies, five questions</h2><p>Discovering a legacy costs spirit stones and ancient relics. Each legacy holds three trials. Pass all three to claim its artifact and complete the inheritance.</p><div class="legacy-grid">${cards}</div></article></div>
+    const boonCards = legacyBoons.map(b => {
+      const claimed = (state.inheritance.boons || []).includes(b.id);
+      const can = !claimed && (state.inheritance.points || 0) >= b.points;
+      return `<article class="boon-card ${claimed ? 'claimed' : ''}"${tipAttr(`${b.name} · ${b.desc} Costs ${b.points} legacy points.`)}><span class="boon-seal">${b.seal}</span><div><h3>${b.name}</h3><p>${b.desc}</p><small>${rewardsText(b.grant)}</small></div><button class="action-btn" data-action="claim-boon" data-id="${b.id}" ${can ? '' : 'disabled'}>${claimed ? 'Claimed' : `✦ ${b.points} legacy`}</button></article>`;
+    }).join('');
+    return `<div class="subview-layout"><div class="subview-main"><article class="content-panel"><div class="eyebrow">THE UNCLAIMED PAST</div><h2>Five legacies, five questions</h2><p>Discovering a legacy costs spirit stones and ancient relics. Each legacy holds three trials. Pass all three to claim its artifact and complete the inheritance.</p><div class="legacy-grid">${cards}</div></article>
+      <article class="content-panel"><div class="eyebrow">LEGACY BOONS · ${state.inheritance.points || 0} POINTS</div><h2>What the ancients set aside</h2><p>Discovering a legacy and passing its trials earns legacy points. Spend them here for permanent aid that follows you through reincarnation.</p><div class="boon-grid">${boonCards}</div></article></div>
       <aside class="subview-aside"><article class="feature-card"><div class="eyebrow">LEGACY RECORD</div><h3>${state.inheritance.completed.length} / ${inheritanceCatalog.length} inheritances claimed</h3><p>Artifacts are permanent. Equip up to two in the Forge. Some legacies also teach a forgotten martial art.</p><div class="feature-stats"><span>DISCOVERED <b>${state.inheritance.discovered.length}</b></span><span>ARTIFACTS <b>${state.inheritance.artifacts.length}</b></span><span>LEGACY POINTS <b>${state.inheritance.points || 0}</b></span></div></article>
       <article class="content-panel"><div class="eyebrow">THE HEIR'S BURDEN</div><h2>Trials remember</h2><p>Trials ask for Dao levels, beast bonds, brews, victories and realm advancement. Prepare before you enter; the legacy will wait.</p><button class="action-btn" data-view="forge">Open the forge</button></article></aside></div>`;
   }
@@ -1179,15 +1565,18 @@
       const owned = state.forge.weapons[w.id] || null;
       const canForge = state.stage >= w.req && canPay(w.cost) && !owned;
       const refine = owned?.refine || 0;
+      const temper = owned?.temper || 0;
       const refineCost = { stones: Math.round(160 * Math.pow(1.45, refine)), ore: 2 + refine };
-      const attack = Math.round(w.attack * (1 + refine * .12) * (1 + buildingLevel('armory') * .03));
+      const temperCost = { stones: 90 + temper * 95, ore: 1 + Math.floor(temper / 2) };
+      const attack = Math.round(w.attack * (1 + refine * .12 + temper * .02) * (1 + buildingLevel('armory') * .03));
       const canRefine = owned && refine < 10 && canPay(refineCost);
+      const canTemper = owned && temper < forgeTempers && canPay(temperCost);
       const canAwaken = owned && refine >= 10 && !owned.awakened && state.stones >= 500 && (state.herbs.relic || 0) >= 1 && (state.herbs.beastCore || 0) >= 1;
-      return `<article class="weapon-card ${owned ? (state.forge.equippedWeapon === w.id ? 'equipped' : '') : 'locked'}"><span class="rarity-tag">${w.rarity.toUpperCase()}</span><h3>${w.name}</h3><p>${owned ? `${w.ability}` : `A ${w.rarity.toLowerCase()} weapon requiring stage ${w.req}.`}</p><div class="weapon-stats"><span>⚔ ${nfmt(attack)} attack</span><span>Refine ${refine}/10</span><span>${owned?.awakened ? 'Awakened' : 'Dormant'}</span></div><div class="weapon-ability"><b>${w.seal} ${owned?.awakened ? 'Awakened ability' : 'Latent ability'}</b><br>${w.ability}</div><div class="weapon-actions">${owned ? `<button class="action-btn" data-action="equip-weapon" data-id="${w.id}" ${state.forge.equippedWeapon === w.id ? 'disabled' : ''}>${state.forge.equippedWeapon === w.id ? 'Equipped' : 'Equip'}</button><button class="action-btn" data-action="refine-weapon" data-id="${w.id}" ${canRefine ? '' : 'disabled'}>${refine >= 10 ? 'Max refinement' : `Refine · ${costText(refineCost)}`}</button><button class="action-btn gold" data-action="awaken-weapon" data-id="${w.id}" ${canAwaken ? '' : 'disabled'}>Awaken · ◇ 500 · relic · core</button>` : `<button class="action-btn" data-action="forge-weapon" data-id="${w.id}" ${canForge ? '' : 'disabled'}>${state.stage < w.req ? `Requires stage ${w.req}` : `Forge · ${costText(w.cost)}`}</button>`}</div></article>`;
+      return `<article class="weapon-card ${owned ? (state.forge.equippedWeapon === w.id ? 'equipped' : '') : 'locked'}"><span class="rarity-tag">${w.rarity.toUpperCase()}</span><h3>${w.name}</h3><p>${owned ? `${w.ability}` : `A ${w.rarity.toLowerCase()} weapon requiring stage ${w.req}.`}</p><div class="weapon-stats"><span${tipAttr(TIP.attack)}>⚔ ${nfmt(attack)} attack</span><span>Refine ${refine}/10</span><span${tipAttr(TIP.temper)}>Temper ${temper}/${forgeTempers}</span><span>${owned?.awakened ? 'Awakened' : 'Dormant'}</span></div><div class="weapon-ability"><b>${w.seal} ${owned?.awakened ? 'Awakened ability' : 'Latent ability'}</b><br>${w.ability}</div><div class="weapon-actions">${owned ? `<button class="action-btn" data-action="equip-weapon" data-id="${w.id}" ${state.forge.equippedWeapon === w.id ? 'disabled' : ''}>${state.forge.equippedWeapon === w.id ? 'Equipped' : 'Equip'}</button><button class="action-btn" data-action="refine-weapon" data-id="${w.id}" ${canRefine ? '' : 'disabled'}>${refine >= 10 ? 'Max refinement' : `Refine · ${costText(refineCost)}`}</button><button class="action-btn" data-action="temper-weapon" data-id="${w.id}" ${canTemper ? '' : 'disabled'}>${temper >= forgeTempers ? 'Fully tempered' : `Temper · ${costText(temperCost)}`}</button><button class="action-btn gold" data-action="awaken-weapon" data-id="${w.id}" ${canAwaken ? '' : 'disabled'}>Awaken · ◇ 500 · relic · core</button>` : `<button class="action-btn" data-action="forge-weapon" data-id="${w.id}" ${canForge ? '' : 'disabled'}>${state.stage < w.req ? `Requires stage ${w.req}` : `Forge · ${costText(w.cost)}`}</button>`}</div></article>`;
     }).join('');
     const weapon = equippedWeapon();
     return `<div class="subview-layout"><div class="subview-main"><article class="content-panel"><div class="eyebrow">THE COLD ANVIL · ORE ${state.herbs.ore || 0}</div><h2>Weapons of the path</h2><p>Forging a weapon costs spirit stones and ore. Equipped weapons add their attack to every strike; refinement multiplies it further. At refinement 10 a weapon can be awakened with a relic and a beast core.</p><div class="forge-grid">${cards}</div></article>
-      <article class="content-panel"><div class="eyebrow">CURRENT ARMS</div><h2>${weapon ? weapon.name : 'Bare hands'}</h2><p>${weapon ? `+${nfmt(weapon.totalAttack)} attack · Refine ${weapon.refine}/10 · ${weapon.awakened ? 'Awakened' : 'Dormant'}. ${weapon.ability}` : 'A forged weapon is the difference between a long road and a short one.'}</p><div class="feature-stats"><span>ATTACK <b>${nfmt(attackDamage(0))}</b></span><span>GUARD <b>${guardFor()}</b></span><span>CRIT <b>${Math.round(critChance() * 100)}%</b></span></div></article></div>
+      <article class="content-panel"><div class="eyebrow">CURRENT ARMS</div><h2>${weapon ? weapon.name : 'Bare hands'}</h2><p>${weapon ? `+${nfmt(weapon.totalAttack)} attack · Refine ${weapon.refine}/10 · Temper ${weapon.temper}/5 · ${weapon.awakened ? 'Awakened' : 'Dormant'}. ${weapon.ability}` : 'A forged weapon is the difference between a long road and a short one.'}</p><div class="feature-stats"><span>ATTACK <b>${nfmt(attackDamage(0))}</b></span><span>GUARD <b>${guardFor()}</b></span><span>CRIT <b>${Math.round(critChance() * 100)}%</b></span></div></article></div>
       <aside class="subview-aside"><article class="feature-card"><div class="eyebrow">FORGE MASTER</div><h3>${Object.values(state.forge.weapons).filter(w => w?.owned).length} weapons forged</h3><p>The armory building increases every weapon's power. Artifacts from ancient inheritances can be equipped in the second tab.</p><div class="feature-stats"><span>STONES <b>◇ ${nfmt(state.stones)}</b></span><span>ORE <b>${state.herbs.ore || 0}</b></span><span>CORES <b>${state.herbs.beastCore || 0}</b></span></div></article>
       <article class="content-panel"><div class="eyebrow">AWAKENING</div><h2>Steel remembers</h2><p>An awakened weapon keeps its full ability in battle. The Emberfang burns, the Mistfang evades, and Heaven's Edge sharpens every critical strike.</p></article></aside></div>`;
   }
@@ -1209,10 +1598,10 @@
 
   /* ---------------- FATE & FORTUNE ---------------- */
   function ensureFate(s = state) {
-    if (!s.fate) s.fate = { pending: null, log: [], merchant: [], merchantDate: 0, maps: 0, fragments: 0, clock: 0, encounters: 0, luckBuff: 0, luckBuffUntil: 0 };
+    if (!s.fate) s.fate = { pending: null, log: [], merchant: [], merchantDate: 0, merchantRefreshDate: 0, maps: 0, fragments: 0, clock: 0, encounters: 0, luckBuff: 0, luckBuffUntil: 0, offeringLuck: 0, offeringUntil: 0, divinations: 0 };
     const day = dayIndex(s);
     if (s.fate.merchantDate !== day) {
-      const seed = dayHash(day + (s.rebirth?.count || 0) * 23 + 'merchant');
+      const seed = dayHash(day + (s.rebirth?.count || 0) * 23 + (s.fate.merchantRefreshDate || 0) * 7 + 'merchant');
       const pool = merchantPool.slice();
       for (let i = pool.length - 1; i > 0; i--) { const j = seed % (i + 1); [pool[i], pool[j]] = [pool[j], pool[i]]; }
       s.fate.merchant = pool.slice(0, 3).map(item => ({ id: item.id, bought: false }));
@@ -1231,7 +1620,15 @@
     const pendingHtml = pending
       ? `<article class="content-panel"><div class="eyebrow">A FORTUNE ON THE ROAD · ${pending.seal}</div><h2>${pending.title}</h2><p>${pending.text}</p><div class="fate-options">${pending.options.map(o => `<button class="action-btn gold" data-action="resolve-fate" data-id="${o.key}">${o.label}</button>`).join('')}</div></article>`
       : `<article class="content-panel"><div class="eyebrow">THE ROAD IS OPEN</div><h2>Seek what fate has left for you</h2><p>Walk beyond the sect gate and let chance find you. Seeking a fortune costs a little qi; the road may offer treasure, insight, a beast, or a lesson.</p><button class="action-btn gold" data-action="seek-fate" ${state.qi < 20 ? 'disabled' : ''}>Walk the road · 20 qi</button><div class="small-note">Fate also finds you on its own during long cultivation. A pending fortune appears in the banners above.</div></article>`;
-    $('view-fate').innerHTML = `${subHead('THE ROAD REMEMBERS', 'Fate & Fortune', 'Walk the roads between certainty and chance. Luck bends what the world is willing to give you.', '✦')}<div class="subview-layout"><div class="subview-main"><article class="content-panel"><div class="luck-hero"><div class="luck-orb">✦</div><div><div class="eyebrow">YOUR FORTUNE</div><h2>${luckFor()}</h2><p>Luck bends loot, taming, rare roots, critical strikes and the generosity of strangers.</p></div></div></article>${pendingHtml}
+    const luckBuffLeft = Math.max(0, Math.ceil(((state.fate.luckBuffUntil || 0) - Date.now()) / 60000));
+    const offeringLeft = Math.max(0, Math.ceil(((state.fate.offeringUntil || 0) - Date.now()) / 60000));
+    const workings = `<article class="content-panel"><div class="eyebrow">FATE WORKINGS · ${state.fate.fragments || 0} FRAGMENTS</div><h2>Bend the thread, not the loom</h2><p>Fragments are echoes of futures that did not happen. Spend them to divine the road, refresh the faceless merchant, or weave a new encounter. Incense offerings invite luck to linger.</p><div class="fate-work-grid">
+      <div class="fate-work"${tipAttr('Divination reveals the shape of the next fortune and grants a short luck blessing. Costs 1 fragment, or 80 stones if you have none.')}><span>卜</span><div><b>Divine the road</b><small>1 fragment · +2 luck for 10 min</small></div><button class="action-btn" data-action="divine-fate" ${(state.fate.fragments > 0 || state.stones >= 80) ? '' : 'disabled'}>Divine</button></div>
+      <div class="fate-work"${tipAttr('Burn spirit incense at the roadside shrine. Costs 120 stones and grants +3 luck for 15 minutes.')}><span>香</span><div><b>Offer incense</b><small>◇ 120 · +3 luck for 15 min</small></div><button class="action-btn" data-action="offer-incense" ${state.stones >= 120 ? '' : 'disabled'}>Offer</button></div>
+      <div class="fate-work"${tipAttr('Weave 2 fate fragments into a fresh encounter, even if one already waits.')}><span>織</span><div><b>Weave a fortune</b><small>2 fragments · new encounter</small></div><button class="action-btn" data-action="weave-fate" ${(state.fate.fragments || 0) >= 2 ? '' : 'disabled'}>Weave</button></div>
+      <div class="fate-work"${tipAttr('Ask the faceless merchant to show a different selection. Costs 1 fragment and can be done once per day.')}><span>商</span><div><b>Refresh merchant</b><small>1 fragment · new stock</small></div><button class="action-btn" data-action="refresh-merchant" ${(state.fate.fragments || 0) >= 1 && state.fate.merchantRefreshDate !== dayIndex() ? '' : 'disabled'}>${state.fate.merchantRefreshDate === dayIndex() ? 'Refreshed' : 'Refresh'}</button></div>
+    </div><div class="stat-pills">${luckBuffLeft > 0 ? `<span class="stat-pill green">Fortune's favor · ${luckBuffLeft} min</span>` : ''}${offeringLeft > 0 ? `<span class="stat-pill gold">Incense · ${offeringLeft} min</span>` : ''}<span class="stat-pill">Divinations ${state.fate.divinations || 0}</span></div></article>`;
+    $('view-fate').innerHTML = `${subHead('THE ROAD REMEMBERS', 'Fate & Fortune', 'Walk the roads between certainty and chance. Luck bends what the world is willing to give you.', '✦')}<div class="subview-layout"><div class="subview-main"><article class="content-panel"><div class="luck-hero"><div class="luck-orb">✦</div><div><div class="eyebrow">YOUR FORTUNE</div><h2>${luckFor()}</h2><p>Luck bends loot, taming, rare roots, critical strikes and the generosity of strangers.</p></div></div></article>${pendingHtml}${workings}
       <article class="content-panel"><div class="eyebrow">THE FACELESS MERCHANT · DAY ${dayIndex()}</div><h2>Three offers at the edge of the road</h2><p>A new merchant arrives each game day. Their stock is never the same twice.</p><div class="merchant-grid">${offers}</div></article>
       <article class="content-panel"><div class="eyebrow">TREASURE MAPS</div><h2>${state.fate.maps} map${state.fate.maps === 1 ? '' : 's'} in your sleeve</h2><p>Treasure maps lead to buried caches, forgotten keys and fragments of older maps. Using one always costs the map.</p><button class="action-btn" data-action="use-map" ${state.fate.maps > 0 ? '' : 'disabled'}>${state.fate.maps > 0 ? 'Follow a treasure map' : 'No maps'}</button></article></div>
       <aside class="subview-aside"><article class="feature-card"><div class="eyebrow">FORTUNE'S LEDGER</div><h3>${state.fate.encounters || 0} encounters walked</h3><p>Some fortunes grant permanent luck. Others ask for courage, patience, or a handful of spirit stones.</p><div class="feature-stats"><span>MAPS <b>${state.fate.maps}</b></span><span>FRAGMENTS <b>${state.fate.fragments || 0}</b></span><span>LUCK <b>${luckFor()}</b></span></div></article>
@@ -1265,7 +1662,45 @@
   function renderCodex() {
     const tab = uiTabs.codex;
     let body = '';
-    if (tab === 'achievements') {
+    if (tab === 'collections') {
+      const beastCards = beastCatalog.map(b => {
+        const owned = !!state.taming.beasts[b.id];
+        const data = state.taming.beasts[b.id];
+        return `<div class="collection-card ${owned ? 'owned' : 'locked'} ${rarityClass(b.rarity)}"${tipAttr(`${b.name} · ${b.rarity}. ${b.passive}. ${owned ? `Bonded at level ${data.level}.` : b.tameable ? `Tame at stage ${b.req}.` : 'Obtained by evolution.'}`)}><span class="collection-glyph">${b.icon}</span><small>${b.rarity.toUpperCase()}</small><b>${owned ? b.name : 'Undiscovered'}</b><em>${owned ? `Lv ${data.level} · bond ${data.bond || 0}` : b.tameable ? `Stage ${b.req}` : 'Evolution'}</em></div>`;
+      }).join('');
+      const gearCards = [...gearCatalog.map(g => {
+        const owned = !!state.equipment[g.id]?.owned;
+        return `<div class="collection-card ${owned ? 'owned' : 'locked'} ${rarityClass(g.rarity)}"${tipAttr(`${g.name} · ${g.bonus}. ${owned ? `Equipped at level ${state.equipment[g.id].level}.` : 'Bought from the Armory.'}`)}><span class="collection-glyph">${g.seal}</span><small>${g.rarity.toUpperCase()} · GEAR</small><b>${owned ? g.name : 'Undiscovered'}</b><em>${owned ? `Level ${state.equipment[g.id].level}` : `${g.tokens} tokens`}</em></div>`;
+      }), ...weaponCatalog.map(w => {
+        const owned = !!state.forge.weapons[w.id]?.owned;
+        return `<div class="collection-card ${owned ? 'owned' : 'locked'} ${rarityClass(w.rarity)}"${tipAttr(`${w.name} · ${w.ability}. ${owned ? 'Forged and remembered.' : `Forged at stage ${w.req}.`}`)}><span class="collection-glyph">${w.seal}</span><small>${w.rarity.toUpperCase()} · WEAPON</small><b>${owned ? w.name : 'Unforged'}</b><em>${owned ? `Refine ${state.forge.weapons[w.id].refine}/10` : `Stage ${w.req}`}</em></div>`;
+      }), ...artifactCatalog.map(a => {
+        const owned = state.inheritance.artifacts.includes(a.id);
+        const equipped = (state.forge.equippedArtifacts || []).includes(a.id);
+        return `<div class="collection-card ${owned ? 'owned' : 'locked'} ${rarityClass(a.rarity)}"${tipAttr(`${a.name} · ${a.ability}. ${owned ? 'Claimed from an inheritance.' : 'Claimed by completing an inheritance or boss.'}`)}><span class="collection-glyph">${a.seal}</span><small>${a.rarity.toUpperCase()} · ARTIFACT</small><b>${owned ? a.name : 'Undiscovered'}</b><em>${equipped ? 'Equipped' : owned ? 'In vault' : 'Inheritance'}</em></div>`;
+      })].join('');
+      const techCards = [...techniques.map(t => {
+        const rank = state.upgrades[t.id] || 0;
+        return `<div class="collection-card ${rank ? 'owned' : 'locked'}"${tipAttr(`${t.name} · ${t.effect}. Rank ${rank}.`)}><span class="collection-glyph">${t.seal}</span><small>PASSIVE SUTRA</small><b>${t.name}</b><em>Rank ${rank}${rank ? '' : ` · stage ${t.req}`}</em></div>`;
+      }), ...martialArts.map(a => {
+        const known = state.activeArts.includes(a.id);
+        return `<div class="collection-card ${known ? 'owned' : 'locked'}"${tipAttr(`${a.name} · ${a.desc} ${a.qi} qi · ${a.damage} base damage.`)}><span class="collection-glyph">${a.seal}</span><small>MARTIAL ART</small><b>${a.name}</b><em>${known ? 'Learned' : `Stage ${a.req}`}</em></div>`;
+      })].join('');
+      const rootCards = rootTypes.map(r => {
+        const known = state.root.discovered.includes(r.id) || state.root.type === r.id;
+        return `<div class="collection-card ${known ? 'owned' : 'locked'} ${rarityClass(r.rarity)}"${tipAttr(`${r.name} · ${r.ability} ${known ? bonusText(r.bonus) : 'Awaken or reroll roots to discover.'}`)}><span class="collection-glyph">${known ? r.seal : '?'}</span><small>${r.rarity.toUpperCase()} · ROOT</small><b>${known ? r.name : 'Undiscovered'}</b><em>${known ? bonusText(r.bonus) : 'Awakening'}</em></div>`;
+      }).join('');
+      const beastsOwned = beastCatalog.filter(b => state.taming.beasts[b.id]).length;
+      const gearOwned = gearCatalog.filter(g => state.equipment[g.id]?.owned).length + weaponCatalog.filter(w => state.forge.weapons[w.id]?.owned).length + state.inheritance.artifacts.length;
+      const gearTotal = gearCatalog.length + weaponCatalog.length + artifactCatalog.length;
+      const techOwned = Object.values(state.upgrades).filter(v => v > 0).length + state.activeArts.length;
+      body = `<div class="subview-layout"><div class="subview-main"><article class="content-panel"><div class="eyebrow">BEAST BESTIARY · ${beastsOwned} / ${beastCatalog.length}</div><h2>Spirit beasts</h2><p>Every beast you tame, hatch or evolve is recorded here. Evolved forms appear once they are bonded.</p><div class="collection-grid">${beastCards}</div></article>
+        <article class="content-panel"><div class="eyebrow">ARMORY &amp; ARTIFACTS · ${gearOwned} / ${gearTotal}</div><h2>Equipment collection</h2><p>Gear, forged weapons and inheritance artifacts share one record.</p><div class="collection-grid">${gearCards}</div></article>
+        <article class="content-panel"><div class="eyebrow">LIBRARY · ${techOwned} / ${techniques.length + martialArts.length}</div><h2>Techniques</h2><p>Passive sutras gain ranks; martial arts are learned once and carried into every battle.</p><div class="collection-grid">${techCards}</div></article>
+        <article class="content-panel"><div class="eyebrow">ROOTS · ${state.root.discovered.length} / ${rootTypes.length}</div><h2>Spiritual roots</h2><p>Roots are discovered through awakening and rerolling.</p><div class="collection-grid">${rootCards}</div></article></div>
+        <aside class="subview-aside"><article class="feature-card"><div class="eyebrow">COLLECTION RECORD</div><h3>${beastsOwned + gearOwned + techOwned + state.root.discovered.length} entries recorded</h3><p>Collections are drawn from your live save. Evolving a beast, forging a weapon or learning an art updates them immediately.</p><div class="feature-stats"><span>BEASTS <b>${beastsOwned} / ${beastCatalog.length}</b></span><span>EQUIPMENT <b>${gearOwned} / ${gearTotal}</b></span><span>ARTS <b>${techOwned} / ${techniques.length + martialArts.length}</b></span><span>ROOTS <b>${state.root.discovered.length} / ${rootTypes.length}</b></span></div></article>
+        <article class="content-panel"><div class="eyebrow">WHERE TO LOOK</div><h2>Fill the gaps</h2><p>Beasts come from taming and eggs. Gear comes from the Armory, forged weapons from the Forge, artifacts from inheritances, and roots from awakening.</p><div class="inline-actions"><button class="action-btn" data-view="combat">Tame beasts</button><button class="action-btn" data-view="forge">Forge</button><button class="action-btn" data-view="inherit">Inheritances</button></div></article></aside></div>`;
+    } else if (tab === 'achievements') {
       const cards = achievementDefs.map(def => {
         const unlocked = !!state.achievements[def.id];
         const hidden = def.hidden && !unlocked;
@@ -1308,7 +1743,7 @@
         <article class="content-panel"><div class="eyebrow">THE NEXT THRESHOLD</div><h2>${realmTitle(state.stage + 1)}</h2><p>${nfmt(requirement())} qi are required. ${isMajor(state.stage + 1) ? 'A heavenly tribulation waits at this gate.' : 'The road ahead is quiet, for now.'}</p><button class="action-btn" data-action="close-modal" style="display:none"></button></article></aside></div>`;
     }
     $('view-codex').innerHTML = `${subHead('THE IMMORTAL CODEX', 'Codex', 'Realms, achievements, story quests and the record of your long road.', '▤')}
-      ${tabs('codex', [['realms', 'Realms'], ['achievements', 'Achievements'], ['quests', 'Story quests'], ['records', 'Records']])}${body}`;
+      ${tabs('codex', [['realms', 'Realms'], ['collections', 'Collections'], ['achievements', 'Achievements'], ['quests', 'Story quests'], ['records', 'Records']])}${body}`;
   }
 
   /* ---------------- MODALS & VISUAL EFFECTS ---------------- */
@@ -1327,6 +1762,26 @@
     el.innerHTML = `<div class="bolt"></div><div class="bolt two"></div><div class="bolt three"></div><div class="trib-text">${label || (success ? 'TRIBULATION ENDURED' : 'THE HEAVENS REFUSE')}</div>`;
     document.body.appendChild(el);
     setTimeout(() => el.remove(), 2200);
+  }
+  function fxBurst(kind, seal, title, text, sub = '') {
+    const layer = $('fxLayer'); if (!layer) return;
+    const card = document.createElement('div');
+    card.className = `fx-card fx-${kind}`;
+    const sparks = Array.from({ length: kind === 'rare' ? 14 : 9 }, (_, i) =>
+      `<i style="--a:${(i * 360 / (kind === 'rare' ? 14 : 9)).toFixed(1)}deg;--d:${60 + (i % 4) * 22}px;--t:${(i % 3) * .08}s"></i>`
+    ).join('');
+    card.innerHTML = `<div class="fx-sparks">${sparks}</div><div class="fx-seal">${seal || '✦'}</div><div class="fx-copy"><small>${kind === 'rare' ? 'RARE DISCOVERY' : kind === 'beast' ? 'BOND TRANSFORMED' : kind === 'breakthrough' ? 'HEAVEN ACKNOWLEDGES' : 'REWARD EARNED'}</small><b>${title}</b><span>${text}</span>${sub ? `<em>${sub}</em>` : ''}</div>`;
+    layer.appendChild(card);
+    setTimeout(() => card.classList.add('out'), 2400);
+    setTimeout(() => card.remove(), 3000);
+  }
+  function rewardFloat(text) {
+    const layer = $('fxLayer'); if (!layer) return;
+    const el = document.createElement('div');
+    el.className = 'reward-float';
+    el.textContent = text;
+    layer.appendChild(el);
+    setTimeout(() => el.remove(), 1800);
   }
 
   /* ---------------- ROOTS ---------------- */
@@ -1402,7 +1857,8 @@
       const reward = 12 + Math.floor(state.stage / 2) * 3;
       state.stones += reward;
       state.hp = state.maxHp;
-      showToast(`Breakthrough · ${realmTitle()} · +${major ? 2 : 1} meridian point${major ? 's' : ''}${major ? ' · +1 dao insight · +1 realm key' : ''}`);
+      notify(`Breakthrough · ${realmTitle()} · +${major ? 2 : 1} meridian point${major ? 's' : ''}${major ? ' · +1 dao insight · +1 realm key' : ''}`, 'breakthrough');
+      fxBurst('breakthrough', currentBand().cn || '破', realmTitle(), 'Your foundation deepens. The next threshold awaits.', `+${major ? 2 : 1} meridian point${major ? 's' : ''} · +${reward} spirit stones`);
       save(); render();
       if (state.stage === 25) {
         openModal('仙', 'THE IMMORTAL GATE', 'You have touched eternity', 'The mortal world falls away. Yet even an immortal knows there are always higher skies to seek. Ascension now waits in the wheel of lives.', '<button class="primary-btn" data-action="close-modal">Continue the journey</button>');
@@ -1731,7 +2187,8 @@
     payCost(inc.cost);
     state.inheritance.discovered.push(id);
     state.inheritance.points = (state.inheritance.points || 0) + 1;
-    showToast(`${inc.name} discovered · its trials now await you.`);
+    notify(`${inc.name} discovered · its trials now await you.`, 'rare');
+    fxBurst('rare', inc.seal, inc.name, 'A legacy stirs in the dark and recognizes your step.', '+1 legacy point');
     save(); render();
   }
   function attemptTrial(id, index) {
@@ -1750,12 +2207,15 @@
       if (inc.art && !state.activeArts.includes(inc.art)) state.activeArts.push(inc.art);
       state.daoPoints = (state.daoPoints || 0) + 1;
       state.root.essence = (state.root.essence || 0) + 2;
-      showToast(`Inheritance complete · ${inc.name} · artifact claimed.`);
+      notify(`Inheritance complete · ${inc.name} · artifact claimed.`, 'rare');
+      fxBurst('rare', inc.seal, inc.name, 'All three trials are passed. A legacy acknowledges its heir.', artifactCatalog.find(a => a.id === inc.artifact)?.name || '');
       save(); render();
       openModal(inc.seal, 'AN INHERITANCE CLAIMED', inc.name, `All three trials are passed. The legacy acknowledges you.<br><br><b>${artifactCatalog.find(a => a.id === inc.artifact)?.name}</b><br>${inc.bonus}${inc.art ? `<br>A forgotten art is now yours · ${martialArts.find(a => a.id === inc.art)?.name}` : ''}`, '<button class="primary-btn" data-action="close-modal">Accept the legacy</button>');
       return;
     }
     showToast(`Trial passed · ${trial.name}.`);
+    notify(`Trial passed · ${inc.name} · ${trial.name} · ${rewardsText(trial.reward)}`, 'reward');
+    rewardFloat(`+ ${rewardsText(trial.reward)}`);
     save(); render();
   }
 
@@ -1766,9 +2226,10 @@
     if (state.stage < w.req) return showToast(`You must reach stage ${w.req}.`);
     if (!canPay(w.cost)) return showToast(`You need ${costText(w.cost)}.`);
     payCost(w.cost);
-    state.forge.weapons[id] = { owned: true, refine: 0, awakened: false };
+    state.forge.weapons[id] = { owned: true, refine: 0, temper: 0, awakened: false };
     if (!state.forge.equippedWeapon) state.forge.equippedWeapon = id;
-    showToast(`${w.name} forged${state.forge.equippedWeapon === id ? ' and equipped' : ''}.`);
+    notify(`${w.name} forged${state.forge.equippedWeapon === id ? ' and equipped' : ''}.`, 'forge');
+    fxBurst('reward', w.seal, w.name, 'Steel takes shape beneath the cold anvil.', w.ability);
     save(); render();
   }
   function equipWeapon(id) {
@@ -1792,7 +2253,8 @@
     if (state.stones < 500 || (state.herbs.relic || 0) < 1 || (state.herbs.beastCore || 0) < 1) return showToast('Awakening needs ◇ 500, 1 ancient relic and 1 beast core.');
     state.stones -= 500; state.herbs.relic -= 1; state.herbs.beastCore -= 1;
     owned.awakened = true;
-    showToast(`${w.name} awakens · ${w.ability}`);
+    notify(`${w.name} awakens · ${w.ability}`, 'rare');
+    fxBurst('rare', w.seal, `${w.name} Awakened`, 'The weapon remembers a name older than the sect.', w.ability);
     save(); render();
   }
   function equipArtifact(id, slot) {
@@ -1824,8 +2286,9 @@
       if (!state.taming.active) state.taming.active = id;
       state.stats.tames = (state.stats.tames || 0) + 1;
       dailyStep('tame');
-      showToast(`${def.name} bows its head · a bond is formed.`);
-    } else showToast(`${def.name} resists and vanishes into the wild.`);
+      notify(`${def.name} bows its head · a bond is formed.`, 'beast');
+      fxBurst('beast', def.icon, def.name, 'A new bond is recorded in the bestiary.', def.passive);
+    } else notify(`${def.name} resists and vanishes into the wild.`, 'info');
     save(); render();
   }
   function setBeast(id) {
@@ -1856,7 +2319,8 @@
     delete state.taming.beasts[id];
     state.taming.beasts[evolved.id] = { level: Math.max(1, data.level - 4), xp: 0, bond: (data.bond || 0) + 1 };
     if (state.taming.active === id) state.taming.active = evolved.id;
-    showToast(`${def.name} evolved into ${evolved.name}!`);
+    notify(`${def.name} evolved into ${evolved.name}!`, 'beast');
+    fxBurst('beast', evolved.icon, evolved.name, `${def.name} has transformed. Its new bond is stronger.`, evolved.passive);
     save(); render();
   }
   function hatchEgg(rarity) {
@@ -1870,7 +2334,8 @@
     if (!state.taming.active) state.taming.active = def.id;
     state.stats.tames = (state.stats.tames || 0) + 1;
     dailyStep('tame');
-    showToast(`The egg cracks · ${def.name} is born.`);
+    notify(`The egg cracks · ${def.name} is born.`, 'beast');
+    fxBurst('beast', def.icon, def.name, 'A mystic egg has hatched into a new companion.', def.passive);
     save(); render();
   }
 
@@ -1891,7 +2356,8 @@
     applyReward(q.reward);
     if (!state.quests.completed.includes(q.id)) state.quests.completed.push(q.id);
     state.quests.active = null;
-    showToast(`Quest complete · ${q.name} · ${rewardsText(q.reward)}.`);
+    notify(`Quest complete · ${q.name} · ${rewardsText(q.reward)}.`, 'reward');
+    fxBurst('reward', '傳', q.name, 'A story is settled, but the road continues.', rewardsText(q.reward));
     save(); render();
   }
   function claimDailyTask(id) {
@@ -1899,7 +2365,8 @@
     if ((task.progress || 0) < task.target) return showToast('The challenge is not yet complete.');
     task.claimed = true;
     applyReward(task.reward);
-    showToast(`Daily challenge complete · ${rewardsText(task.reward)}.`);
+    notify(`Daily challenge complete · ${rewardsText(task.reward)}.`, 'reward');
+    rewardFloat(`+ ${rewardsText(task.reward)}`);
     save(); render();
   }
   function claimDailyPractice() {
@@ -1908,7 +2375,8 @@
     state.dailyClaimed = true;
     state.stones += 35;
     state.sectTokens += 3;
-    showToast('Daily practice complete · +35 spirit stones · +3 sect tokens.');
+    notify('Daily practice complete · +35 spirit stones · +3 sect tokens.', 'reward');
+    fxBurst('reward', '勤', 'Daily Practice Complete', 'The quiet work of a disciple is never wasted.', '+35 spirit stones · +3 sect tokens');
     save(); render();
   }
 
@@ -2095,6 +2563,37 @@
     showToast('Your expedition has begun. Safe travels.');
     save(); render();
   }
+  function selectRegion(id) {
+    if (!regionData(id)) return;
+    uiTabs.expeditions = id;
+    render();
+  }
+  function surveyRegion(id) {
+    const region = regionData(id); if (!region) return;
+    if (state.stage < region.req) return showToast(`You must reach stage ${region.req} to survey this region.`);
+    const rs = regionState(id);
+    if (rs.found.length >= region.landmarks.length) return showToast('Every site in this region is already charted.');
+    const qiCost = 20 + region.req * 3, stoneCost = 10 + region.req * 2;
+    if (state.qi < qiCost || state.stones < stoneCost) return showToast(`A survey needs ${qiCost} qi and ◇ ${stoneCost}.`);
+    state.qi -= qiCost; state.stones -= stoneCost; rs.surveys = (rs.surveys || 0) + 1;
+    const remaining = region.landmarks.filter(lm => !rs.found.includes(lm.id));
+    const rare = remaining.filter(lm => lm.rare);
+    const common = remaining.filter(lm => !lm.rare);
+    const target = rare.length && (!common.length || Math.random() < Math.min(.6, .2 + luckFor() * .018)) ? pick(rare) : pick(common.length ? common : rare);
+    const chance = clamp(58 + luckFor() * 1.4 - (target.rare ? 14 : 0) + (target.rare && luckFor() >= 15 ? 12 : 0), 20, 96);
+    if (Math.random() * 100 <= chance) {
+      addDiscovery(id, target);
+      save(); render();
+      return;
+    }
+    const crumbs = Math.floor(6 + luckFor());
+    state.stones += crumbs;
+    state.discoveries.log.unshift({ region: id, landmark: null, name: 'Unmarked trail', at: Date.now() });
+    if (state.discoveries.log.length > 30) state.discoveries.log.length = 30;
+    notify(`The wilds elude you · +${crumbs} spirit stones found along the way.`, 'info');
+    save(); render();
+  }
+
   function collectTrip() {
     if (!state.trip || Date.now() < state.trip.ends) return;
     const trip = state.trip, def = expeditions.find(t => t.id === trip.id); if (!def) { state.trip = null; save(); render(); return; }
@@ -2104,11 +2603,20 @@
     Object.entries(def.loot).forEach(([k, v]) => { if (state.herbs[k] !== undefined) state.herbs[k] += Math.max(1, Math.round(v * harvestMult())); });
     addRep(def.rep);
     dailyStep('trip'); missionStep('trip');
+    const linkedRegion = worldRegions.find(r => r.trip === def.id);
+    if (linkedRegion) {
+      const rs = regionState(linkedRegion.id);
+      rs.visits = (rs.visits || 0) + 1;
+      if (Math.random() * 100 < 18 + luckFor()) {
+        const remaining = linkedRegion.landmarks.filter(lm => !rs.found.includes(lm.id));
+        if (remaining.length) addDiscovery(linkedRegion.id, pick(remaining));
+      }
+    }
     const luck = luckFor();
-    if (Math.random() * 100 < 6 + luck * .5) { addEgg(luck > 18 ? 'rare' : 'common'); showToast('A mystic egg was hidden in the loot.'); }
-    if (Math.random() * 100 < 5 + luck * .4) { state.fate.maps = (state.fate.maps || 0) + 1; showToast('A treasure map was tucked into your pack.'); }
-    if (Math.random() * 100 < 2 + luck * .2) { state.realms.keys = (state.realms.keys || 0) + 1; showToast('A realm key was found among the stones.'); }
-    showToast(`A safe return · +${nfmt(reward)} stones · +${def.rep} merit · ingredients gathered.`);
+    if (Math.random() * 100 < 6 + luck * .5) { addEgg(luck > 18 ? 'rare' : 'common'); notify('A mystic egg was hidden in the loot.', 'rare'); fxBurst('rare', '卵', 'Mystic Egg Found', 'A warm shell clicks softly against your pack.'); }
+    if (Math.random() * 100 < 5 + luck * .4) { state.fate.maps = (state.fate.maps || 0) + 1; notify('A treasure map was tucked into your pack.', 'fate'); }
+    if (Math.random() * 100 < 2 + luck * .2) { state.realms.keys = (state.realms.keys || 0) + 1; notify('A realm key was found among the stones.', 'rare'); }
+    notify(`A safe return · +${nfmt(reward)} stones · +${def.rep} merit · ingredients gathered.`, 'reward');
     save(); render();
   }
   function brew(id) {
@@ -2211,9 +2719,165 @@
     if (state.rankClaimDate === dayIndex()) return showToast('You have already claimed today\'s stipend.');
     const stones = 80 + (11 - place) * 20;
     state.stones += stones; state.sectTokens += 2 + Math.max(0, 6 - place); state.rankClaimDate = dayIndex();
-    showToast(`Ranking stipend claimed · +${stones} spirit stones · sect tokens.`);
+    notify(`Ranking stipend claimed · +${stones} spirit stones · sect tokens.`, 'reward');
     save(); render();
   }
+  function buyVault(id) {
+    const item = sectVault.find(v => v.id === id); if (!item) return;
+    if (state.sectTokens < item.tokens) return showToast(`The vault asks ${item.tokens} sect tokens.`);
+    state.sectTokens -= item.tokens;
+    applyReward(item.grant);
+    notify(`Vault purchase · ${item.name} · ${rewardsText(item.grant)}.`, 'sect');
+    fxBurst('reward', item.seal, item.name, rewardsText(item.grant), 'Withdrawn from the sect vault.');
+    save(); render();
+  }
+  function performDuty(id) {
+    const duty = sectDuties.find(d => d.id === id); if (!duty) return;
+    if (state.sectPerks?.dutyDate === dayIndex()) return showToast('You have already served the sect today.');
+    const qiCost = Math.abs(duty.qi || 0);
+    if (state.qi < qiCost) return showToast(`This duty requires ${qiCost} qi.`);
+    state.qi -= qiCost;
+    state.sectTokens += duty.tokens || 0;
+    addRep(duty.merit || 0);
+    if (duty.stones) state.stones += duty.stones;
+    if (duty.dao) {
+      const each = duty.dao / daoPaths.length;
+      daoPaths.forEach(d => { state.dao[d.id].xp += each * daoGainMult(d.id); });
+    }
+    const blessing = id === 'train' ? 'attack' : id === 'copy' ? 'break' : 'qi';
+    state.sectPerks.dutyDate = dayIndex();
+    state.sectPerks.dutyType = id;
+    state.sectPerks.blessing = blessing;
+    state.sectPerks.blessingUntil = Date.now() + 300000;
+    const names = { qi: '+25% qi flow', attack: '+15% attack', break: '+5% breakthrough' };
+    notify(`Duty complete · ${duty.name} · ${names[blessing]} for 5 minutes.`, 'sect');
+    save(); render();
+  }
+  function claimBoon(id) {
+    const boon = legacyBoons.find(b => b.id === id); if (!boon) return;
+    if ((state.inheritance.boons || []).includes(id)) return showToast('This boon is already claimed.');
+    if ((state.inheritance.points || 0) < boon.points) return showToast(`You need ${boon.points} legacy points.`);
+    state.inheritance.points -= boon.points;
+    state.inheritance.boons.push(id);
+    applyReward(boon.grant);
+    notify(`Legacy boon claimed · ${boon.name} · ${rewardsText(boon.grant)}.`, 'rare');
+    fxBurst('rare', boon.seal, boon.name, rewardsText(boon.grant), 'The ancients remember their heir.');
+    save(); render();
+  }
+  function temperWeapon(id) {
+    const w = weaponCatalog.find(x => x.id === id), owned = state.forge.weapons[id];
+    if (!w || !owned || (owned.temper || 0) >= forgeTempers) return;
+    const cost = { stones: 90 + (owned.temper || 0) * 95, ore: 1 + Math.floor((owned.temper || 0) / 2) };
+    if (!canPay(cost)) return showToast(`Tempering needs ${costText(cost)}.`);
+    payCost(cost);
+    owned.temper = (owned.temper || 0) + 1;
+    notify(`${w.name} tempered to ${owned.temper}/${forgeTempers} · +2% attack.`, 'forge');
+    save(); render();
+  }
+  function divineFate() {
+    if (!state.fate.fragments && state.stones < 80) return showToast('Divination needs 1 fate fragment or ◇ 80.');
+    if (state.fate.fragments > 0) state.fate.fragments -= 1; else state.stones -= 80;
+    state.fate.divinations = (state.fate.divinations || 0) + 1;
+    state.fate.luckBuff = 2; state.fate.luckBuffUntil = Date.now() + 600000;
+    const hadPending = !!state.fate.pending;
+    if (!hadPending) spawnFate();
+    addFateLog(`Divination · ${hadPending ? 'the shape of the waiting fortune becomes clear.' : 'a new thread appears on the road.'}`);
+    notify(`The road clarifies · +2 luck for 10 minutes${hadPending ? ' · a fortune already waits' : ' · a new fortune appears'}.`, 'fate');
+    save(); render();
+  }
+  function offerIncense() {
+    if (state.stones < 120) return showToast('The shrine incense costs ◇ 120.');
+    state.stones -= 120;
+    state.fate.offeringLuck = 3; state.fate.offeringUntil = Date.now() + 900000;
+    addFateLog('Incense offered · the shrine smoke bends toward you.');
+    notify('Incense offered · +3 luck for 15 minutes.', 'fate');
+    save(); render();
+  }
+  function weaveFate() {
+    if ((state.fate.fragments || 0) < 2) return showToast('Weaving a fortune needs 2 fate fragments.');
+    state.fate.fragments -= 2;
+    spawnFate();
+    addFateLog(`Weaving · a new encounter takes shape · ${fateEvents.find(f => f.id === state.fate.pending?.id)?.title || 'unknown'}.`);
+    notify('A new fortune is woven from the fragments.', 'fate');
+    fxBurst('rare', '織', 'A Fortune Woven', 'Two futures become one road.', 'A new encounter waits in Fate & Fortune.');
+    save(); render();
+  }
+  function refreshMerchant() {
+    if ((state.fate.fragments || 0) < 1) return showToast('Refreshing the merchant needs 1 fate fragment.');
+    if (state.fate.merchantRefreshDate === dayIndex()) return showToast('The merchant has already been asked today.');
+    state.fate.fragments -= 1;
+    state.fate.merchantRefreshDate = dayIndex();
+    state.fate.merchantDate = 0;
+    ensureFate();
+    addFateLog('Merchant · the faceless merchant lays out a different selection.');
+    notify('The merchant reveals different stock.', 'fate');
+    save(); render();
+  }
+  function clearNotifications() {
+    state.notifications = [];
+    save(); render();
+  }
+
+  /* ---------------- TOOLTIPS & MOBILE NAVIGATION ---------------- */
+  function showTooltip(target) {
+    const tip = $('tooltip'); if (!tip || !target) return;
+    const text = target.getAttribute('data-tip'); if (!text) return;
+    tip.textContent = text; tip.hidden = false;
+    const rect = target.getBoundingClientRect();
+    const pad = 10;
+    let left = rect.left + rect.width / 2;
+    let top = rect.top - 10;
+    const tipRect = tip.getBoundingClientRect();
+    left = clamp(left, tipRect.width / 2 + pad, window.innerWidth - tipRect.width / 2 - pad);
+    let placement = 'top';
+    if (top - tipRect.height < pad) { top = rect.bottom + 10; placement = 'bottom'; }
+    tip.style.left = `${left}px`;
+    tip.style.top = `${top}px`;
+    tip.dataset.place = placement;
+    tip.classList.add('show');
+  }
+  function hideTooltip() {
+    const tip = $('tooltip'); if (!tip) return;
+    tip.classList.remove('show'); tip.hidden = true;
+  }
+  document.addEventListener('pointerover', (e) => {
+    const t = e.target.closest?.('[data-tip]'); if (t) showTooltip(t);
+  });
+  document.addEventListener('pointerout', (e) => {
+    const t = e.target.closest?.('[data-tip]');
+    if (t && !t.contains(e.relatedTarget)) hideTooltip();
+  });
+  document.addEventListener('focusin', (e) => {
+    const t = e.target.closest?.('[data-tip]'); if (t) showTooltip(t);
+  });
+  document.addEventListener('focusout', (e) => {
+    if (e.target.closest?.('[data-tip]')) hideTooltip();
+  });
+  document.addEventListener('pointerdown', (e) => {
+    if (e.pointerType === 'touch') {
+      const t = e.target.closest?.('[data-tip]');
+      if (t) showTooltip(t); else hideTooltip();
+    }
+  });
+  window.addEventListener('scroll', hideTooltip, { passive: true });
+  window.addEventListener('resize', hideTooltip);
+
+  function closeMobileNav() {
+    $('sidebar')?.classList.remove('open');
+    const scrim = $('navScrim'); if (scrim) scrim.hidden = true;
+    $('menuToggle')?.setAttribute('aria-expanded', 'false');
+    document.body.classList.remove('nav-open');
+  }
+  $('menuToggle')?.addEventListener('click', () => {
+    const sidebar = $('sidebar'); if (!sidebar) return;
+    const open = !sidebar.classList.contains('open');
+    sidebar.classList.toggle('open', open);
+    const scrim = $('navScrim'); if (scrim) scrim.hidden = !open;
+    $('menuToggle').setAttribute('aria-expanded', String(open));
+    document.body.classList.toggle('nav-open', open);
+  });
+  $('navScrim')?.addEventListener('click', closeMobileNav);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeMobileNav(); hideTooltip(); closeModal(); } });
 
   /* ---------------- EVENT DISPATCH ---------------- */
   document.addEventListener('click', (event) => {
@@ -2233,6 +2897,8 @@
       case 'unlock-art': unlockArt(id); break;
       case 'start-trip': startTrip(id); break;
       case 'collect-trip': collectTrip(); break;
+      case 'select-region': selectRegion(id); break;
+      case 'survey-region': surveyRegion(id); break;
       case 'brew': brew(id); break;
       case 'train-path': trainPath(id); break;
       case 'seek-enemy': seekEnemy(); break;
@@ -2248,6 +2914,9 @@
       case 'donate': donateToSect(); break;
       case 'upgrade-building': upgradeBuilding(id); break;
       case 'claim-rank': claimRank(); break;
+      case 'buy-vault': buyVault(id); break;
+      case 'perform-duty': performDuty(id); break;
+      case 'clear-notifications': clearNotifications(); break;
       case 'attempt-break': attemptBreak(); break;
       case 'close-modal': closeModal(); break;
       case 'awaken-root': awakenRoot(); break;
@@ -2269,6 +2938,7 @@
       case 'claim-daily': claimDailyTask(id); break;
       case 'discover-inheritance': discoverInheritance(id); break;
       case 'attempt-trial': attemptTrial(id, Number(button.dataset.index)); break;
+      case 'claim-boon': claimBoon(id); break;
       case 'enter-realm': enterRealm(id); break;
       case 'realm-attack': realmAttack(button.dataset.style); break;
       case 'realm-spell': realmSpell(); break;
@@ -2277,6 +2947,7 @@
       case 'forge-weapon': forgeWeapon(id); break;
       case 'equip-weapon': equipWeapon(id); break;
       case 'refine-weapon': refineWeapon(id); break;
+      case 'temper-weapon': temperWeapon(id); break;
       case 'awaken-weapon': awakenWeapon(id); break;
       case 'equip-artifact': equipArtifact(id, button.dataset.slot); break;
       case 'unequip-artifact': unequipArtifact(button.dataset.slot); break;
@@ -2284,6 +2955,10 @@
       case 'resolve-fate': resolveFate(id); break;
       case 'buy-merchant': buyMerchant(id); break;
       case 'use-map': useMap(); break;
+      case 'divine-fate': divineFate(); break;
+      case 'offer-incense': offerIncense(); break;
+      case 'weave-fate': weaveFate(); break;
+      case 'refresh-merchant': refreshMerchant(); break;
       case 'accept-quest': acceptQuest(id); break;
       case 'claim-quest': claimQuest(); break;
       case 'reincarnate': reincarnate(); break;
@@ -2336,6 +3011,7 @@
     if (state.active) state.medSeconds += 1;
     state.stoneClock = (state.stoneClock || 0) + 1;
     if (state.stoneClock >= 8) { state.stoneClock -= 8; state.stones += 1; }
+    if ((pathTreeBonus('stonesPer') || 0) > 0 && state.totalSeconds % 20 === 0) state.stones += pathTreeBonus('stonesPer');
     if ((state.upgrades.array || 0) > 0 && state.totalSeconds % 20 === 0) state.stones += state.upgrades.array;
     const inBattle = !!state.enemy || !!state.world.active || !!state.realms.boss;
     if (!inBattle && daoLevel('water') >= 3) state.hp = Math.min(state.maxHp, state.hp + state.maxHp * .01);
@@ -2347,7 +3023,7 @@
     }
     if (state.trip && Date.now() >= state.trip.ends && !state.trip.notified) {
       state.trip.notified = true;
-      showToast('Your expedition has returned · collect your rewards.');
+      notify('Your expedition has returned · collect your rewards.', 'reward');
     }
     render();
     if (state.totalSeconds % 5 === 0) save();
