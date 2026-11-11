@@ -22,6 +22,7 @@
       <nav class="main-nav" aria-label="Main navigation">
         <button class="nav-item active" data-view="cultivate"><span class="nav-icon">◉</span><span>Cultivate</span><span class="nav-dot"></span></button>
         <button class="nav-item" data-view="paths"><span class="nav-icon">☯</span><span>Cultivation Paths</span></button>
+        <button class="nav-item" data-view="companions"><span class="nav-icon">靈</span><span>Companions</span></button>
         <button class="nav-item" data-view="combat"><span class="nav-icon">⚔</span><span>Spirit Beasts</span></button>
         <button class="nav-item" data-view="sect"><span class="nav-icon">青</span><span>Sect Hall</span></button>
         <button class="nav-item" data-view="techniques"><span class="nav-icon">卷</span><span>Techniques</span><span class="nav-count" id="techCount">0/3</span></button>
@@ -104,6 +105,7 @@
       </section>
 
       <section class="view subview" id="view-paths"></section>
+      <section class="view subview" id="view-companions"></section>
       <section class="view subview" id="view-combat"></section>
       <section class="view subview" id="view-sect"></section>
       <section class="view subview" id="view-techniques"></section>
@@ -114,7 +116,7 @@
     </main>
   </div>
   <nav class="mobile-nav" aria-label="Mobile navigation">
-    <button class="active" data-view="cultivate"><i>◉</i>Home</button><button data-view="paths"><i>☯</i>Paths</button><button data-view="combat"><i>⚔</i>Fight</button><button data-view="sect"><i>青</i>Sect</button><button data-view="techniques"><i>卷</i>Arts</button><button data-view="expeditions"><i>⌁</i>Travel</button><button data-view="alchemy"><i>⚗</i>Alchemy</button><button data-view="codex"><i>▤</i>Codex</button>
+    <button class="active" data-view="cultivate"><i>◉</i>Home</button><button data-view="paths"><i>☯</i>Paths</button><button data-view="companions"><i>靈</i>Companions</button><button data-view="combat"><i>⚔</i>Fight</button><button data-view="sect"><i>青</i>Sect</button><button data-view="techniques"><i>卷</i>Arts</button><button data-view="expeditions"><i>⌁</i>Travel</button><button data-view="alchemy"><i>⚗</i>Alchemy</button><button data-view="codex"><i>▤</i>Codex</button>
   </nav>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <div class="modal-backdrop" id="modalBackdrop" hidden><div class="modal" role="dialog" aria-modal="true"><button class="modal-close" id="modalClose">×</button><div class="modal-symbol" id="modalSymbol">✧</div><div class="eyebrow" id="modalEyebrow">REALM BREAKTHROUGH</div><h2 id="modalTitle">The threshold awaits</h2><p id="modalText"></p><div class="modal-actions" id="modalActions"></div></div></div>
