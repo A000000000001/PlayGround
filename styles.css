@@ -6,3 +6,68 @@
 @media(max-width:850px){.sidebar{width:70px;padding:20px 9px}.brand{justify-content:center;padding:0}.brand-copy,.sect-label,.nav-item>span:not(.nav-icon):not(.nav-dot),.sidebar-bottom{display:none}.main-nav{margin-top:42px}.nav-item{justify-content:center;padding:12px 0}.nav-icon{font-size:18px}.main-area{margin-left:70px;width:calc(100% - 70px);padding:0 22px 18px}.cultivation-grid{grid-template-columns:minmax(0,1fr) minmax(250px,.85fr);gap:12px}.right-stack{gap:12px}.panel{padding:15px}.lower-grid{gap:12px}.welcome-row h1{font-size:26px}}
 @media(max-width:650px){.sidebar{display:none}.main-area{margin-left:0;width:100%;padding:0 15px 75px}.topbar{height:61px}.mobile-brand{display:flex;align-items:center;gap:8px;font-size:10px;letter-spacing:1.5px}.mobile-brand .brand-mark{width:30px;height:30px;font-size:18px}.breadcrumb{display:none}.top-right{gap:10px}.resource-pill{height:35px;padding-left:8px;gap:6px}.resource-icon{font-size:16px}.resource-pill b{font-size:10px}.resource-pill small{font-size:6px}.plus-btn{padding-left:6px;font-size:15px}.sound-btn{display:none}.avatar{width:28px;height:28px}.welcome-row{padding:25px 0 17px;align-items:flex-start}.welcome-row h1{font-size:24px;line-height:1.2}.welcome-row .subtitle{font-size:10px;max-width:235px;line-height:1.45;margin-top:6px}.day-chip{display:none}.cultivation-grid,.lower-grid,.subview-layout{grid-template-columns:1fr}.hero-art{height:190px}.hero-content{padding:17px 16px 14px}.hero-actions{grid-template-columns:1.2fr 1fr}.primary-btn,.breakthrough-btn{height:46px;padding:0 8px;gap:6px}.primary-btn b,.breakthrough-btn b{font-size:9px}.primary-btn small,.breakthrough-btn small{font-size:6px}.btn-arrow{display:none}.right-stack{grid-template-columns:1fr 1fr;grid-template-rows:auto;gap:10px}.panel{padding:14px}.panel-heading h3{font-size:15px}.stat-row{grid-template-columns:15px 1fr 30px;gap:6px}.stat-meter{display:none}.stats-note{font-size:8px;line-height:1.4}.task-row{gap:6px}.task-row b{font-size:8px}.task-row small{font-size:7px}.task-reward{font-size:8px}.task-list{gap:8px}.text-link{font-size:8px}.lower-grid{margin-top:12px;gap:10px}.lower-grid .panel{min-height:140px}.realm-step span:last-child{font-size:7px}.footer{display:grid;gap:8px;padding:17px 0}.footer>span:last-child{font-size:7px}.subview{padding-top:23px}.subview-head h1{font-size:25px}.subview-layout{gap:12px}.content-panel{padding:16px}.technique-card{padding:11px;gap:10px}.tech-seal{width:38px;height:38px}.tech-copy h3{font-size:12px}.tech-copy p{font-size:9px}.buy-btn{padding:8px;font-size:8px}.expedition-card{grid-template-columns:40px 1fr auto;padding:11px;gap:9px}.expedition-art{width:39px;height:39px}.expedition-card h3{font-size:12px}.expedition-card p{font-size:8px}.alch-grid{gap:8px}.recipe{padding:12px}.recipe h3{font-size:12px}.realm-path{margin-top:18px}.mobile-nav{display:flex;position:fixed;z-index:10;bottom:0;left:0;right:0;height:58px;background:#14211f;border-top:1px solid #35443c;justify-content:space-around;align-items:center;padding-bottom:env(safe-area-inset-bottom)}.mobile-nav button{background:none;border:0;color:#8fa096;display:grid;justify-items:center;gap:3px;font-size:8px;cursor:pointer}.mobile-nav button.active{color:#daca98}.mobile-nav i{font-style:normal;font-size:16px}}
 @media(max-width:390px){.right-stack{grid-template-columns:1fr}.hero-actions{grid-template-columns:1fr}.primary-btn,.breakthrough-btn{height:42px}.hero-art{height:170px}.welcome-row h1{font-size:22px}.cultivation-grid{gap:10px}}
+
+/* Cultivation paths, combat, and sect progression */
+.path-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.path-card{position:relative;display:flex;flex-direction:column;align-items:flex-start;min-width:0;padding:23px;border:1px solid var(--line);border-radius:9px;background:var(--panel);box-shadow:var(--shadow);overflow:hidden}
+.path-card:before{content:"";position:absolute;inset:0 0 auto;height:4px;background:linear-gradient(90deg,#52866c,#b3c9a9)}
+.path-card.spirit-path:before{background:linear-gradient(90deg,#8276a8,#c9b9d8)}
+.path-seal{position:absolute;right:19px;top:17px;width:42px;height:42px;display:grid;place-items:center;border:1px solid #d5e1d4;border-radius:50%;background:#eef4eb;color:#47735d;font:23px 'Ma Shan Zheng',serif}
+.spirit-path .path-seal{background:#f1eef7;border-color:#e0d9eb;color:#796b9c}
+.path-card .eyebrow{padding-right:45px;color:#7f9182}
+.path-card h2{font:600 20px var(--serif);margin:9px 0 7px}
+.path-card>p{min-height:54px;margin:0 0 17px;color:#768279;font-size:11px;line-height:1.6}
+.path-level{width:100%;display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-top:1px solid #eceee6;border-bottom:1px solid #eceee6;color:#78857b;font-size:9px;letter-spacing:.7px}
+.path-level b{color:#355e4d;font-size:11px;letter-spacing:0}
+.spirit-path .path-level b{color:#71658f}
+.path-card .inventory-row{margin-top:5px}
+.path-card>.action-btn{width:100%;margin-top:10px;min-height:38px}
+.path-note{margin-top:15px}
+.path-note .feature-stats{margin-top:17px}
+.feature-card{padding:21px;border:1px solid #30483d;border-radius:9px;background:linear-gradient(145deg,#243d34,#172a25);color:#f3f2e7;box-shadow:var(--shadow)}
+.feature-card .eyebrow{color:#b6c4a8}
+.feature-card h3{font:600 18px var(--serif);margin:9px 0 8px}
+.feature-card p{color:#bdc8bb;font-size:11px;line-height:1.65;margin:0 0 15px}
+.feature-card .action-btn{border-color:#647a68;background:#314a3c;color:#f1eddb}
+.feature-card .action-btn:hover{background:#3c5a48}
+.feature-stats{display:flex;flex-wrap:wrap;gap:8px 18px;padding-top:12px;border-top:1px solid rgba(220,229,212,.16)}
+.feature-stats span{display:grid;gap:4px;color:#aab8a9;font-size:8px;letter-spacing:.65px}
+.feature-stats b{color:#e5d7a9;font-size:11px;letter-spacing:0}
+.inventory-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #eceee6;color:#7b877e;font-size:10px}
+.inventory-row:last-child{border-bottom:0}
+.inventory-row b{color:#334a3e;font-size:10px;text-align:right}
+.combat-panel{min-height:260px}
+.enemy-card{display:flex;align-items:center;gap:19px;margin-top:22px;padding:18px;border:1px solid #e8e8df;border-radius:8px;background:linear-gradient(120deg,#f8f6ee,#fffefa)}
+.enemy-glyph{width:78px;height:78px;flex-shrink:0;display:grid;place-items:center;border:1px solid #e7dcc0;border-radius:50%;background:radial-gradient(circle,#fffdf5,#f0ead8);color:#806f4f;font:40px 'Ma Shan Zheng',serif}
+.enemy-info{flex:1;min-width:0}
+.enemy-info .eyebrow{font-size:8px}
+.enemy-info h2{margin:5px 0 13px;font-size:22px}
+.health-label{display:flex;justify-content:space-between;gap:10px;margin-bottom:6px;color:#7c887f;font-size:8px;letter-spacing:.7px}
+.health-label b{color:#49584f;font-size:9px;letter-spacing:0}
+.health-track{height:9px;overflow:hidden;border-radius:20px;background:#ece9e1;box-shadow:inset 0 1px 2px rgba(24,38,31,.08)}
+.health-track i{display:block;width:100%;height:100%;border-radius:inherit;background:linear-gradient(90deg,#b96e5c,#d18b70);transition:width .25s ease}
+.player-health i{background:linear-gradient(90deg,#43866d,#7eae79)}
+.combat-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:17px}
+.combat-actions .action-btn{flex:1 1 150px;min-height:39px;white-space:normal}
+.combat-actions .body-strike{background:#f5f0e2;border-color:#e7dcc0;color:#836b3e}
+.combat-actions .spirit-strike{background:#f0eef6;border-color:#e1dbea;color:#70628e}
+.combat-actions .action-btn:last-child{flex:0 0 auto;color:#8a675d}
+.encounter-empty{display:grid;justify-items:center;text-align:center;padding:28px 14px 12px}
+.empty-mark{width:56px;height:56px;display:grid;place-items:center;border-radius:50%;background:#f2efe4;color:#927c4f;font-size:23px}
+.encounter-empty h2{margin:15px 0 6px;font:600 20px var(--serif)}
+.encounter-empty p{max-width:410px;margin:0 0 16px;color:#7b877e;font-size:11px;line-height:1.6}
+.combat-tip{margin:12px 0 0!important;font-size:10px!important}
+.sect-progress .mini-track{height:8px;margin:15px 0 5px}
+.sect-progress>.action-btn{margin-top:12px;min-height:36px}
+.sect-rank-list{display:grid;margin-top:10px}
+.sect-rank{position:relative;display:flex;align-items:center;gap:13px;min-height:59px;padding:9px 5px;border-bottom:1px solid #eceee6;color:#9aa39a}
+.sect-rank:last-child{border-bottom:0}
+.sect-rank>span{width:29px;height:29px;display:grid;place-items:center;border:1px solid #e4e6dd;border-radius:50%;color:#a1aaa0;font-size:12px}
+.sect-rank>div{display:grid;gap:3px}
+.sect-rank b{color:#727e74;font:600 12px var(--serif)}
+.sect-rank small{color:#9aa39a;font-size:9px}
+.sect-rank.unlocked>span{border-color:#d6e4d6;background:#edf4ec;color:#4e8063}
+.sect-rank.unlocked b{color:#375b48}
+.sect-rank em{margin-left:auto;color:#a58a4d;font-size:8px;font-style:normal;font-weight:700;letter-spacing:.8px}
+@media(max-width:720px){.path-choice-grid{grid-template-columns:1fr}.path-card>p{min-height:0}.enemy-card{gap:13px;padding:14px}.enemy-glyph{width:61px;height:61px;font-size:32px}.enemy-info h2{font-size:19px}.combat-actions .action-btn:last-child{flex:1 1 100%}}
+@media(max-width:390px){.path-card{padding:18px}.feature-card,.content-panel{padding:15px}.enemy-card{align-items:flex-start}.enemy-glyph{width:48px;height:48px;font-size:26px}.enemy-info h2{font-size:17px}.feature-stats{gap:9px 13px}}
