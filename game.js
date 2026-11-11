@@ -1,13 +1,36 @@
 (() => {
   const SAVE_KEY = 'stillwater-cultivator-v1';
-  const realmBands = [
-    { start: 1, end: 9, name: 'Qi Condensation', cn: '凝氣' },
-    { start: 10, end: 12, name: 'Foundation Establishment', cn: '築基' },
-    { start: 13, end: 15, name: 'Golden Core', cn: '金丹' },
-    { start: 16, end: 18, name: 'Nascent Soul', cn: '元嬰' },
-    { start: 19, end: 21, name: 'Spirit Severing', cn: '化神' },
-    { start: 22, end: 24, name: 'Dao Ascendant', cn: '合道' },
-    { start: 25, end: Infinity, name: 'Immortal', cn: '仙人' }
+  // Realm floors are data-driven so each path can keep its own place on the ladder.
+  const realms = [
+    { name: 'Qi Condensation', cn: '凝氣', floors: 9 },
+    { name: 'Foundation Establishment', cn: '築基', floors: 3 },
+    { name: 'Golden Core', cn: '金丹', floors: 3 },
+    { name: 'Nascent Soul', cn: '元嬰', floors: 3 },
+    { name: 'Spirit Severing', cn: '化神', floors: 3 },
+    { name: 'Dao Ascendant', cn: '合道', floors: 3 },
+    { name: 'Immortal', cn: '仙人', floors: 9 }
+  ];
+  const realmBands = realms.reduce((bands, realm, index) => {
+    const start = bands.length ? bands[bands.length - 1].start + bands[bands.length - 1].floors : 1;
+    bands.push({ ...realm, start, end: index === realms.length - 1 ? Infinity : start + realm.floors - 1 });
+    return bands;
+  }, []);
+  const realmPhases = ['Early', 'Middle', 'Late', 'Peak'];
+  const realmGates = {
+    10: { body: 3, roots: 1, label: 'Foundation Trial' },
+    13: { body: 6, spirit: 1, roots: 2, flowers: 1, wins: 1, label: 'Core Condensation' },
+    16: { body: 9, spirit: 3, flowers: 2, brews: 1, wins: 3, label: 'Nascent Soul tribulation' },
+    19: { body: 12, spirit: 5, flowers: 3, brews: 2, sectRank: 1, wins: 5, label: 'Spirit Severing trial' },
+    22: { body: 15, spirit: 8, flowers: 4, brews: 3, sectRank: 2, wins: 8, label: 'Dao Ascendant tribulation' },
+    25: { body: 18, spirit: 10, flowers: 5, brews: 4, sectRank: 3, wins: 12, label: 'Immortal tribulation' }
+  };
+  const progressionUnlocks = [
+    { stage: 1, title: 'Spirit beast grounds', detail: 'Combat practice and the Mistwood expedition.' },
+    { stage: 4, title: 'Moonlit Ruins', detail: 'A new exploration region with rare moonflowers and stronger beasts.' },
+    { stage: 10, title: 'Foundation armory', detail: 'Unlock the second equipment tier.' },
+    { stage: 16, title: 'Nascent hunting grounds', detail: 'Stronger spirit beasts join the encounter pool.' },
+    { stage: 22, title: 'Dao armory', detail: 'Unlock the highest equipment tier.' },
+    { stage: 25, title: 'Immortal frontier', detail: 'A final exploration region opens beyond the mortal world.' }
   ];
   const techniques = [
     { id: 'sutra', name: 'Clear Heart Sutra', seal: '心', desc: 'A serene mind draws pure qi from the surrounding world.', base: 30, effect: 'Meditation qi +35% / rank', kind: 'qi' },
@@ -21,12 +44,12 @@
     { id: 'fortune', name: 'Fortune Incense', seal: '香', desc: 'Auspicious smoke that draws spirit stones and gathers qi.', cost: 10, ingredients: { herb: 1, flower: 1 }, effect: 'Gain 1,000 spirit stones and 1,000 qi.', type: 'fortune', amount: 1000 }
   ];
   const enemyKinds = [
-    { name: 'Mistfang Wolf', icon: '狼', sect: 'azure', hp: 42, damage: 5, stones: 10, rep: 4, drop: 'herb' },
-    { name: 'Brambleback Boar', icon: '豕', sect: 'azure', hp: 58, damage: 7, stones: 14, rep: 5, drop: 'root' },
-    { name: 'Moonlit Wisp', icon: '魄', sect: 'jade', hp: 36, damage: 8, stones: 12, rep: 6, drop: 'flower' },
-    { name: 'Ashenhorn Stag', icon: '鹿', sect: 'crimson', hp: 52, damage: 8, stones: 18, rep: 7, drop: 'root' },
-    { name: 'Emberscale Serpent', icon: '蛇', sect: 'crimson', hp: 44, damage: 10, stones: 20, rep: 8, drop: 'flower' },
-    { name: 'Jadewing Crane', icon: '鶴', sect: 'jade', hp: 48, damage: 6, stones: 16, rep: 7, drop: 'herb' }
+    { name: 'Mistfang Wolf', icon: '狼', sect: 'azure', hp: 42, damage: 5, stones: 10, rep: 4, drop: 'herb', minStage: 0 },
+    { name: 'Brambleback Boar', icon: '豕', sect: 'azure', hp: 58, damage: 7, stones: 14, rep: 5, drop: 'root', minStage: 0 },
+    { name: 'Moonlit Wisp', icon: '魄', sect: 'jade', hp: 36, damage: 8, stones: 12, rep: 6, drop: 'flower', minStage: 4 },
+    { name: 'Ashenhorn Stag', icon: '鹿', sect: 'crimson', hp: 52, damage: 8, stones: 18, rep: 7, drop: 'root', minStage: 4 },
+    { name: 'Emberscale Serpent', icon: '蛇', sect: 'crimson', hp: 44, damage: 10, stones: 20, rep: 8, drop: 'flower', minStage: 16 },
+    { name: 'Jadewing Crane', icon: '鶴', sect: 'jade', hp: 48, damage: 6, stones: 16, rep: 7, drop: 'herb', minStage: 4 }
   ];
   const sects = {
     azure: { name: 'Azure Cloud', seal: '青', bonus: 'Qi generation +10%', qi: .1, attack: 0 },
@@ -43,15 +66,15 @@
     { id: 'hunt5', name: 'Guard the Mountain Pass', desc: 'Defeat 5 spirit beasts.', target: 5, stones: 150, tokens: 15, merit: 22 }
   ];
   const gearCatalog = [
-    { id: 'sword', name: 'Sword', seal: '劍', tokens: 8, bonus: 'Attack +6 / level', stat: 'attack', value: 6 },
-    { id: 'helmet', name: 'Helmet', seal: '盔', tokens: 6, bonus: 'Qi flow +4% / level', stat: 'qi', value: .04 },
-    { id: 'gloves', name: 'Gloves', seal: '手', tokens: 6, bonus: 'Attack +3 / level', stat: 'attack', value: 3 },
-    { id: 'pants', name: 'Pants', seal: '褲', tokens: 6, bonus: 'Max health +10 / level', stat: 'health', value: 10 },
-    { id: 'vest', name: 'Vest', seal: '甲', tokens: 7, bonus: 'Qi flow +5% / level', stat: 'qi', value: .05 },
-    { id: 'shoes', name: 'Shoes', seal: '履', tokens: 5, bonus: 'Incoming damage -1 / level', stat: 'guard', value: 1 }
+    { id: 'sword', name: 'Sword', seal: '劍', tokens: 8, bonus: 'Attack +6 / level', stat: 'attack', value: 6, minStage: 0 },
+    { id: 'helmet', name: 'Helmet', seal: '盔', tokens: 6, bonus: 'Qi flow +4% / level', stat: 'qi', value: .04, minStage: 10 },
+    { id: 'gloves', name: 'Gloves', seal: '手', tokens: 6, bonus: 'Attack +3 / level', stat: 'attack', value: 3, minStage: 10 },
+    { id: 'pants', name: 'Pants', seal: '褲', tokens: 6, bonus: 'Max health +10 / level', stat: 'health', value: 10, minStage: 10 },
+    { id: 'vest', name: 'Vest', seal: '甲', tokens: 7, bonus: 'Qi flow +5% / level', stat: 'qi', value: .05, minStage: 22 },
+    { id: 'shoes', name: 'Shoes', seal: '履', tokens: 5, bonus: 'Incoming damage -1 / level', stat: 'guard', value: 1, minStage: 22 }
   ];
   const emptyEquipment = () => Object.fromEntries(gearCatalog.map(item => [item.id, { owned: false, level: 0 }]));
-  const defaultState = () => ({ qi: 0, stones: 25, stage: 0, active: false, totalSeconds: 0, totalQi: 0, qiToday: 0, medSeconds: 0, expeditions: 0, completedTrips: 0, trip: null, upgrades: { sutra: 0, array: 0, body: 0 }, boosts: 0, teaUntil: 0, dailyClaimed: false, dailyDate: 1, brews: 0, milestones: [], lastSeen: Date.now(), hp: 60, maxHp: 60, enemy: null, pathLevels: { body: 0, spirit: 0 }, herbs: { herb: 0, root: 0, flower: 0 }, sectRep: 0, sectRank: 0, tripToday: 0, sectId: 'azure', sectTokens: 0, mission: null, equipment: emptyEquipment() });
+  const defaultState = () => ({ qi: 0, stones: 25, stage: 0, active: false, totalSeconds: 0, totalQi: 0, qiToday: 0, medSeconds: 0, expeditions: 0, completedTrips: 0, trip: null, upgrades: { sutra: 0, array: 0, body: 0 }, boosts: 0, teaUntil: 0, dailyClaimed: false, dailyDate: 1, brews: 0, milestones: [], lastSeen: Date.now(), hp: 60, maxHp: 60, enemy: null, pathLevels: { body: 0, spirit: 0 }, pathProgress: { qi: 0, body: 0 }, herbs: { herb: 0, root: 0, flower: 0 }, sectRep: 0, sectRank: 0, tripToday: 0, sectId: 'azure', sectTokens: 0, mission: null, equipment: emptyEquipment() });
   let state = loadState();
   let activeView = 'cultivate';
   let toastTimer;
@@ -63,7 +86,14 @@
       const saved = JSON.parse(localStorage.getItem(SAVE_KEY));
       if (!saved) return defaultState();
       const defaults = defaultState();
-      const fresh = { ...defaults, ...saved, upgrades: { ...defaults.upgrades, ...(saved.upgrades || {}) }, pathLevels: { ...defaults.pathLevels, ...(saved.pathLevels || {}) }, herbs: { ...defaults.herbs, ...(saved.herbs || {}) }, equipment: { ...defaults.equipment, ...(saved.equipment || {}) }, milestones: saved.milestones || [] };
+      const fresh = { ...defaults, ...saved, upgrades: { ...defaults.upgrades, ...(saved.upgrades || {}) }, pathLevels: { ...defaults.pathLevels, ...(saved.pathLevels || {}) }, pathProgress: { ...defaults.pathProgress, ...(saved.pathProgress || {}) }, herbs: { ...defaults.herbs, ...(saved.herbs || {}) }, equipment: { ...defaults.equipment, ...(saved.equipment || {}) }, milestones: saved.milestones || [] };
+      fresh.stage = Math.max(0, Math.floor(Number(fresh.stage) || 0));
+      fresh.pathLevels.body = Math.max(0, Math.floor(Number(fresh.pathLevels.body) || 0));
+      fresh.pathLevels.spirit = Math.max(0, Math.floor(Number(fresh.pathLevels.spirit) || 0));
+      // Qi floors follow the legacy realm stage; Body floors inherit the old Body rank.
+      fresh.pathProgress.qi = Math.max(fresh.stage, Math.floor(Number(saved.pathProgress?.qi) || 0));
+      fresh.pathProgress.body = Math.max(0, Math.floor(Number(saved.pathProgress?.body ?? saved.pathLevels?.body) || 0));
+      fresh.pathLevels.body = Math.max(fresh.pathLevels.body, fresh.pathProgress.body);
       Object.keys(fresh.equipment).forEach(id => { fresh.equipment[id] = { owned: false, level: 0, ...(fresh.equipment[id] || {}) }; });
       if (!sects[fresh.sectId]) fresh.sectId = 'azure';
       fresh.maxHp = Math.max(60, Number(fresh.maxHp) || 60);
@@ -80,8 +110,12 @@
         const day = Math.floor(nextTotal / 300) + 1;
         const crossedDay = day !== fresh.dailyDate;
         const secondsToday = nextTotal % 300;
-        fresh.qiToday = (crossedDay ? 0 : fresh.qiToday) + secondsToday * qiRate;
-        fresh.medSeconds = (crossedDay ? 0 : fresh.medSeconds) + (wasActive ? secondsToday : 0);
+        fresh.qiToday = crossedDay
+          ? secondsToday * qiRate
+          : fresh.qiToday + away * qiRate;
+        fresh.medSeconds = crossedDay
+          ? (wasActive ? secondsToday : 0)
+          : fresh.medSeconds + (wasActive ? away : 0);
         if (crossedDay) { fresh.dailyDate = day; fresh.dailyClaimed = false; fresh.tripToday = 0; }
         fresh.stoneClock = (Number(fresh.stoneClock) || 0) + away;
         fresh.stones += Math.floor(fresh.stoneClock / 8);
@@ -100,10 +134,46 @@
     $('saveStatus').textContent = 'SYNCED';
   }
   function requirement(stage = state.stage) { return stage === 0 ? 100 : Math.round(100 * Math.pow(1.47, stage)); }
+  function gateFor(stage = state.stage + 1) { return realmGates[stage] || null; }
+  function gateNeeds(stage = state.stage + 1) {
+    const gate = gateFor(stage);
+    if (!gate) return [];
+    const needs = [];
+    if (state.pathProgress.body < gate.body) needs.push(`Body floor ${gate.body}`);
+    if (state.pathLevels.spirit < (gate.spirit || 0)) needs.push(`Spirit rank ${gate.spirit}`);
+    if (state.herbs.root < (gate.roots || 0)) needs.push(`${gate.roots} ironroot`);
+    if (state.herbs.flower < (gate.flowers || 0)) needs.push(`${gate.flowers} moonflowers`);
+    if ((state.brews || 0) < (gate.brews || 0)) needs.push(`${gate.brews} prepared pills`);
+    if ((state.wins || 0) < (gate.wins || 0)) needs.push(`${gate.wins} beast victories`);
+    if (state.sectRank < (gate.sectRank || 0)) needs.push(`${sectRanks[gate.sectRank]?.name || 'Sect rank'} standing`);
+    return needs;
+  }
+  function gateSummary(stage = state.stage + 1) {
+    const gate = gateFor(stage);
+    if (!gate) return 'Qi threshold';
+    const parts = [`Body ${gate.body}+`];
+    if (gate.spirit) parts.push(`Spirit ${gate.spirit}+`);
+    if (gate.roots) parts.push(`${gate.roots} ironroot`);
+    if (gate.flowers) parts.push(`${gate.flowers} moonflowers`);
+    if (gate.brews) parts.push(`${gate.brews} pills brewed`);
+    if (gate.wins) parts.push(`${gate.wins} victories`);
+    if (gate.sectRank) parts.push(`${sectRanks[gate.sectRank].name}`);
+    return parts.join(' · ');
+  }
+  function realmProgress(stage = state.stage) {
+    if (stage <= 0) return { band: null, floor: 0, phase: 'Mortal', floors: 0 };
+    const band = currentBand(stage);
+    const rawFloor = stage - band.start + 1;
+    const floor = ((rawFloor - 1) % band.floors) + 1;
+    const phaseIndex = Math.min(3, Math.floor((floor - 1) * 4 / band.floors));
+    return { band, floor, phase: realmPhases[phaseIndex], floors: band.floors };
+  }
+  function pathBonus(path, floor) { return path === 'body' ? floor * 2 : floor * 0.01; }
+  function bodyFloorRequirement(floor = state.pathProgress.body) { return 50 + floor * 45; }
   function sectData(s = state) { return sects[s.sectId] || sects.azure; }
   function gearStat(stat, s = state) { return gearCatalog.reduce((sum, item) => sum + (item.stat === stat && s.equipment?.[item.id]?.owned ? item.value * s.equipment[item.id].level : 0), 0); }
-  function attackDamage(base) { return Math.round((base + gearStat('attack')) * (1 + sectData().attack + state.sectRank * .03)); }
-  function rateFor(s = state) { return (0.8 + s.upgrades.sutra * .45 + (s.pathLevels?.spirit || 0) * .2) * (1 + s.boosts + gearStat('qi', s) + sectData(s).qi + s.sectRank * .02) * (s.active ? 1 : .2); }
+  function attackDamage(base) { return Math.round((base + pathBonus('body', state.pathProgress.body) + gearStat('attack')) * (1 + sectData().attack + state.sectRank * .03)); }
+  function rateFor(s = state) { return (0.8 + s.upgrades.sutra * .45 + (s.pathLevels?.spirit || 0) * .2) * (1 + s.boosts + gearStat('qi', s) + sectData(s).qi + s.sectRank * .02 + pathBonus('qi', s.pathProgress?.qi || s.stage)) * (s.active ? 1 : .2); }
   function currentSpell() { return sectSpells[state.sectId] || sectSpells.azure; }
   function damageEnemy(damage, source) {
     const enemy = state.enemy;
@@ -128,8 +198,8 @@
   function realmTitle(stage = state.stage) {
     if (stage === 0) return 'Mortal';
     const band = currentBand(stage);
-    const level = stage < 10 ? stage : ((stage - band.start) % 3) + 1;
-    return `${band.name} ${level}`;
+    const { floor } = realmProgress(stage);
+    return `${band.name} ${floor}`;
   }
   function showToast(message) {
     const toast = $('toast'); toast.textContent = message; toast.classList.add('show');
@@ -153,7 +223,7 @@
     const qi = Math.floor(state.qi);
     $('stones').textContent = nfmt(state.stones);
     $('realmName').textContent = realmTitle();
-    $('stageBadge').innerHTML = `${state.stage === 0 ? '凡人' : currentBand().cn} <span>${String(state.stage === 0 ? 1 : ((state.stage - 1) % 3) + 1).padStart(2, '0')}</span>`;
+    $('stageBadge').innerHTML = `${state.stage === 0 ? '凡人' : currentBand().cn} <span>${String(state.stage === 0 ? 1 : realmProgress().floor).padStart(2, '0')}</span>`;
     $('qiText').textContent = nfmt(qi); $('qiGoal').textContent = nfmt(goal);
     $('qiFill').style.width = `${Math.min(100, qi / goal * 100)}%`;
     $('qiPercent').textContent = `${Math.min(100, Math.floor(qi / goal * 100))}%`;
@@ -161,13 +231,14 @@
     $('meditateLabel').textContent = state.active ? 'Meditation in progress' : 'Begin Meditation';
     $('meditateHint').textContent = state.active ? 'BREATHE DEEPLY · THE QI GATHERS' : 'LET THE QI FLOW THROUGH YOU';
     $('meditateBtn').classList.toggle('meditating', state.active);
-    const canBreak = state.qi >= goal;
+    const missingGateNeeds = gateNeeds();
+    const canBreak = state.qi >= goal && !missingGateNeeds.length;
     $('breakthroughBtn').disabled = !canBreak;
-    $('breakHint').textContent = canBreak ? `READY · ${breakChance()}% SUCCESS` : `${nfmt(Math.max(0, goal - qi))} QI TO THE THRESHOLD`;
+    $('breakHint').textContent = missingGateNeeds.length ? `REQUIRES · ${missingGateNeeds.join(' · ')}` : state.qi >= goal ? `READY · ${breakChance()}% SUCCESS` : `${nfmt(Math.max(0, goal - qi))} QI TO THE THRESHOLD`;
     const control = Math.max(1, 1 + state.stage + state.upgrades.sutra * 2);
     const spirit = Math.max(1, 1 + Math.floor(state.stage / 2) + state.upgrades.array * 2 + state.pathLevels.spirit * 3);
     const body = Math.max(1, 1 + state.stage + state.upgrades.body * 2 + state.pathLevels.body * 3);
-    state.maxHp = Math.max(60, 60 + body * 5 + state.pathLevels.body * 12 + state.sectRank * 10 + gearStat('health'));
+    state.maxHp = Math.max(60, 60 + body * 5 + state.pathLevels.body * 12 + pathBonus('body', state.pathProgress.body) * 3 + state.sectRank * 10 + gearStat('health'));
     state.hp = Math.min(state.hp, state.maxHp);
     $('sectRankLabel').textContent = sectRanks[state.sectRank]?.name || sectRanks[0].name;
     $('sectName').textContent = sectData().name;
@@ -211,15 +282,24 @@
   }
   function renderExpeditions() {
     const list = [
-      { id: 'herbs', name: 'Gathering in the Mistwood', icon: '林', desc: 'Follow the dew trails through the foothills. Return with medicinal herbs and a modest stone offering.', duration: 25, reward: 18, loot: '3 herbs · 1 ironroot' },
-      { id: 'ruins', name: 'The Moonlit Ruins', icon: '月', desc: 'Search a forgotten shrine for spirit stones, ironroot, and rare moonflowers.', duration: 60, reward: 48, loot: '2 ironroot · 2 moonflowers' }
+      { id: 'herbs', name: 'Gathering in the Mistwood', icon: '林', desc: 'Follow the dew trails through the foothills. Return with medicinal herbs and a modest stone offering.', duration: 25, reward: 18, loot: '3 herbs · 1 ironroot', minStage: 0 },
+      { id: 'ruins', name: 'The Moonlit Ruins', icon: '月', desc: 'Search a forgotten shrine for spirit stones, ironroot, and rare moonflowers.', duration: 60, reward: 48, loot: '2 ironroot · 2 moonflowers', minStage: 4 },
+      { id: 'frontier', name: 'The Immortal Frontier', icon: '仙', desc: 'Cross beyond the mortal veil in search of ancient roots and immortal offerings.', duration: 90, reward: 100, loot: '3 ironroot · 3 moonflowers', minStage: 25 }
     ];
     let tripState = '';
     if (state.trip) {
       const left = Math.max(0, Math.ceil((state.trip.ends - Date.now()) / 1000));
       tripState = left ? `<div class="timer">Returning in ${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}</div>` : `<div class="timer ready">Journey complete · ready to collect</div>`;
     }
-    const cards = list.map(t => `<article class="expedition-card"><div class="expedition-art">${t.icon}</div><div><h3>${t.name}</h3><p>${t.desc}</p><div class="exp-meta"><span>◷ ${t.duration}s</span><span>◇ ${t.reward + state.stage * 2} stones</span><span>✿ ${t.loot}</span></div>${state.trip && state.trip.id === t.id ? tripState : ''}</div>${state.trip ? (state.trip.id === t.id && Date.now() >= state.trip.ends ? `<button class="action-btn" data-action="collect-trip">Collect</button>` : `<button class="action-btn" disabled>${state.trip.id === t.id ? 'In progress' : 'Away'}</button>`) : `<button class="action-btn" data-action="start-trip" data-id="${t.id}" data-duration="${t.duration}" data-reward="${t.reward}">Set out</button>`}</article>`).join('');
+    const cards = list.map(t => {
+      const locked = state.stage < t.minStage;
+      const button = state.trip
+        ? (state.trip.id === t.id && Date.now() >= state.trip.ends ? `<button class="action-btn" data-action="collect-trip">Collect</button>` : `<button class="action-btn" disabled>${state.trip.id === t.id ? 'In progress' : 'Away'}</button>`)
+        : locked
+          ? `<button class="action-btn" disabled>Requires stage ${t.minStage}</button>`
+          : `<button class="action-btn" data-action="start-trip" data-id="${t.id}" data-duration="${t.duration}" data-reward="${t.reward}">Set out</button>`;
+      return `<article class="expedition-card ${locked ? 'expedition-locked' : ''}"><div class="expedition-art">${t.icon}</div><div><h3>${t.name}</h3><p>${t.desc}</p><div class="exp-meta"><span>◷ ${t.duration}s</span><span>◇ ${t.reward + state.stage * 2} stones</span><span>✿ ${t.loot}</span></div>${locked ? `<div class="path-warning">Unlocks at stage ${t.minStage}</div>` : ''}${state.trip && state.trip.id === t.id ? tripState : ''}</div>${button}</article>`;
+    }).join('');
     $('view-expeditions').innerHTML = `${subHead('BEYOND THE SECT WALLS', 'Expeditions', 'The world is vast. A cultivator must also walk its roads.', '⌁')}<div class="subview-layout"><div class="subview-main"><article class="content-panel"><div class="eyebrow">AVAILABLE JOURNEYS</div><h2>Choose a path</h2><p>Send your spirit out into the world. You can continue cultivating while an expedition is underway.</p>${cards}</article></div><aside class="subview-aside"><article class="feature-card"><div class="eyebrow">TRAVELER'S LEDGER</div><h3>${state.completedTrips} journeys completed</h3><p>Every safe return brings new spirit stones to the Azure Cloud Sect. Higher realms draw richer offerings.</p><div class="feature-stats"><span>STONE YIELD <b>+${state.stage * 2} / trip</b></span></div></article><article class="content-panel"><div class="eyebrow">FIELD TIP</div><h2>Time moves on</h2><p>Expeditions progress while you visit other pages. Leave the game open, or return later to collect your findings.</p></article></aside></div>`;
   }
   function renderAlchemy() {
@@ -236,8 +316,15 @@
   }
   function renderPaths() {
     const bodyLevel = state.pathLevels.body, spiritLevel = state.pathLevels.spirit;
-    const bodyCost = 50 + bodyLevel * 45, spiritCost = 50 + spiritLevel * 45;
-    $('view-paths').innerHTML = `${subHead('TWO WAYS TO IMMORTALITY', 'Choose your cultivation path', 'Train the mortal vessel or refine the soul. Both paths remain open, and each grants its own battle art.', '☯')}<div class="path-choice-grid"><article class="path-card body-path"><div class="path-seal">體</div><div class="eyebrow">THE IRON VESSEL</div><h2>Body cultivation</h2><p>Temper bone, blood, and breath. Body ranks increase health and empower crushing physical strikes.</p><div class="path-level">BODY REALM <b>Rank ${bodyLevel}</b></div><div class="inventory-row"><span>Training requirement</span><b>${bodyCost} qi · 5 stones</b></div><button class="action-btn" data-action="train-path" data-id="body" ${state.qi < bodyCost || state.stones < 5 ? 'disabled' : ''}>Temper the body</button></article><article class="path-card spirit-path"><div class="path-seal">神</div><div class="eyebrow">THE IMMORTAL SPIRIT</div><h2>Spiritual cultivation</h2><p>Expand your sea of consciousness. Spirit ranks strengthen spiritual arts and accelerate meditation.</p><div class="path-level">SPIRIT REALM <b>Rank ${spiritLevel}</b></div><div class="inventory-row"><span>Training requirement</span><b>${spiritCost} qi · 5 stones</b></div><button class="action-btn" data-action="train-path" data-id="spirit" ${state.qi < spiritCost || state.stones < 5 ? 'disabled' : ''}>Refine the spirit</button></article></div><article class="content-panel path-note"><div class="eyebrow">YOUR FOUNDATION</div><h2>Neither path is a dead end</h2><p>Body training raises your health and physical damage. Spirit training improves qi generation and spirit-arts damage. Invest in either—or balance both.</p><div class="feature-stats"><span>BODY RANK <b>${bodyLevel}</b></span><span>SPIRIT RANK <b>${spiritLevel}</b></span><span>QI FLOW <b>${rateFor().toFixed(1)} / sec</b></span></div></article>`;
+    const bodyCost = bodyFloorRequirement(), qiCost = requirement();
+    const qiRealm = realmProgress(state.stage), bodyRealm = realmProgress(state.pathProgress.body);
+    const qiFloorProgress = Math.min(100, state.qi / qiCost * 100);
+    const bodyFloorProgress = Math.min(100, state.qi / bodyCost * 100);
+    const qiRealmLabel = qiRealm.band ? `${qiRealm.band.name} · ${qiRealm.phase} ${qiRealm.floor}/${qiRealm.floors}` : 'Mortal · before first floor';
+    const bodyRealmLabel = bodyRealm.band ? `${bodyRealm.band.name} · ${bodyRealm.phase} ${bodyRealm.floor}/${bodyRealm.floors}` : 'Mortal · before first floor';
+    const gate = gateFor(), missing = gateNeeds();
+    const unlockRows = progressionUnlocks.map(item => `<div class="progression-unlock ${state.stage >= item.stage ? 'unlocked' : 'locked'}"><span>${state.stage >= item.stage ? '✦' : '⌑'}</span><div><b>${item.title}</b><small>${item.detail}</small></div><em>${state.stage >= item.stage ? 'UNLOCKED' : `STAGE ${item.stage}`}</em></div>`).join('');
+    $('view-paths').innerHTML = `${subHead('TWO WAYS TO IMMORTALITY', 'Choose your cultivation path', 'Advance the Qi realm floor by floor, while tempering a separate Body path. Each has its own requirements and lasting bonuses.', '☯')}<div class="path-choice-grid"><article class="path-card qi-path"><div class="path-seal">氣</div><div class="eyebrow">THE INNER MERIDIAN</div><h2>Qi cultivation</h2><p>Gather essence and cross each realm floor through a breakthrough. Major thresholds demand a prepared foundation.</p><div class="path-level">CURRENT REALM <b>${realmTitle()} · Floor ${qiRealm.floor || 0}</b></div><div class="path-floor-label"><span>${qiRealmLabel}</span><b>${nfmt(state.qi)} / ${nfmt(qiCost)} qi</b></div><div class="path-progress-track"><i style="width:${qiFloorProgress}%"></i></div><div class="inventory-row"><span>Next floor</span><b>${realmTitle(state.stage + 1)} · ${realmProgress(state.stage + 1).phase}</b></div><div class="inventory-row"><span>Breakthrough conditions</span><b>${gate ? gateSummary() : 'Qi threshold'}</b></div>${gate && missing.length ? `<div class="path-warning">Still needed: ${missing.join(' · ')}</div>` : `<div class="path-bonus-line">Realm benefit · Qi flow +${(pathBonus('qi', state.pathProgress.qi) * 100).toFixed(0)}%</div>`}<div class="path-bonus-line">Current floor progress · ${Math.floor(qiFloorProgress)}%</div></article><article class="path-card body-path"><div class="path-seal">體</div><div class="eyebrow">THE IRON VESSEL</div><h2>Body cultivation</h2><p>Temper bone, blood, and breath independently of realm breakthroughs. Every Body floor increases vitality and physical force.</p><div class="path-level">BODY REALM <b>Rank ${bodyLevel} · Floor ${bodyRealm.floor || 0}</b></div><div class="path-floor-label"><span>${bodyRealmLabel}</span><b>${nfmt(state.qi)} / ${nfmt(bodyCost)} shared qi</b></div><div class="path-progress-track body-track"><i style="width:${bodyFloorProgress}%"></i></div><div class="path-progress-caption">Shared Qi available toward this independent Body floor</div><div class="inventory-row"><span>Next floor conditions</span><b>${nfmt(bodyCost)} qi · 5 spirit stones</b></div><div class="path-bonus-line">Floor bonus · +${pathBonus('body', state.pathProgress.body) * 3} max health · +${state.pathProgress.body} physical force</div><button class="action-btn" data-action="train-path" data-id="body" ${state.qi < bodyCost || state.stones < 5 ? 'disabled' : ''}>Break through Body floor</button><div class="path-bonus-line">Current floor progress · ${Math.floor(bodyFloorProgress)}%</div></article></div><article class="content-panel path-note"><div class="eyebrow">YOUR FOUNDATION</div><h2>Paths advance at their own pace</h2><p>Qi breakthroughs unlock new realms and trials. Body breakthroughs have their own escalating Qi and stone cost; Spirit ranks continue to strengthen spiritual arts and meditation.</p><div class="feature-stats"><span>QI FLOOR <b>${state.pathProgress.qi}</b></span><span>BODY FLOOR <b>${state.pathProgress.body}</b></span><span>SPIRIT RANK <b>${spiritLevel}</b></span><span>QI FLOW <b>${rateFor().toFixed(1)} / sec · +${(pathBonus('qi', state.pathProgress.qi) * 100).toFixed(0)}%</b></span></div></article><article class="content-panel progression-panel"><div class="eyebrow">REALM PROGRESSION</div><h2>Trials, rewards, and unlocks</h2><p>${gate ? `${gate.label}: ${missing.length ? `Requirements remaining — ${missing.join(' · ')}` : 'All requirements met; gather the Qi threshold to attempt the breakthrough.'}` : 'No additional trial requirements at this floor.'} Successful breakthroughs grant spirit stones and open new paths through the world.</p><div class="progression-unlock-list">${unlockRows}</div></article>`;
   }
   function renderCombat() {
     const enemy = state.enemy;
@@ -255,7 +342,8 @@
     const missionPanel = mission ? `<div class="inventory-row"><span>${mission.name}</span><b>${Math.min(state.mission.progress, mission.target)} / ${mission.target}</b></div><p>${mission.desc} Reward: ${mission.stones} stones · ${mission.tokens} sect tokens · ${mission.merit} merit.</p><button class="action-btn" data-action="claim-mission" ${state.mission.progress < mission.target ? 'disabled' : ''}>${state.mission.progress >= mission.target ? 'Claim mission reward' : 'Mission in progress'}</button>` : missions.map(m => `<div class="mission-row"><h3>${m.name}</h3><p>${m.desc}</p><small>Reward · ${m.stones} stones · ${m.tokens} tokens · ${m.merit} merit</small><button class="action-btn" data-action="accept-mission" data-id="${m.id}">Accept mission</button></div>`).join('');
     const equipment = gearCatalog.map(item => {
       const gear = state.equipment[item.id], upgradeCost = 35 * (gear.level + 1);
-      return `<article class="gear-card"><div class="tech-seal">${item.seal}</div><h3>${item.name}</h3><p>${item.bonus}</p><div class="tech-level">${gear.owned ? `EQUIPPED · LEVEL ${gear.level}` : 'NOT OWNED'}</div>${gear.owned ? `<button class="action-btn" data-action="upgrade-gear" data-id="${item.id}" ${state.stones < upgradeCost || gear.level >= 10 ? 'disabled' : ''}>${gear.level >= 10 ? 'Max level' : `Upgrade · ◇ ${upgradeCost}`}</button>` : `<button class="action-btn" data-action="buy-gear" data-id="${item.id}" ${state.sectTokens < item.tokens ? 'disabled' : ''}>Buy · ${item.tokens} sect tokens</button>`}</article>`;
+      const locked = state.stage < item.minStage;
+      return `<article class="gear-card ${locked ? 'gear-locked' : ''}"><div class="tech-seal">${item.seal}</div><h3>${item.name}</h3><p>${item.bonus}</p><div class="tech-level">${gear.owned ? `EQUIPPED · LEVEL ${gear.level}` : locked ? `UNLOCKS AT STAGE ${item.minStage}` : 'NOT OWNED'}</div>${gear.owned ? `<button class="action-btn" data-action="upgrade-gear" data-id="${item.id}" ${state.stones < upgradeCost || gear.level >= 10 ? 'disabled' : ''}>${gear.level >= 10 ? 'Max level' : `Upgrade · ◇ ${upgradeCost}`}</button>` : `<button class="action-btn" data-action="buy-gear" data-id="${item.id}" ${locked || state.sectTokens < item.tokens ? 'disabled' : ''}>${locked ? `Requires stage ${item.minStage}` : `Buy · ${item.tokens} sect tokens`}</button>`}</article>`;
     }).join('');
     $('view-sect').innerHTML = `${subHead('THE GREAT SECTS', 'Sect Hall', 'Choose a sect, complete its missions, and earn the gear to strengthen your path.', sectData().seal)}<div class="subview-layout"><div class="subview-main"><article class="content-panel"><div class="eyebrow">CHOOSE YOUR ALLIANCE</div><h2>Three sects, three disciplines</h2><div class="sect-choice-grid">${sectCards}</div><div class="feature-stats"><span>SECT RANK BONUS <b>+${state.sectRank * 3}% attack · +${state.sectRank * 2}% qi</b></span><span>FACTION BONUS <b>${sectData().bonus}</b></span></div></article><article class="content-panel sect-progress"><div class="eyebrow">YOUR STANDING · ${sectData().name}</div><h2>${rank.name}</h2><p>${next ? `${next.need - state.sectRep} merit until promotion to ${next.name}.` : 'You have reached the highest sect rank.'}</p><div class="mini-track"><i style="width:${progress}%"></i></div><div class="inventory-row"><span>Sect merit</span><b>${state.sectRep} / ${next?.need || 'MAX'}</b></div><button class="action-btn" data-action="donate" ${state.stones < 10 || !next ? 'disabled' : ''}>Donate 10 spirit stones · +4 merit</button></article><article class="content-panel"><div class="eyebrow">SECT MISSIONS</div><h2>Earn tokens and merit</h2><p>Complete beast-hunting assignments to earn sect tokens, spirit stones, and promotion merit.</p><div class="inventory-row"><span>Sect tokens</span><b>✦ ${nfmt(state.sectTokens)}</b></div>${missionPanel}</article><article class="content-panel"><div class="eyebrow">ARMORY · TOKENS ${nfmt(state.sectTokens)} · STONES ${nfmt(state.stones)}</div><h2>Equipment and refinement</h2><p>Buy each gear piece with sect tokens, then spend spirit stones to upgrade its bonus.</p><div class="gear-grid">${equipment}</div></article><article class="content-panel"><div class="eyebrow">THE LADDER OF SERVICE</div><h2>Disciple ranks</h2><div class="sect-rank-list">${ranks}</div></article></div><aside class="subview-aside"><article class="feature-card"><div class="eyebrow">${sectData().name}</div><h3>Your sect empowers your cultivation</h3><p>Promotions strengthen your attacks and qi flow. Gear adds further bonuses, while your sect's unique spell is available in combat.</p><div class="feature-stats"><span>CURRENT RANK <b>${rank.name}</b></span><span>MAX HEALTH <b>${state.maxHp}</b></span><span>ATTACK BONUS <b>+${Math.round((sectData().attack + state.sectRank * .03) * 100)}%</b></span><span>QI FLOW BONUS <b>+${Math.round((sectData().qi + state.sectRank * .02 + gearStat('qi')) * 100)}%</b></span></div></article><article class="content-panel"><div class="eyebrow">SECT SERVICE</div><h2>Rise together</h2><p>Defeat beasts to earn merit and progress your active mission. Every promotion also grants +10 maximum health.</p></article></aside></div>`;
   }
@@ -280,19 +368,34 @@
     $('modalSymbol').textContent = '破';
     $('modalEyebrow').textContent = 'REALM BREAKTHROUGH';
     $('modalTitle').textContent = 'The threshold awaits';
-    $('modalText').textContent = `Your meridians brim with qi. Break through into ${realmTitle(state.stage + 1)}? Success chance: ${breakChance()}%. A failed attempt scatters some gathered qi, but your foundation will endure.`;
+    const gate = gateFor();
+    $('modalText').textContent = `Your meridians brim with qi. ${gate ? `${gate.label} requirements: ${gateSummary()}. ` : ''}Break through into ${realmTitle(state.stage + 1)}? Success chance: ${breakChance()}%. A failed attempt scatters some gathered qi, but your foundation will endure.`;
     $('modalActions').innerHTML = '<button class="secondary-btn" data-action="close-modal">Not yet</button><button class="primary-btn" data-action="attempt-break">Face the tribulation</button>';
     $('modalBackdrop').hidden = false;
   }
   function attemptBreak() {
+    const targetStage = state.stage + 1;
+    const missing = gateNeeds(targetStage);
+    if (state.qi < requirement() || missing.length) {
+      $('modalBackdrop').hidden = true;
+      showToast(missing.length ? `Breakthrough requirements unmet · ${missing.join(' · ')}` : 'Gather enough qi before attempting a breakthrough.');
+      return;
+    }
     $('modalBackdrop').hidden = true;
+    const gate = gateFor(targetStage);
     const chance = breakChance();
     if (Math.random() * 100 < chance) {
       state.qi = Math.max(0, state.qi - requirement());
+      if (gate) {
+        state.herbs.root -= gate.roots || 0;
+        state.herbs.flower -= gate.flowers || 0;
+      }
       state.stage += 1;
+      state.pathProgress.qi = state.stage;
       const reward = 12 + Math.floor(state.stage / 2) * 3;
       state.stones += reward;
-      showToast(`Breakthrough! You reached ${realmTitle()} · +${reward} spirit stones`);
+      const unlocked = progressionUnlocks.find(item => item.stage === state.stage);
+      showToast(`Breakthrough! You reached ${realmTitle()} · +${reward} spirit stones${unlocked ? ` · unlocked: ${unlocked.title}` : ''}`);
       if (state.stage >= 25) {
         $('modalSymbol').textContent = '仙'; $('modalEyebrow').textContent = 'THE IMMORTAL GATE'; $('modalTitle').textContent = 'You have touched eternity';
         $('modalText').textContent = 'The mortal world falls away. Yet even an immortal knows there are always higher skies to seek.';
@@ -324,7 +427,8 @@
     state.trip = null; state.stones += reward; state.completedTrips += 1; state.tripToday = (state.tripToday || 0) + 1;
     if (trip.id === 'herbs') { state.herbs.herb += 3; state.herbs.root += 1; }
     if (trip.id === 'ruins') { state.herbs.root += 2; state.herbs.flower += 2; }
-    addRep(trip.id === 'ruins' ? 8 : 4);
+    if (trip.id === 'frontier') { state.herbs.root += 3; state.herbs.flower += 3; }
+    addRep(trip.id === 'frontier' ? 12 : trip.id === 'ruins' ? 8 : 4);
     showToast(`A safe return · +${reward} stones · medicinal ingredients gathered`); save(); render();
   }
   function brew(id) {
@@ -347,16 +451,19 @@
   }
   function trainPath(id) {
     if (!['body', 'spirit'].includes(id)) return;
-    const level = state.pathLevels[id], cost = 50 + level * 45;
+    const level = state.pathLevels[id], cost = id === 'body' ? bodyFloorRequirement() : 50 + level * 45;
     if (state.qi < cost || state.stones < 5) return showToast('You need more qi and spirit stones to train.');
     state.qi -= cost; state.stones -= 5; state.pathLevels[id] += 1;
-    showToast(id === 'body' ? 'Your body grows more resilient.' : 'Your spiritual sea expands; meditation flows faster.');
+    if (id === 'body') state.pathProgress.body += 1;
+    showToast(id === 'body' ? `Body breakthrough · ${realmTitle(state.pathProgress.body)} vessel` : 'Your spiritual sea expands; meditation flows faster.');
     save(); render();
   }
   function seekEnemy() {
     if (state.enemy) return;
-    const sectEnemies = enemyKinds.filter(enemy => enemy.sect === state.sectId);
-    const pool = sectEnemies.length ? sectEnemies : enemyKinds;
+    const unlockedEnemies = enemyKinds.filter(enemy => state.stage >= (enemy.minStage || 0));
+    const sectEnemies = unlockedEnemies.filter(enemy => enemy.sect === state.sectId);
+    const pool = sectEnemies.length ? sectEnemies : unlockedEnemies;
+    if (!pool.length) return showToast(`No spirit beasts are available until stage ${Math.min(...enemyKinds.map(enemy => enemy.minStage || 0))}.`);
     const template = pool[Math.floor(Math.random() * pool.length)];
     const scale = 1 + state.stage * .12 + (state.wins || 0) * .035;
     const maxHp = Math.round(template.hp * scale);
@@ -409,7 +516,9 @@
   }
   function buyGear(id) {
     const item = gearCatalog.find(entry => entry.id === id);
-    if (!item || state.equipment[id]?.owned || state.sectTokens < item.tokens) return showToast('You need more sect tokens to buy that equipment.');
+    if (!item || state.equipment[id]?.owned) return showToast('That equipment is unavailable.');
+    if (state.stage < item.minStage) return showToast(`${item.name} unlocks at cultivation stage ${item.minStage}.`);
+    if (state.sectTokens < item.tokens) return showToast('You need more sect tokens to buy that equipment.');
     state.sectTokens -= item.tokens;
     state.equipment[id] = { owned: true, level: 1 };
     showToast(`${item.name} equipped · ${item.bonus}`); render(); save();
