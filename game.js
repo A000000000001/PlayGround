@@ -68,16 +68,25 @@
       if (!sects[fresh.sectId]) fresh.sectId = 'azure';
       fresh.maxHp = Math.max(60, Number(fresh.maxHp) || 60);
       fresh.hp = Math.max(0, Math.min(fresh.maxHp, Number(fresh.hp ?? fresh.maxHp)));
-      const away = Math.min(28800, Math.max(0, (Date.now() - (fresh.lastSeen || Date.now())) / 1000));
+      const away = Math.floor(Math.min(28800, Math.max(0, (Date.now() - (fresh.lastSeen || Date.now())) / 1000)));
       if (away > 15) {
-        fresh.totalSeconds += away;
-        fresh.qiToday += fresh.active ? away * rateFor(fresh) : 0;
-        fresh.medSeconds += fresh.active ? away : 0;
-        fresh.qi += away * (fresh.active ? rateFor(fresh) : .15);
-        fresh.totalQi += away * (fresh.active ? rateFor(fresh) : .15);
-        fresh.stones += Math.floor(away / 8);
-        const day = Math.floor(fresh.totalSeconds / 300) + 1;
-        if (day !== fresh.dailyDate) { fresh.dailyDate = day; fresh.dailyClaimed = false; fresh.qiToday = 0; fresh.medSeconds = 0; fresh.tripToday = 0; }
+        const previousTotal = fresh.totalSeconds;
+        const nextTotal = previousTotal + away;
+        const wasActive = fresh.active;
+        const qiRate = rateFor(fresh);
+        fresh.totalSeconds = nextTotal;
+        fresh.qi += away * qiRate;
+        fresh.totalQi += away * qiRate;
+        const day = Math.floor(nextTotal / 300) + 1;
+        const crossedDay = day !== fresh.dailyDate;
+        const secondsToday = nextTotal % 300;
+        fresh.qiToday = (crossedDay ? 0 : fresh.qiToday) + secondsToday * qiRate;
+        fresh.medSeconds = (crossedDay ? 0 : fresh.medSeconds) + (wasActive ? secondsToday : 0);
+        if (crossedDay) { fresh.dailyDate = day; fresh.dailyClaimed = false; fresh.tripToday = 0; }
+        fresh.stoneClock = (Number(fresh.stoneClock) || 0) + away;
+        fresh.stones += Math.floor(fresh.stoneClock / 8);
+        fresh.stoneClock %= 8;
+        fresh.stones += (Math.floor(nextTotal / 20) - Math.floor(previousTotal / 20)) * fresh.upgrades.array;
         fresh.active = false;
         fresh.lastSeen = Date.now();
         setTimeout(() => showToast(`While you were away, ${Math.floor(away / 60)} min passed in quiet meditation.`), 700);
