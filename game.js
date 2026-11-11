@@ -30,13 +30,13 @@
   const worldNames = ['Mortal Realm', 'Immortal Realm', 'Celestial Realm', 'Primordial Void'];
 
   const techniques = [
-    { id: 'sutra', name: 'Clear Heart Sutra', seal: '心', desc: 'A serene mind draws pure qi from the surrounding world.', base: 30, effect: 'Meditation qi +35% / rank', kind: 'qi' },
-    { id: 'array', name: 'Spirit-Gathering Array', seal: '聚', desc: 'Arrange spirit stones to coax the ley lines into motion.', base: 45, effect: 'Spirit stone yield +1 every 20 sec / rank', kind: 'stones' },
-    { id: 'body', name: 'Jade Body Tempering', seal: '玉', desc: 'Temper the mortal vessel to weather the heavenly tribulation.', base: 65, effect: 'Breakthrough chance +4% / rank', kind: 'chance' },
-    { id: 'beast', name: 'Beast Whisperer Sutra', seal: '獸', desc: 'Listen to the wild heart. Even a proud beast may bow its head.', base: 80, effect: 'Taming chance +4% / rank', kind: 'beast' },
-    { id: 'alchemy', name: 'Herb-Lore Canon', seal: '藥', desc: 'Know the nature of every leaf, root, and petal.', base: 75, effect: 'Gathering yield +3% / rank', kind: 'herb' },
-    { id: 'fortune', name: 'Karmic Divination', seal: '卜', desc: 'Read the threads of fate that gather around a fortunate soul.', base: 95, effect: 'Luck +1 / rank', kind: 'luck' },
-    { id: 'dao', name: 'Dao Heart Sutra', seal: '道', desc: 'Still the heart, and the thousand laws will speak to you.', base: 110, effect: 'Dao insight +6% / rank', kind: 'dao' }
+    { id: 'sutra', name: 'Clear Heart Sutra', seal: '心', desc: 'A serene mind draws pure qi from the surrounding world.', base: 30, req: 0, effect: 'Base qi +0.8 / rank', kind: 'qi' },
+    { id: 'array', name: 'Spirit-Gathering Array', seal: '聚', desc: 'Arrange spirit stones to coax the ley lines into motion.', base: 45, req: 2, effect: 'Spirit stone yield +1 every 20 sec / rank', kind: 'stones' },
+    { id: 'body', name: 'Jade Body Tempering', seal: '玉', desc: 'Temper the mortal vessel to weather the heavenly tribulation.', base: 65, req: 3, effect: 'Breakthrough chance +4% / rank', kind: 'chance' },
+    { id: 'beast', name: 'Beast Whisperer Sutra', seal: '獸', desc: 'Listen to the wild heart. Even a proud beast may bow its head.', base: 80, req: 5, effect: 'Taming chance +4% / rank', kind: 'beast' },
+    { id: 'alchemy', name: 'Herb-Lore Canon', seal: '藥', desc: 'Know the nature of every leaf, root, and petal.', base: 75, req: 6, effect: 'Gathering yield +3% / rank', kind: 'herb' },
+    { id: 'fortune', name: 'Karmic Divination', seal: '卜', desc: 'Read the threads of fate that gather around a fortunate soul.', base: 95, req: 8, effect: 'Luck +1 / rank', kind: 'luck' },
+    { id: 'dao', name: 'Dao Heart Sutra', seal: '道', desc: 'Still the heart, and the thousand laws will speak to you.', base: 110, req: 10, effect: 'Dao insight +6% / rank', kind: 'dao' }
   ];
   const martialArts = [
     { id: 'cloudpalm', name: 'Cloudburst Palm', seal: '雲', cost: 150, req: 1, qi: 16, damage: 26, effect: 'plain', desc: 'A compressed wave of spirit qi, the first battle art of the Azure Cloud Sect.' },
@@ -109,20 +109,20 @@
     { name: 'Dao Guardian', need: 540 }, { name: 'Immortal Patriarch', need: 800 }
   ];
   const gearCatalog = [
-    { id: 'sword', name: 'Sword', seal: '劍', tokens: 8, bonus: 'Attack +6 / level', stat: 'attack', value: 6, rarity: 'Common' },
-    { id: 'helmet', name: 'Helmet', seal: '盔', tokens: 6, bonus: 'Qi flow +4% / level', stat: 'qi', value: .04, rarity: 'Common' },
-    { id: 'gloves', name: 'Gloves', seal: '手', tokens: 6, bonus: 'Attack +3 / level', stat: 'attack', value: 3, rarity: 'Common' },
-    { id: 'pants', name: 'Pants', seal: '褲', tokens: 6, bonus: 'Max health +10 / level', stat: 'health', value: 10, rarity: 'Common' },
-    { id: 'vest', name: 'Vest', seal: '甲', tokens: 7, bonus: 'Qi flow +5% / level', stat: 'qi', value: .05, rarity: 'Rare' },
-    { id: 'shoes', name: 'Shoes', seal: '履', tokens: 5, bonus: 'Incoming damage -1 / level', stat: 'guard', value: 1, rarity: 'Common' }
+    { id: 'sword', name: 'Sword', seal: '劍', tokens: 8, reqRank: 0, bonus: 'Attack +6 / level', stat: 'attack', value: 6, rarity: 'Common' },
+    { id: 'helmet', name: 'Helmet', seal: '盔', tokens: 6, reqRank: 1, bonus: 'Qi flow +4% / level', stat: 'qi', value: .04, rarity: 'Common' },
+    { id: 'gloves', name: 'Gloves', seal: '手', tokens: 6, reqRank: 1, bonus: 'Attack +3 / level', stat: 'attack', value: 3, rarity: 'Common' },
+    { id: 'pants', name: 'Pants', seal: '褲', tokens: 6, reqRank: 2, bonus: 'Max health +10 / level', stat: 'health', value: 10, rarity: 'Common' },
+    { id: 'vest', name: 'Vest', seal: '甲', tokens: 7, reqRank: 3, bonus: 'Qi flow +5% / level', stat: 'qi', value: .05, rarity: 'Rare' },
+    { id: 'shoes', name: 'Shoes', seal: '履', tokens: 5, reqRank: 1, bonus: 'Incoming damage -1 / level', stat: 'guard', value: 1, rarity: 'Common' }
   ];
   const sectBuildings = [
-    { id: 'meditation', name: 'Meditation Hall', seal: '靜', perk: '+3% qi flow / level', desc: 'Incense and silence. The oldest engine of cultivation.' },
-    { id: 'garden', name: 'Herb Garden', seal: '藥', perk: '+5% gathering yield / level', desc: 'Spirit herbs arranged according to the five elements.' },
-    { id: 'beastpen', name: 'Beast Pen', seal: '獸', perk: '+2% taming chance / level', desc: 'A wild sanctuary where proud beasts learn trust.' },
-    { id: 'formation', name: 'Formation Hall', seal: '陣', perk: '+2% breakthrough chance / level', desc: 'Ley-line diagrams that steady the mortal vessel.' },
-    { id: 'armory', name: 'Refining Armory', seal: '器', perk: '+3% weapon power / level', desc: 'Cold anvils and hotter forge-fires.' },
-    { id: 'library', name: 'Scripture Library', seal: '卷', perk: '+10% dao insight / level', desc: 'Scrolls older than the sect itself.' }
+    { id: 'meditation', name: 'Meditation Hall', seal: '靜', reqRank: 0, perk: '+3% qi flow / level', desc: 'Incense and silence. The oldest engine of cultivation.' },
+    { id: 'garden', name: 'Herb Garden', seal: '藥', reqRank: 1, perk: '+5% gathering yield / level', desc: 'Spirit herbs arranged according to the five elements.' },
+    { id: 'beastpen', name: 'Beast Pen', seal: '獸', reqRank: 1, perk: '+2% taming chance / level', desc: 'A wild sanctuary where proud beasts learn trust.' },
+    { id: 'formation', name: 'Formation Hall', seal: '陣', reqRank: 2, perk: '+2% breakthrough chance / level', desc: 'Ley-line diagrams that steady the mortal vessel.' },
+    { id: 'armory', name: 'Refining Armory', seal: '器', reqRank: 2, perk: '+3% weapon power / level', desc: 'Cold anvils and hotter forge-fires.' },
+    { id: 'library', name: 'Scripture Library', seal: '卷', reqRank: 3, perk: '+10% dao insight / level', desc: 'Scrolls older than the sect itself.' }
   ];
   const expeditions = [
     { id: 'herbs', name: 'Gathering in the Mistwood', icon: '林', desc: 'Follow the dew trails through the foothills. Return with medicinal herbs and a modest stone offering.', duration: 25, reward: 18, loot: { herb: 3, root: 1 }, rep: 4, req: 0 },
@@ -402,8 +402,8 @@
         const rate = rateFor(fresh);
         fresh.qiToday += fresh.active ? away * rate : 0;
         fresh.medSeconds += fresh.active ? away : 0;
-        fresh.qi += away * (fresh.active ? rate : .15);
-        fresh.totalQi += away * (fresh.active ? rate : .15);
+        fresh.qi += away * (fresh.active ? rate : .5);
+        fresh.totalQi += away * (fresh.active ? rate : .5);
         fresh.stones += Math.floor(away / 8);
         fresh.dailyDate = dayIndex(fresh);
         ensureDaily(fresh);
@@ -503,14 +503,17 @@
     if ((s.fate?.luckBuffUntil || 0) > Date.now()) luck += (s.fate?.luckBuff || 0);
     return Math.round(luck * 10) / 10;
   }
+  function qiBase(s = state) {
+    return 2.5 + (s.stage || 0) * .28 + (s.upgrades?.sutra || 0) * .8 + (s.pathLevels?.spirit || 0) * .4 + (s.pathLevels?.qi || 0) * .24;
+  }
   function rateFor(s = state) {
-    const base = .8 + (s.upgrades?.sutra || 0) * .45 + (s.pathLevels?.spirit || 0) * .2 + (s.pathLevels?.qi || 0) * .12;
+    const base = qiBase(s);
     const ev = currentEvent(s);
     const mult = 1 + (s.boosts || 0) + gearStat('qi', s) + sectData(s).qi + (s.sectRank || 0) * .02
       + rootBonus('qi', s) + daoLevel('water', s) * .03 + meridianBonus('qi', s) + beastBonus('qi', s)
       + artifactBonus('qi', s) + rebirthUpgrade('qi', s) * .1 + (s.rebirth?.world || 0) * .2
       + buildingLevel('meditation', s) * .03 + (ev?.buff === 'qi' ? .5 : 0);
-    return base * mult * (s.active ? 1 : .2);
+    return base * mult * (s.active ? 1 : .35);
   }
   function attackDamage(base, s = state) {
     const w = equippedWeapon(s);
@@ -833,7 +836,7 @@
     const cardHtml = cards.map(c => `<article class="path-card ${c.cls}"><div class="path-seal">${c.seal}</div><div class="eyebrow">${c.eyebrow}</div><h2>${c.name}</h2><p>${c.desc}</p><div class="path-level">${c.label} <b>Rank ${c.level}</b></div><div class="inventory-row"><span>Training requirement</span><b>${nfmt(c.cost)} qi · ${c.id === 'qi' ? 8 : 5} stones</b></div><button class="action-btn" data-action="train-path" data-id="${c.id}" ${c.good ? '' : 'disabled'}>${c.action}</button><small class="subtle">Every 5 ranks grants 1 meridian point.</small></article>`).join('');
     $('view-paths').innerHTML = `${subHead('THREE WAYS TO IMMORTALITY', 'Choose your cultivation path', 'Train the mortal vessel, refine the soul, or perfect the breath. All paths remain open, and each grants its own battle art.', '☯')}
       <div class="path-choice-grid three">${cardHtml}</div>
-      <article class="content-panel path-note"><div class="eyebrow">YOUR FOUNDATION</div><h2>Neither path is a dead end</h2><p>Body training raises health and physical damage. Spirit training improves spirit-arts damage and meditation. Qi training accelerates qi flow and meridian recovery. Invest in any—or balance all three.</p><div class="feature-stats"><span>BODY RANK <b>${bodyLevel}</b></span><span>SPIRIT RANK <b>${spiritLevel}</b></span><span>QI RANK <b>${qiLevel}</b></span><span>QI FLOW <b>${rateFor().toFixed(1)} / sec</b></span><span>MAX HEALTH <b>${maxHpFor()}</b></span></div></article>
+      <article class="content-panel path-note"><div class="eyebrow">YOUR FOUNDATION</div><h2>Neither path is a dead end</h2><p>Body training raises health and physical damage. Spirit training improves spirit-arts damage and meditation. Qi training accelerates qi flow and meridian recovery. Invest in any—or balance all three.</p><p class="small-note">Base qi growth: ${qiBase().toFixed(1)} qi/sec at stage ${state.stage}. Every realm, spirit rank, qi rank and rank of the Clear Heart Sutra adds to it.</p><div class="feature-stats"><span>BODY RANK <b>${bodyLevel}</b></span><span>SPIRIT RANK <b>${spiritLevel}</b></span><span>QI RANK <b>${qiLevel}</b></span><span>QI FLOW <b>${rateFor().toFixed(1)} / sec</b></span><span>MAX HEALTH <b>${maxHpFor()}</b></span></div></article>
       <article class="content-panel"><div class="eyebrow">THE HEAVENLY TRIBULATION</div><h2>Major realms are guarded</h2><p>At the threshold of every major realm, heaven sends a tribulation. Its success chance is lower than an ordinary breakthrough, but the rewards are far greater: meridian points, dao insight, realm keys and root essence. Prepare pills, formations and meridians before you step forward.</p><div class="stat-pills"><span class="stat-pill gold">Current chance · ${breakChance()}%</span><span class="stat-pill ${isMajor(state.stage + 1) ? 'red' : 'green'}">Next threshold · ${isMajor(state.stage + 1) ? 'Heavenly Tribulation' : 'Ordinary'}</span><span class="stat-pill">Meridian points · ${state.meridians.points}</span><span class="stat-pill violet">Dao insight · ${state.daoPoints}</span></div></article>`;
   }
 
@@ -850,15 +853,17 @@
     } else {
       const cards = techniques.map(t => {
         const level = state.upgrades[t.id] || 0, cost = Math.ceil(t.base * Math.pow(level + 1, 1.55));
-        return `<article class="technique-card"><div class="tech-seal">${t.seal}</div><div class="tech-copy"><h3>${t.name}</h3><p>${t.desc}</p><div class="tech-level">RANK ${level} · ${t.effect}</div></div><button class="buy-btn" data-action="upgrade" data-id="${t.id}" ${state.stones < cost ? 'disabled' : ''}>Attune<span>◇ ${cost}</span></button></article>`;
+        const locked = state.stage < t.req;
+        const can = !locked && state.stones >= cost;
+        return `<article class="technique-card"><div class="tech-seal">${t.seal}</div><div class="tech-copy"><h3>${t.name}</h3><p>${t.desc}</p><div class="tech-level">RANK ${level} · ${t.effect}${locked ? ` · REQUIRES STAGE ${t.req}` : ''}</div></div><button class="buy-btn" data-action="upgrade" data-id="${t.id}" ${can ? '' : 'disabled'}>${locked ? 'Locked' : 'Attune'}<span>${locked ? `Stage ${t.req}` : `◇ ${cost}`}</span></button></article>`;
       }).join('');
-      body = `<article class="content-panel"><div class="eyebrow">SEVEN SCROLLS AWAIT</div><h2>Choose what to cultivate</h2><p>Each technique may be attuned again and again. Higher ranks demand more spirit stones, but their effects endure.</p>${cards}</article>`;
+      body = `<article class="content-panel"><div class="eyebrow">SEVEN SCROLLS AWAIT</div><h2>Choose what to cultivate</h2><p>Each technique may be attuned again and again. Higher ranks demand more spirit stones, but their effects endure. Deeper sutras unlock at stages 2, 3, 5, 6, 8 and 10.</p>${cards}</article>`;
     }
     $('view-techniques').innerHTML = `${subHead('THE SECT LIBRARY', 'Cultivation techniques', 'Master ancient arts to deepen your foundation, or learn battle arts to break your limits.', '☯')}
       ${tabs('techniques', [['passive', 'Passive sutras'], ['arts', 'Martial arts']])}
       <div class="subview-layout"><div class="subview-main">${body}</div><aside class="subview-aside">
-      <article class="feature-card"><div class="eyebrow">CURRENTLY PRACTICING</div><h3>${state.active ? 'Clear your mind' : 'A quiet mind is a clear vessel'}</h3><p>${state.active ? `Your breath gathers ${rateFor().toFixed(1)} qi each second. Let the cycle continue.` : 'Begin meditation from the Cultivation Grove to gather vital essence even while you explore the sect.'}</p><div class="feature-stats"><span>QI FLOW <b>${rateFor().toFixed(1)} / sec</b></span><span>BREAKTHROUGH <b>${breakChance()}%</b></span><span>ARTS LEARNED <b>${state.activeArts.length} / ${martialArts.length}</b></span></div></article>
-      <article class="content-panel"><div class="eyebrow">LEARNER'S NOTE</div><h2>Attunement</h2><p>Spend spirit stones to bind a scroll to your meridians. Effects are permanent and stack with each rank. Martial arts are learned once and can be used in every battle.</p><div class="inventory-row"><span>Spirit stones</span><b>◇ ${nfmt(state.stones)}</b></div></article>
+      <article class="feature-card"><div class="eyebrow">CURRENTLY PRACTICING</div><h3>${state.active ? 'Clear your mind' : 'A quiet mind is a clear vessel'}</h3><p>${state.active ? `Your breath gathers ${rateFor().toFixed(1)} qi each second — ${qiBase().toFixed(1)} base before bonuses. Let the cycle continue.` : `Base qi growth is ${qiBase().toFixed(1)} per second. Begin meditation from the Cultivation Grove to gather vital essence even while you explore the sect.`}</p><div class="feature-stats"><span>QI FLOW <b>${rateFor().toFixed(1)} / sec</b></span><span>BREAKTHROUGH <b>${breakChance()}%</b></span><span>ARTS LEARNED <b>${state.activeArts.length} / ${martialArts.length}</b></span></div></article>
+      <article class="content-panel"><div class="eyebrow">LEARNER'S NOTE</div><h2>Attunement</h2><p>Spend spirit stones to bind a scroll to your meridians. Effects are permanent and stack with each rank. Martial arts are learned once and can be used in every battle. Higher sutras require deeper realms.</p><div class="inventory-row"><span>Spirit stones</span><b>◇ ${nfmt(state.stones)}</b></div><div class="inventory-row"><span>Current realm</span><b>${realmTitle()}</b></div></article>
       </aside></div>`;
   }
 
@@ -986,7 +991,10 @@
   function renderSectOverview() {
     const rank = sectRanks[state.sectRank] || sectRanks[0], next = sectRanks[state.sectRank + 1];
     const progress = next ? Math.min(100, state.sectRep / next.need * 100) : 100;
-    const sectCards = Object.entries(sects).map(([id, sect]) => `<article class="sect-choice ${state.sectId === id ? 'selected' : ''}"><div class="tech-seal">${sect.seal}</div><h3>${sect.name}</h3><p>${sect.bonus}</p><button class="action-btn" data-action="join-sect" data-id="${id}" ${state.sectId === id ? 'disabled' : ''}>${state.sectId === id ? 'Current sect' : 'Join sect'}</button></article>`).join('');
+    const sectCards = Object.entries(sects).map(([id, sect]) => {
+      const stageLocked = state.stage < 4 && state.sectId !== id;
+      return `<article class="sect-choice ${state.sectId === id ? 'selected' : ''}"><div class="tech-seal">${sect.seal}</div><h3>${sect.name}</h3><p>${sect.bonus}</p>${stageLocked ? '<div class="tech-level">REQUIRES STAGE 4</div>' : ''}<button class="action-btn" data-action="join-sect" data-id="${id}" ${state.sectId === id || stageLocked ? 'disabled' : ''}>${state.sectId === id ? 'Current sect' : stageLocked ? 'Requires stage 4' : 'Join sect'}</button></article>`;
+    }).join('');
     const ranks = sectRanks.map((r, i) => `<div class="sect-rank ${i <= state.sectRank ? 'unlocked' : ''}"><span>${i <= state.sectRank ? '✦' : '·'}</span><div><b>${r.name}</b><small>${r.need} merit</small></div>${i === state.sectRank ? '<em>CURRENT</em>' : ''}</div>`).join('');
     return `<div class="subview-layout"><div class="subview-main"><article class="content-panel"><div class="eyebrow">CHOOSE YOUR ALLIANCE</div><h2>Three sects, three disciplines</h2><div class="sect-choice-grid">${sectCards}</div><div class="feature-stats"><span>SECT RANK BONUS <b>+${state.sectRank * 3}% attack · +${state.sectRank * 2}% qi</b></span><span>FACTION BONUS <b>${sectData().bonus}</b></span><span>BUILDINGS <b>${Object.values(state.sectBuildings).reduce((a, b) => a + b, 0)} levels</b></span></div></article>
     <article class="content-panel sect-progress"><div class="eyebrow">YOUR STANDING · ${sectData().name}</div><h2>${rank.name}</h2><p>${next ? `${next.need - state.sectRep} merit until promotion to ${next.name}.` : 'You have reached the highest sect rank.'}</p><div class="mini-track"><i style="width:${progress}%"></i></div><div class="inventory-row"><span>Sect merit</span><b>${state.sectRep} / ${next?.need || 'MAX'}</b></div><div class="inventory-row"><span>Sect tokens</span><b>✦ ${nfmt(state.sectTokens)}</b></div><button class="action-btn" data-action="donate" ${state.stones < 10 || !next ? 'disabled' : ''}>Donate 10 spirit stones · +4 merit</button></article>
@@ -1016,21 +1024,25 @@
       const lv = buildingLevel(b.id);
       const stones = Math.round(120 * Math.pow(1.65, lv));
       const tokens = 8 * (lv + 1);
-      const can = lv < 10 && state.stones >= stones && state.sectTokens >= tokens;
-      return `<article class="building-card"><div class="tech-seal">${b.seal}</div><h3>${b.name}</h3><p>${b.desc}</p><div class="building-level"><span>LEVEL ${lv} / 10</span><span>${b.perk}</span></div>${progressLine(lv, 10)}<button class="action-btn" data-action="upgrade-building" data-id="${b.id}" ${can ? '' : 'disabled'}>${lv >= 10 ? 'Fully built' : `Upgrade · ◇ ${nfmt(stones)} · ✦ ${tokens}`}</button></article>`;
+      const rankLocked = state.sectRank < (b.reqRank || 0);
+      const rankName = sectRanks[b.reqRank || 0]?.name || 'Outer Disciple';
+      const can = lv < 10 && !rankLocked && state.stones >= stones && state.sectTokens >= tokens;
+      return `<article class="building-card ${rankLocked ? 'locked' : ''}"><div class="tech-seal">${b.seal}</div><h3>${b.name}</h3><p>${b.desc}</p><div class="building-level"><span>LEVEL ${lv} / 10</span><span>${b.perk}</span></div>${rankLocked ? `<div class="tech-level">REQUIRES ${rankName.toUpperCase()}</div>` : ''}${progressLine(lv, 10)}<button class="action-btn" data-action="upgrade-building" data-id="${b.id}" ${can ? '' : 'disabled'}>${lv >= 10 ? 'Fully built' : rankLocked ? `Requires ${rankName}` : `Upgrade · ◇ ${nfmt(stones)} · ✦ ${tokens}`}</button></article>`;
     }).join('');
-    return `<div class="subview-layout"><div class="subview-main"><article class="content-panel"><div class="eyebrow">SECT CONSTRUCTION · TOKENS ${nfmt(state.sectTokens)}</div><h2>Raise the halls</h2><p>Buildings grant permanent bonuses to every disciple. Each level costs spirit stones and sect tokens, and the price rises with each rank.</p><div class="building-grid">${cards}</div></article></div>
+    return `<div class="subview-layout"><div class="subview-main"><article class="content-panel"><div class="eyebrow">SECT CONSTRUCTION · TOKENS ${nfmt(state.sectTokens)}</div><h2>Raise the halls</h2><p>Buildings grant permanent bonuses to every disciple. Each level costs spirit stones and sect tokens; deeper halls open as your sect rank rises.</p><div class="building-grid">${cards}</div></article></div>
     <aside class="subview-aside"><article class="feature-card"><div class="eyebrow">BUILDING BONUSES</div><h3>Strong foundations</h3><p>Meditation Hall · qi flow<br>Herb Garden · gathering<br>Beast Pen · taming<br>Formation Hall · breakthrough<br>Refining Armory · weapon power<br>Scripture Library · dao insight</p><div class="feature-stats"><span>TOTAL LEVELS <b>${Object.values(state.sectBuildings).reduce((a, b) => a + b, 0)}</b></span></div></article></aside></div>`;
   }
   function renderArmory() {
     const equipment = gearCatalog.map(item => {
       const gear = state.equipment[item.id], upgradeCost = 35 * (gear.level + 1);
-      return `<article class="gear-card ${rarityClass(item.rarity)}"><div class="tech-seal">${item.seal}</div><h3>${item.name}</h3><span class="rarity-tag">${item.rarity.toUpperCase()}</span><p>${item.bonus}</p><div class="tech-level">${gear.owned ? `EQUIPPED · LEVEL ${gear.level}` : 'NOT OWNED'}</div>${gear.owned ? `<button class="action-btn" data-action="upgrade-gear" data-id="${item.id}" ${state.stones < upgradeCost || gear.level >= 10 ? 'disabled' : ''}>${gear.level >= 10 ? 'Max level' : `Upgrade · ◇ ${upgradeCost}`}</button>` : `<button class="action-btn" data-action="buy-gear" data-id="${item.id}" ${state.sectTokens < item.tokens ? 'disabled' : ''}>Buy · ${item.tokens} sect tokens</button>`}</article>`;
+      const rankLocked = state.sectRank < (item.reqRank || 0);
+      const rankName = sectRanks[item.reqRank || 0]?.name || 'Outer Disciple';
+      return `<article class="gear-card ${rarityClass(item.rarity)}"><div class="tech-seal">${item.seal}</div><h3>${item.name}</h3><span class="rarity-tag">${item.rarity.toUpperCase()}</span><p>${item.bonus}</p><div class="tech-level">${gear.owned ? `EQUIPPED · LEVEL ${gear.level}` : rankLocked ? `REQUIRES ${rankName.toUpperCase()}` : 'NOT OWNED'}</div>${gear.owned ? `<button class="action-btn" data-action="upgrade-gear" data-id="${item.id}" ${state.stones < upgradeCost || gear.level >= 10 || rankLocked ? 'disabled' : ''}>${rankLocked ? `Requires ${rankName}` : gear.level >= 10 ? 'Max level' : `Upgrade · ◇ ${upgradeCost}`}</button>` : `<button class="action-btn" data-action="buy-gear" data-id="${item.id}" ${rankLocked || state.sectTokens < item.tokens ? 'disabled' : ''}>${rankLocked ? `Requires ${rankName}` : `Buy · ${item.tokens} sect tokens`}</button>`}</article>`;
     }).join('');
     const weapon = equippedWeapon();
-    return `<div class="subview-layout"><div class="subview-main"><article class="content-panel"><div class="eyebrow">ARMORY · TOKENS ${nfmt(state.sectTokens)} · STONES ${nfmt(state.stones)}</div><h2>Equipment and refinement</h2><p>Buy each gear piece with sect tokens, then spend spirit stones to upgrade its bonus. Advanced weapons and artifacts are forged in the Forge.</p><div class="gear-grid">${equipment}</div></article>
+    return `<div class="subview-layout"><div class="subview-main"><article class="content-panel"><div class="eyebrow">ARMORY · TOKENS ${nfmt(state.sectTokens)} · STONES ${nfmt(state.stones)}</div><h2>Equipment and refinement</h2><p>Buy each gear piece with sect tokens, then spend spirit stones to upgrade its bonus. Better gear is reserved for higher sect ranks; advanced weapons and artifacts are forged in the Forge.</p><div class="gear-grid">${equipment}</div></article>
     <article class="content-panel"><div class="eyebrow">CURRENT WEAPON</div><h2>${weapon ? weapon.name : 'No weapon equipped'}</h2><p>${weapon ? `${weapon.rarity} · +${weapon.totalAttack} attack · Refine ${weapon.refine}/10${weapon.awakened ? ' · Awakened' : ''}` : 'A cultivator without a weapon is still dangerous, but not as dangerous as one with a legendary blade.'}</p><button class="action-btn" data-view="forge">Open the forge</button></article></div>
-    <aside class="subview-aside"><article class="feature-card"><div class="eyebrow">ARMORY KEEPER</div><h3>Tokens well spent</h3><p>Gear provides flat attack, qi flow, health and guard. Refinement in the Forge multiplies a weapon’s base attack and can awaken a unique ability.</p><div class="feature-stats"><span>ATTACK <b>${attackDamage(0)}</b></span><span>GUARD <b>${guardFor()}</b></span><span>MAX HP <b>${maxHpFor()}</b></span></div></article></aside></div>`;
+    <aside class="subview-aside"><article class="feature-card"><div class="eyebrow">ARMORY KEEPER</div><h3>Tokens well spent</h3><p>Gear provides flat attack, qi flow, health and guard. Refinement in the Forge multiplies a weapon’s base attack and can awaken a unique ability. Raise your sect rank to unlock the full armory.</p><div class="feature-stats"><span>ATTACK <b>${attackDamage(0)}</b></span><span>GUARD <b>${guardFor()}</b></span><span>MAX HP <b>${maxHpFor()}</b></span></div></article></aside></div>`;
   }
 
   /* ---------------- INNER DAO ---------------- */
@@ -2059,6 +2071,7 @@
   /* ---------------- CORE ACTIONS ---------------- */
   function buyUpgrade(id) {
     const t = techniques.find(x => x.id === id); if (!t) return;
+    if (state.stage < (t.req || 0)) return showToast(`${t.name} requires stage ${t.req}.`);
     const rank = state.upgrades[id] || 0, cost = Math.ceil(t.base * Math.pow(rank + 1, 1.55));
     if (state.stones < cost) return showToast('Not enough spirit stones.');
     state.stones -= cost; state.upgrades[id] = rank + 1;
@@ -2136,6 +2149,7 @@
   }
   function joinSect(id) {
     if (!sects[id] || id === state.sectId) return;
+    if (state.stage < 4) return showToast('Switching sects requires stage 4.');
     state.sectId = id;
     showToast(`You have joined the ${sects[id].name} Sect. Its arts and beasts await.`);
     save(); render();
@@ -2158,7 +2172,9 @@
   }
   function buyGear(id) {
     const item = gearCatalog.find(entry => entry.id === id);
-    if (!item || state.equipment[id]?.owned || state.sectTokens < item.tokens) return showToast('You need more sect tokens to buy that equipment.');
+    if (!item || state.equipment[id]?.owned) return;
+    if (state.sectRank < (item.reqRank || 0)) return showToast(`${item.name} requires the rank of ${sectRanks[item.reqRank]?.name || 'a higher disciple'}.`);
+    if (state.sectTokens < item.tokens) return showToast('You need more sect tokens to buy that equipment.');
     state.sectTokens -= item.tokens;
     state.equipment[id] = { owned: true, level: 1 };
     showToast(`${item.name} equipped · ${item.bonus}.`);
@@ -2183,6 +2199,7 @@
     const def = sectBuildings.find(b => b.id === id); if (!def) return;
     const lv = buildingLevel(id), stones = Math.round(120 * Math.pow(1.65, lv)), tokens = 8 * (lv + 1);
     if (lv >= 10) return showToast('This hall is fully built.');
+    if (state.sectRank < (def.reqRank || 0)) return showToast(`${def.name} requires the rank of ${sectRanks[def.reqRank]?.name || 'a higher disciple'}.`);
     if (state.stones < stones || state.sectTokens < tokens) return showToast(`Upgrading needs ◇ ${nfmt(stones)} and ✦ ${tokens} tokens.`);
     state.stones -= stones; state.sectTokens -= tokens; state.sectBuildings[id] = lv + 1;
     showToast(`${def.name} raised to level ${lv + 1} · ${def.perk}.`);
