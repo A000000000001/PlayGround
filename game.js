@@ -75,7 +75,13 @@
     { id: 'shoes', name: 'Shoes', seal: '履', tokens: 5, bonus: 'Incoming damage -1 / level', stat: 'guard', value: 1, minStage: 22 }
   ];
   const emptyEquipment = () => Object.fromEntries(gearCatalog.map(item => [item.id, { owned: false, level: 0 }]));
-  const defaultState = () => ({ qi: 0, stones: 25, stage: 0, active: false, totalSeconds: 0, totalQi: 0, qiToday: 0, medSeconds: 0, expeditions: 0, completedTrips: 0, trip: null, upgrades: { sutra: 0, array: 0, body: 0 }, boosts: 0, teaUntil: 0, dailyClaimed: false, dailyDate: 1, brews: 0, milestones: [], lastSeen: Date.now(), hp: 60, maxHp: 60, enemy: null, pathLevels: { body: 0, spirit: 0 }, pathProgress: { qi: 0, body: 0 }, herbs: { herb: 0, root: 0, flower: 0 }, sectRep: 0, sectRank: 0, tripToday: 0, sectId: 'azure', sectTokens: 0, mission: null, equipment: emptyEquipment() });
+  const companionCatalog = [
+    { id: 'fox', name: 'Emberfox', seal: '狐', title: 'Cinder-tailed familiar', desc: 'A bright little spirit that stokes the qi within your meridians.', minStage: 1, cost: 50, stat: 'qi', value: .08, effect: '+8% qi flow per bond rank' },
+    { id: 'crane', name: 'Jadewing Crane', seal: '鶴', title: 'Keeper of the high mists', desc: 'Its keen gaze finds openings in even the most guarded beast.', minStage: 4, cost: 150, stat: 'attack', value: .06, effect: '+6% attack damage per bond rank' },
+    { id: 'tortoise', name: 'Mossback Tortoise', seal: '龜', title: 'Ancient shell of the valley', desc: 'A patient guardian that lends its resilience to your body.', minStage: 10, cost: 300, stat: 'health', value: .1, guard: .5, effect: '+10% max health and +0.5 guard per rank' }
+  ];
+  const emptyCompanions = () => Object.fromEntries(companionCatalog.map(item => [item.id, { owned: false, level: 0 }]));
+  const defaultState = () => ({ qi: 0, stones: 25, stage: 0, active: false, totalSeconds: 0, totalQi: 0, qiToday: 0, medSeconds: 0, expeditions: 0, completedTrips: 0, trip: null, upgrades: { sutra: 0, array: 0, body: 0 }, boosts: 0, teaUntil: 0, dailyClaimed: false, dailyDate: 1, brews: 0, milestones: [], lastSeen: Date.now(), hp: 60, maxHp: 60, enemy: null, pathLevels: { body: 0, spirit: 0 }, pathProgress: { qi: 0, body: 0 }, herbs: { herb: 0, root: 0, flower: 0 }, sectRep: 0, sectRank: 0, tripToday: 0, sectId: 'azure', sectTokens: 0, mission: null, equipment: emptyEquipment(), companions: emptyCompanions(), activeCompanion: null });
   let state = loadState();
   let activeView = 'cultivate';
   let toastTimer;
@@ -87,7 +93,7 @@
       const saved = JSON.parse(localStorage.getItem(SAVE_KEY));
       if (!saved) return defaultState();
       const defaults = defaultState();
-      const fresh = { ...defaults, ...saved, upgrades: { ...defaults.upgrades, ...(saved.upgrades || {}) }, pathLevels: { ...defaults.pathLevels, ...(saved.pathLevels || {}) }, pathProgress: { ...defaults.pathProgress, ...(saved.pathProgress || {}) }, herbs: { ...defaults.herbs, ...(saved.herbs || {}) }, equipment: { ...defaults.equipment, ...(saved.equipment || {}) }, milestones: saved.milestones || [] };
+      const fresh = { ...defaults, ...saved, upgrades: { ...defaults.upgrades, ...(saved.upgrades || {}) }, pathLevels: { ...defaults.pathLevels, ...(saved.pathLevels || {}) }, pathProgress: { ...defaults.pathProgress, ...(saved.pathProgress || {}) }, herbs: { ...defaults.herbs, ...(saved.herbs || {}) }, equipment: { ...defaults.equipment, ...(saved.equipment || {}) }, companions: { ...defaults.companions, ...(saved.companions || {}) }, milestones: saved.milestones || [] };
       fresh.stage = Math.max(0, Math.floor(Number(fresh.stage) || 0));
       fresh.pathLevels.body = Math.max(0, Math.floor(Number(fresh.pathLevels.body) || 0));
       fresh.pathLevels.spirit = Math.max(0, Math.floor(Number(fresh.pathLevels.spirit) || 0));
@@ -96,6 +102,13 @@
       fresh.pathProgress.body = Math.max(0, Math.floor(Number(saved.pathProgress?.body ?? saved.pathLevels?.body) || 0));
       fresh.pathLevels.body = Math.max(fresh.pathLevels.body, fresh.pathProgress.body);
       Object.keys(fresh.equipment).forEach(id => { fresh.equipment[id] = { owned: false, level: 0, ...(fresh.equipment[id] || {}) }; });
+      companionCatalog.forEach(item => {
+        const companion = fresh.companions[item.id] || {};
+        const owned = Boolean(companion.owned);
+        const level = Math.floor(Number(companion.level) || 0);
+        fresh.companions[item.id] = { owned, level: owned ? Math.min(10, Math.max(1, level)) : 0 };
+      });
+      if (!companionCatalog.some(item => item.id === fresh.activeCompanion && fresh.companions[item.id]?.owned)) fresh.activeCompanion = null;
       if (!sects[fresh.sectId]) fresh.sectId = 'azure';
       fresh.maxHp = Math.max(60, Number(fresh.maxHp) || 60);
       fresh.hp = Math.max(0, Math.min(fresh.maxHp, Number(fresh.hp ?? fresh.maxHp)));
@@ -173,8 +186,18 @@
   function bodyFloorRequirement(floor = state.pathProgress.body) { return 50 + floor * 45; }
   function sectData(s = state) { return sects[s.sectId] || sects.azure; }
   function gearStat(stat, s = state) { return gearCatalog.reduce((sum, item) => sum + (item.stat === stat && s.equipment?.[item.id]?.owned ? item.value * s.equipment[item.id].level : 0), 0); }
-  function attackDamage(base) { return Math.round((base + pathBonus('body', state.pathProgress.body) + gearStat('attack')) * (1 + sectData().attack + state.sectRank * .03)); }
-  function rateFor(s = state) { return (0.8 + s.upgrades.sutra * .45 + (s.pathLevels?.spirit || 0) * .2) * (1 + s.boosts + gearStat('qi', s) + sectData(s).qi + s.sectRank * .02 + pathBonus('qi', s.pathProgress?.qi || s.stage)) * (s.active ? 1 : .2); }
+  function activeCompanion(s = state) { return companionCatalog.find(item => item.id === s.activeCompanion && s.companions?.[item.id]?.owned) || null; }
+  function companionLevel(id, s = state) { return s.companions?.[id]?.owned ? s.companions[id].level : 0; }
+  function attackDamage(base) {
+    const companion = activeCompanion();
+    const bonus = companion?.stat === 'attack' ? companion.value * companionLevel(companion.id) : 0;
+    return Math.round((base + pathBonus('body', state.pathProgress.body) + gearStat('attack')) * (1 + sectData().attack + state.sectRank * .03 + bonus));
+  }
+  function rateFor(s = state) {
+    const companion = activeCompanion(s);
+    const companionBonus = companion?.stat === 'qi' ? companion.value * companionLevel(companion.id, s) : 0;
+    return (0.8 + s.upgrades.sutra * .45 + (s.pathLevels?.spirit || 0) * .2) * (1 + s.boosts + gearStat('qi', s) + sectData(s).qi + s.sectRank * .02 + pathBonus('qi', s.pathProgress?.qi || s.stage) + companionBonus) * (s.active ? 1 : .2);
+  }
   function currentSpell() { return sectSpells[state.sectId] || sectSpells.azure; }
   function damageEnemy(damage, source) {
     const enemy = state.enemy;
@@ -188,7 +211,9 @@
       showToast(`${enemy.name} defeated · +${enemy.stones} stones · +${enemy.rep} merit${enemy.drop ? ` · ${enemy.drop} gathered` : ''}`);
       return;
     }
-    const taken = Math.max(1, enemy.damage - Math.floor(state.pathLevels.body / 2) - Math.floor(gearStat('guard')));
+    const companion = activeCompanion();
+    const companionGuard = companion?.stat === 'health' ? companion.guard * companionLevel(companion.id) : 0;
+    const taken = Math.max(1, enemy.damage - Math.floor(state.pathLevels.body / 2) - Math.floor(gearStat('guard') + companionGuard));
     state.hp = Math.max(0, state.hp - taken);
     if (state.hp <= 0) {
       state.enemy = null; state.hp = Math.max(1, Math.floor(state.maxHp * .35));
@@ -239,7 +264,9 @@
     const control = Math.max(1, 1 + state.stage + state.upgrades.sutra * 2);
     const spirit = Math.max(1, 1 + Math.floor(state.stage / 2) + state.upgrades.array * 2 + state.pathLevels.spirit * 3);
     const body = Math.max(1, 1 + state.stage + state.upgrades.body * 2 + state.pathLevels.body * 3);
-    state.maxHp = Math.max(60, 60 + body * 5 + state.pathLevels.body * 12 + pathBonus('body', state.pathProgress.body) * 3 + state.sectRank * 10 + gearStat('health'));
+    const companion = activeCompanion();
+    const companionHealth = companion?.stat === 'health' ? companion.value * companionLevel(companion.id) : 0;
+    state.maxHp = Math.max(60, Math.floor((60 + body * 5 + state.pathLevels.body * 12 + pathBonus('body', state.pathProgress.body) * 3 + state.sectRank * 10 + gearStat('health')) * (1 + companionHealth)));
     state.hp = Math.min(state.hp, state.maxHp);
     $('sectRankLabel').textContent = sectRanks[state.sectRank]?.name || sectRanks[0].name;
     $('sectName').textContent = sectData().name;
@@ -266,6 +293,21 @@
     $('techCount').textContent = `${Object.values(state.upgrades).reduce((a,b)=>a+b,0)}/∞`;
     $('expDot').classList.toggle('hidden', !(state.trip && Date.now() >= state.trip.ends));
     renderPath(); renderSubView();
+  }
+  function renderCompanions() {
+    const cards = companionCatalog.map(item => {
+      const bond = state.companions[item.id];
+      const locked = state.stage < item.minStage;
+      const bondCost = Math.ceil(item.cost * .6 * Math.max(1, bond.level));
+      const active = state.activeCompanion === item.id;
+      let button;
+      if (!bond.owned) button = `<button class="action-btn" data-action="acquire-companion" data-id="${item.id}" ${locked || state.stones < item.cost ? 'disabled' : ''}>${locked ? `Requires stage ${item.minStage}` : `Form bond · ◇ ${item.cost}`}</button>`;
+      else button = `<button class="action-btn" data-action="bond-companion" data-id="${item.id}" ${state.stones < bondCost || bond.level >= 10 ? 'disabled' : ''}>${bond.level >= 10 ? 'Bond maxed' : `Deepen bond · ◇ ${bondCost}`}</button><button class="action-btn companion-toggle" data-action="toggle-companion" data-id="${item.id}">${active ? 'Traveling with you · dismiss' : 'Choose as companion'}</button>`;
+      return `<article class="companion-card ${locked ? 'companion-locked' : ''} ${active ? 'companion-active' : ''}"><div class="companion-seal">${item.seal}</div><div class="eyebrow">${locked ? `STAGE ${item.minStage} · MYSTERIOUS SPIRIT` : bond.owned ? active ? 'ACTIVE COMPANION' : 'BONDED SPIRIT' : 'SPIRIT SEEKING A BOND'}</div><h2>${item.name}</h2><div class="companion-title">${item.title}</div><p>${item.desc}</p><div class="companion-level">BOND RANK <b>${bond.owned ? bond.level : '—'}</b></div><div class="path-bonus-line">${item.effect}</div>${locked ? `<div class="path-warning">This spirit reveals itself at cultivation stage ${item.minStage}.</div>` : ''}${button}</article>`;
+    }).join('');
+    const companion = activeCompanion();
+    const activeText = companion ? `${companion.name} · rank ${companionLevel(companion.id)}` : 'No companion chosen';
+    $('view-companions').innerHTML = `${subHead('FAMILIARS OF THE IMMORTAL WAY', 'Spirit companions', 'Discover spiritual beasts, form a lasting bond, and travel with one companion whose gift grows with your trust.', '靈')}<div class="subview-layout"><div class="subview-main"><article class="content-panel"><div class="eyebrow">SPIRITS OF THE WILDERNESS</div><h2>Seek a faithful companion</h2><p>Spend spirit stones to invite a spirit into your life, then deepen its bond for stronger benefits. Only one companion can accompany you at a time.</p><div class="companion-grid">${cards}</div></article></div><aside class="subview-aside"><article class="feature-card"><div class="eyebrow">YOUR COMPANION</div><h3>${activeText}</h3><p>${companion ? `${companion.name} grants ${companion.effect.toLowerCase()}. Its gift is included in your cultivation and battle attributes.` : 'Choose one of your bonded spirits to receive its passive gift. Companions remain yours when dismissed.'}</p><div class="feature-stats"><span>BONDED SPIRITS <b>${Object.values(state.companions).filter(item => item.owned).length} / ${companionCatalog.length}</b></span><span>AVAILABLE STONES <b>◇ ${nfmt(state.stones)}</b></span></div></article><article class="content-panel"><div class="eyebrow">BONDING PRACTICE</div><h2>Trust grows through care</h2><p>Each bond rank improves that spirit’s unique gift. Rank costs increase with the spirit’s rarity; a spirit can reach rank 10.</p><div class="inventory-row"><span>Qi flow</span><b>${rateFor().toFixed(1)} / sec</b></div><div class="inventory-row"><span>Battle power</span><b>${activeCompanion()?.stat === 'attack' ? 'Companion enhanced' : 'Ready'}</b></div></article></aside></div>`;
   }
   function renderPath() {
     const milestones = [0, 1, 10, 13, 16, 19, 22];
@@ -351,6 +393,7 @@
     $('view-sect').innerHTML = `${subHead('THE GREAT SECTS', 'Sect Hall', 'Choose a sect, complete its missions, and earn the gear to strengthen your path.', sectData().seal)}<div class="subview-layout"><div class="subview-main"><article class="content-panel"><div class="eyebrow">CHOOSE YOUR ALLIANCE</div><h2>Three sects, three disciplines</h2><div class="sect-choice-grid">${sectCards}</div><div class="feature-stats"><span>SECT RANK BONUS <b>+${state.sectRank * 3}% attack · +${state.sectRank * 2}% qi</b></span><span>FACTION BONUS <b>${sectData().bonus}</b></span></div></article><article class="content-panel sect-progress"><div class="eyebrow">YOUR STANDING · ${sectData().name}</div><h2>${rank.name}</h2><p>${next ? `${next.need - state.sectRep} merit until promotion to ${next.name}.` : 'You have reached the highest sect rank.'}</p><div class="mini-track"><i style="width:${progress}%"></i></div><div class="inventory-row"><span>Sect merit</span><b>${state.sectRep} / ${next?.need || 'MAX'}</b></div><button class="action-btn" data-action="donate" ${state.stones < 10 || !next ? 'disabled' : ''}>Donate 10 spirit stones · +4 merit</button></article><article class="content-panel"><div class="eyebrow">SECT MISSIONS</div><h2>Earn tokens and merit</h2><p>Complete beast-hunting assignments to earn sect tokens, spirit stones, and promotion merit.</p><div class="inventory-row"><span>Sect tokens</span><b>✦ ${nfmt(state.sectTokens)}</b></div>${missionPanel}</article><article class="content-panel"><div class="eyebrow">ARMORY · TOKENS ${nfmt(state.sectTokens)} · STONES ${nfmt(state.stones)}</div><h2>Equipment and refinement</h2><p>Buy each gear piece with sect tokens, then spend spirit stones to upgrade its bonus.</p><div class="gear-grid">${equipment}</div></article><article class="content-panel"><div class="eyebrow">THE LADDER OF SERVICE</div><h2>Disciple ranks</h2><div class="sect-rank-list">${ranks}</div></article></div><aside class="subview-aside"><article class="feature-card"><div class="eyebrow">${sectData().name}</div><h3>Your sect empowers your cultivation</h3><p>Promotions strengthen your attacks and qi flow. Gear adds further bonuses, while your sect's unique spell is available in combat.</p><div class="feature-stats"><span>CURRENT RANK <b>${rank.name}</b></span><span>MAX HEALTH <b>${state.maxHp}</b></span><span>ATTACK BONUS <b>+${Math.round((sectData().attack + state.sectRank * .03) * 100)}%</b></span><span>QI FLOW BONUS <b>+${Math.round((sectData().qi + state.sectRank * .02 + gearStat('qi')) * 100)}%</b></span></div></article><article class="content-panel"><div class="eyebrow">SECT SERVICE</div><h2>Rise together</h2><p>Defeat beasts to earn merit and progress your active mission. Every promotion also grants +10 maximum health.</p></article></aside></div>`;
   }
   function renderSubView() {
+    if (activeView === 'companions') renderCompanions();
     if (activeView === 'paths') renderPaths();
     if (activeView === 'combat') renderCombat();
     if (activeView === 'sect') renderSect();
@@ -363,7 +406,7 @@
     activeView = view;
     document.querySelectorAll('.view').forEach(el => el.classList.toggle('active', el.id === `view-${view}`));
     document.querySelectorAll('[data-view]').forEach(el => el.classList.toggle('active', el.dataset.view === view));
-    const names = { cultivate: 'CULTIVATION GROVE', paths: 'TWO CULTIVATION PATHS', combat: 'SPIRIT BEAST GROUNDS', sect: 'AZURE CLOUD SECT', techniques: 'SECT LIBRARY', expeditions: 'BEYOND THE SECT', alchemy: 'ALCHEMY PAVILION', codex: 'THE IMMORTAL CODEX' };
+    const names = { cultivate: 'CULTIVATION GROVE', paths: 'TWO CULTIVATION PATHS', companions: 'SPIRIT COMPANIONS', combat: 'SPIRIT BEAST GROUNDS', sect: 'AZURE CLOUD SECT', techniques: 'SECT LIBRARY', expeditions: 'BEYOND THE SECT', alchemy: 'ALCHEMY PAVILION', codex: 'THE IMMORTAL CODEX' };
     $('crumbTitle').textContent = names[view] || names.cultivate;
     render(); window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -538,6 +581,29 @@
     if (state.stones < 10 || state.sectRank >= sectRanks.length - 1) return;
     state.stones -= 10; addRep(4); showToast('A generous contribution · +4 sect merit.'); save(); render();
   }
+  function acquireCompanion(id) {
+    const item = companionCatalog.find(companion => companion.id === id);
+    if (!item || state.companions[id]?.owned || state.stage < item.minStage || state.stones < item.cost) return;
+    state.stones -= item.cost;
+    state.companions[id] = { owned: true, level: 1 };
+    showToast(`${item.name} trusts you · bond rank 1.`); save(); render();
+  }
+  function bondCompanion(id) {
+    const item = companionCatalog.find(companion => companion.id === id);
+    const bond = state.companions[id];
+    if (!item || !bond?.owned || bond.level >= 10) return;
+    const cost = Math.ceil(item.cost * .6 * Math.max(1, bond.level));
+    if (state.stones < cost) return showToast('You need more spirit stones to deepen this bond.');
+    state.stones -= cost; bond.level += 1;
+    showToast(`${item.name} bond deepened · rank ${bond.level}.`); save(); render();
+  }
+  function toggleCompanion(id) {
+    const item = companionCatalog.find(companion => companion.id === id);
+    if (!item || !state.companions[id]?.owned) return;
+    state.activeCompanion = state.activeCompanion === id ? null : id;
+    showToast(state.activeCompanion ? `${item.name} will travel at your side.` : `${item.name} rests at your sanctuary.`);
+    save(); render();
+  }
   document.addEventListener('click', (event) => {
     const viewButton = event.target.closest('[data-view]');
     if (viewButton) { setView(viewButton.dataset.view); return; }
@@ -549,6 +615,9 @@
       case 'collect-trip': collectTrip(); break;
       case 'brew': brew(action.dataset.id); break;
       case 'train-path': trainPath(action.dataset.id); break;
+      case 'acquire-companion': acquireCompanion(action.dataset.id); break;
+      case 'bond-companion': bondCompanion(action.dataset.id); break;
+      case 'toggle-companion': toggleCompanion(action.dataset.id); break;
       case 'seek-enemy': seekEnemy(); break;
       case 'attack': attackEnemy(action.dataset.style); break;
       case 'cast-spell': castSectSpell(); break;

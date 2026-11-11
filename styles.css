@@ -116,3 +116,27 @@
 .sect-spell:hover{background:#e2efe2!important;border-color:#a9c8ac!important}
 @media(max-width:720px){.sect-choice-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.gear-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:390px){.sect-choice{padding:11px}.sect-choice h3{font-size:12px}.sect-choice-grid{gap:8px}.gear-grid{gap:8px}.gear-card{padding:10px}.gear-card h3{font-size:12px}.gear-card p{font-size:8px}}
+
+/* Spirit companion collection */
+.companion-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin-top:16px}
+.companion-card{position:relative;display:flex;flex-direction:column;align-items:flex-start;min-width:0;padding:16px;border:1px solid #e8e8df;border-radius:8px;background:#fffefa;overflow:hidden}
+.companion-card:before{content:"";position:absolute;inset:0 0 auto;height:3px;background:linear-gradient(90deg,#b38d53,#e0cd98)}
+.companion-card.companion-active{border-color:#9bb9a0;background:linear-gradient(145deg,#f3f7ef,#fffefa);box-shadow:inset 0 0 0 1px rgba(90,133,98,.12)}
+.companion-card.companion-active:before{background:linear-gradient(90deg,#52866c,#b3c9a9)}
+.companion-card.companion-locked{background:#f8f7f2}
+.companion-seal{width:42px;height:42px;display:grid;place-items:center;margin-bottom:12px;border:1px solid #e7dfca;border-radius:50%;background:#f4edde;color:#927c4f;font:24px 'Ma Shan Zheng',serif}
+.companion-card:nth-child(2) .companion-seal{border-color:#e0d9eb;background:#f1eef7;color:#796b9c}
+.companion-card:nth-child(3) .companion-seal{border-color:#d5e1d4;background:#eef4eb;color:#47735d}
+.companion-card .eyebrow{font-size:7px;letter-spacing:.8px;line-height:1.5}
+.companion-card h2{margin:6px 0 3px;font:600 16px var(--serif)}
+.companion-title{color:#8b958c;font:italic 10px var(--serif)}
+.companion-card>p{min-height:48px;margin:9px 0;color:#7b877e;font-size:9px;line-height:1.55}
+.companion-level{width:100%;display:flex;justify-content:space-between;padding:9px 0;border-top:1px solid #eceee6;color:#899389;font-size:8px;letter-spacing:.7px}
+.companion-level b{color:#455f4d;font-size:10px;letter-spacing:0}
+.companion-card .path-warning{width:100%;margin-bottom:5px}
+.companion-card>.action-btn{width:100%;margin-top:7px;min-height:36px;padding:8px;white-space:normal;line-height:1.4}
+.companion-card>.companion-toggle{margin-top:6px;background:#f5f2e8;border-color:#e8dfc7;color:#806e48}
+.companion-card>.companion-toggle:hover{background:#f0ead9;border-color:#d6c69d}
+@media(max-width:720px){.companion-grid{grid-template-columns:1fr}}
+@media(max-width:650px){.mobile-nav{grid-template-columns:repeat(9,minmax(0,1fr));overflow-x:auto}.mobile-nav button{min-width:52px;font-size:7px}.mobile-nav button i{font-size:13px}}
+@media(max-width:390px){.companion-card{padding:13px}.companion-card>p{min-height:0}}
