@@ -93,3 +93,340 @@
 .sect-spell:hover{background:#e2efe2!important;border-color:#a9c8ac!important}
 @media(max-width:720px){.sect-choice-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.gear-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:390px){.sect-choice{padding:11px}.sect-choice h3{font-size:12px}.sect-choice-grid{gap:8px}.gear-grid{gap:8px}.gear-card{padding:10px}.gear-card h3{font-size:12px}.gear-card p{font-size:8px}}
+
+/* ============================================================
+   STILLWATER EXPANSION — Inner Dao, Legacy, Forge, Fate
+   ============================================================ */
+.main-nav{min-height:0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#3b5348 transparent;padding-right:2px}
+.main-nav::-webkit-scrollbar{width:4px}
+.main-nav::-webkit-scrollbar-thumb{background:#3b5348;border-radius:4px}
+.mobile-nav{overflow-x:auto;justify-content:flex-start;gap:3px;padding:0 10px;scrollbar-width:none}
+.mobile-nav::-webkit-scrollbar{display:none}
+.mobile-nav button{min-width:52px;flex:0 0 auto}
+.challenge-panel{margin-top:15px}
+.stat-icon.luck-icon{color:#b08a45}
+.root-chip{display:flex;align-items:center;gap:10px;margin-top:14px;padding:10px;border:1px solid #e7e7dd;border-radius:8px;background:linear-gradient(135deg,#fbf8ee,#f6f4ea)}
+.root-chip .root-seal{width:31px;height:31px;display:grid;place-items:center;border-radius:50%;border:1px solid #e2d6b6;background:#f7f1df;color:#a28649;font:17px 'Ma Shan Zheng',serif;flex-shrink:0}
+.root-chip small{display:block;font-size:6.5px;letter-spacing:.9px;color:#939c91}
+.root-chip b{font-size:10px;color:#44594b}
+.root-chip .root-seal.rare{border-color:#b8cfe1;background:#edf5fb;color:#4a7a9d}
+.root-chip .root-seal.heavenly{border-color:#d5bd7d;background:#fbf2d7;color:#9e7b2d}
+.root-chip .root-seal.divine{border-color:#c7a9d8;background:#f5eafb;color:#7e4e9a}
+
+/* Tabs and banners */
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.tab-btn{border:1px solid #dfe4d9;background:#f8faf5;color:#5d7567;padding:8px 13px;border-radius:20px;cursor:pointer;font-size:9px;font-weight:700;letter-spacing:.35px;transition:.2s;white-space:nowrap}
+.tab-btn:hover{border-color:#a9c2ab;background:#eef5eb}
+.tab-btn.active{background:#243d34;border-color:#243d34;color:#efe9d3;box-shadow:0 4px 14px rgba(24,43,35,.16)}
+.banner-row{display:grid;gap:10px;margin-bottom:16px}
+.banner-card{display:flex;align-items:center;gap:14px;padding:13px 17px;border:1px solid #e4dcc4;border-radius:9px;background:linear-gradient(120deg,#fbf5e5,#fffefa);box-shadow:var(--shadow)}
+.banner-card.fate{border-color:#bfd4c1;background:linear-gradient(120deg,#edf5ea,#fffefa)}
+.banner-card.event{border-color:#d8c692;background:linear-gradient(120deg,#f8efd5,#fffefa)}
+.banner-symbol{width:38px;height:38px;flex-shrink:0;display:grid;place-items:center;border-radius:50%;border:1px solid #e0d3ae;background:#faf4e1;color:#9b7c38;font:20px 'Ma Shan Zheng',serif}
+.banner-card.fate .banner-symbol{background:#eaf3e7;border-color:#c6d9c4;color:#4b7b5c}
+.banner-body{flex:1;min-width:0}
+.banner-body small{display:block;font-size:7px;letter-spacing:1.1px;color:#9a927d;margin-bottom:3px;font-weight:700}
+.banner-body b{display:block;font:600 13px var(--serif);color:#4e5547}
+.banner-body span{display:block;font-size:9px;color:#89907f;line-height:1.45;margin-top:2px}
+.banner-card .action-btn,.banner-card .buy-btn{flex-shrink:0;white-space:nowrap}
+.world-event-count{font-size:8px;letter-spacing:.8px;color:#a08a51;font-weight:700;white-space:nowrap}
+
+/* Generic expansion cards */
+.feature-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.feature-card-lite{padding:14px;border:1px solid #e8e8df;border-radius:8px;background:#fffefa}
+.feature-card-lite h3{margin:0 0 4px;font:600 13px var(--serif);color:#354b3f}
+.feature-card-lite p{margin:0 0 8px;color:#7c887f;font-size:9px;line-height:1.55}
+.feature-card-lite small{display:block;color:#8a7952;font-size:8px;line-height:1.5;margin-top:4px}
+.feature-card-lite .action-btn{width:100%;margin-top:8px;white-space:normal;line-height:1.3}
+.locked-card{opacity:.72;background:#f8f7f1}
+.locked-card h3{color:#7d857c}
+.stat-pills{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.stat-pill{display:inline-flex;gap:5px;align-items:center;border:1px solid #e7e2d1;background:#fbf7ea;color:#887445;padding:4px 8px;border-radius:20px;font-size:8px;font-weight:700;letter-spacing:.3px}
+.stat-pill.green{border-color:#d3e3d3;background:#f0f7ee;color:#4b7559}
+.stat-pill.violet{border-color:#e1d8ea;background:#f5f0fa;color:#71608b}
+.stat-pill.red{border-color:#ecd6cd;background:#fbf0eb;color:#a15f4c}
+.progress-line{height:6px;border-radius:8px;background:#ecebe3;overflow:hidden;margin:7px 0}
+.progress-line i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#7ea47d,#5e8a68);transition:width .4s}
+.progress-line.gold i{background:linear-gradient(90deg,#cdb46f,#a9904a)}
+.progress-line.violet i{background:linear-gradient(90deg,#a797c2,#7f6da4)}
+.progress-line.blue i{background:linear-gradient(90deg,#7fa6bd,#527f9d)}
+.meter-caption{display:flex;justify-content:space-between;gap:8px;color:#8b948b;font-size:8px;letter-spacing:.3px}
+.meter-caption b{color:#4d6555}
+
+/* Spiritual roots */
+.root-layout{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:15px}
+.root-showcase{position:relative;padding:22px;border:1px solid #e5dcc6;border-radius:10px;background:radial-gradient(circle at 50% 25%,#fdf8ea,#f7f3e7);text-align:center;overflow:hidden}
+.root-showcase:after{content:"";position:absolute;inset:auto -20% -60% -20%;height:80%;background:radial-gradient(ellipse at center,rgba(185,151,81,.12),transparent 65%)}
+.root-orb{position:relative;z-index:1;width:105px;height:105px;margin:0 auto 13px;display:grid;place-items:center;border-radius:50%;border:1px solid var(--rarity,#bfa96d);background:radial-gradient(circle,#fffdf4,#f1ead7);color:var(--rarity,#9e7b2d);font:49px 'Ma Shan Zheng',serif;box-shadow:0 0 0 8px rgba(189,151,81,.06),0 12px 30px rgba(120,95,30,.1)}
+.root-showcase h2{font:600 23px var(--serif);margin:0 0 3px;color:#4e513f}
+.root-showcase .rarity-tag{display:inline-block;font-size:8px;letter-spacing:1.4px;font-weight:700;color:var(--rarity,#9e7b2d);margin-bottom:9px}
+.root-showcase p{position:relative;z-index:1;margin:0 auto 12px;max-width:320px;color:#7f8576;font-size:10px;line-height:1.6}
+.grade-pips{display:flex;justify-content:center;gap:5px;margin:9px 0 14px}
+.grade-pips i{width:18px;height:5px;border-radius:5px;background:#e6e1d1}
+.grade-pips i.on{background:var(--rarity,#bd9751)}
+.root-showcase .action-btn{position:relative;z-index:1;margin:3px}
+.root-catalog{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}
+.root-tile{display:flex;gap:9px;align-items:center;padding:9px;border:1px solid #e8e8df;border-radius:7px;background:#fffefa}
+.root-tile.locked{opacity:.55;filter:grayscale(.5)}
+.root-tile .root-seal{width:28px;height:28px;flex-shrink:0;display:grid;place-items:center;border-radius:50%;border:1px solid var(--rarity,#d9d6c8);color:var(--rarity,#8c8776);background:#faf8f0;font:15px 'Ma Shan Zheng',serif}
+.root-tile b{display:block;font-size:9px;color:#465a4c}
+.root-tile small{display:block;font-size:7px;color:#929b91;margin-top:2px;line-height:1.3}
+
+/* Meridians */
+.meridian-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:13px}
+.meridian-card{padding:13px;border:1px solid #e8e8df;border-radius:8px;background:#fffefa;position:relative;display:flex;flex-direction:column;align-items:flex-start;min-width:0}
+.meridian-card.opened{border-color:#b9d2ba;background:linear-gradient(150deg,#f2f8ef,#fffefa)}
+.meridian-card.available{border-color:#e2d4ac;background:linear-gradient(150deg,#fcf7e8,#fffefa)}
+.meridian-card.special:before{content:"SPECIAL";position:absolute;right:9px;top:9px;font-size:6px;letter-spacing:.8px;font-weight:700;color:#a28649}
+.meridian-seal{width:32px;height:32px;display:grid;place-items:center;border-radius:50%;border:1px solid #dfe4d9;background:#f5f8f1;color:#5e8068;font:17px 'Ma Shan Zheng',serif;margin-bottom:7px}
+.meridian-card.opened .meridian-seal{background:#e6f1e4;border-color:#b9d2ba;color:#457154}
+.meridian-card.special .meridian-seal{border-color:#e2d4ac;background:#faf3df;color:#9e7b2d}
+.meridian-card h3{margin:0 0 3px;font:600 11px var(--serif);color:#3b5144}
+.meridian-card p{margin:0 0 7px;color:#818b80;font-size:8px;line-height:1.45}
+.meridian-card .meridian-req{font-size:7px;line-height:1.45;color:#9b8c62;margin-bottom:7px}
+.meridian-card .action-btn{width:100%;margin-top:auto;padding:7px 4px;font-size:8px;white-space:normal;line-height:1.3}
+.circulation-bonus{margin-top:13px;padding:13px;border:1px solid #dfe8d9;border-radius:8px;background:#f4f9f1}
+.circulation-bonus h3{margin:0 0 5px;font:600 14px var(--serif);color:#42644f}
+.circulation-bonus p{margin:0;color:#7b8b7d;font-size:9px;line-height:1.6}
+
+/* Dao comprehension */
+.dao-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin-top:13px}
+.dao-card{position:relative;padding:16px;border:1px solid #e8e8df;border-radius:9px;background:linear-gradient(150deg,#fffefa,#fbfaf3);overflow:hidden}
+.dao-card:before{content:"";position:absolute;inset:0 0 auto;height:3px;background:var(--dao,#8aa28b)}
+.dao-head{display:flex;align-items:center;gap:11px;margin-bottom:9px}
+.dao-seal{width:39px;height:39px;flex-shrink:0;display:grid;place-items:center;border-radius:50%;border:1px solid var(--dao,#9db29e);background:#f6f8f2;color:var(--dao,#547a60);font:21px 'Ma Shan Zheng',serif}
+.dao-head h3{margin:0;font:600 15px var(--serif);color:#3b5144}
+.dao-head small{display:block;font-size:7px;letter-spacing:.8px;color:#929b91;margin-top:2px}
+.dao-card p{margin:0 0 9px;color:#7c887f;font-size:9px;line-height:1.55;min-height:28px}
+.dao-ability{font-size:8px;line-height:1.45;color:#8a7952;border-top:1px dashed #e8e2d0;padding-top:7px;margin-top:7px}
+.dao-ability b{color:#6e643f}
+.dao-actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.dao-actions .action-btn{flex:1 1 100px;padding:7px 6px;font-size:8px;white-space:normal;line-height:1.3}
+
+/* Beasts and bosses */
+.beast-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+.beast-card{display:flex;flex-direction:column;align-items:flex-start;min-width:0;padding:13px;border:1px solid #e8e8df;border-radius:8px;background:#fffefa}
+.beast-card.active{border-color:#8fb695;background:linear-gradient(150deg,#f1f8ee,#fffefa);box-shadow:inset 0 0 0 1px rgba(90,133,98,.12)}
+.beast-card.tamed{border-color:#d9d2b6}
+.beast-glyph{width:42px;height:42px;display:grid;place-items:center;border-radius:50%;border:1px solid var(--rarity,#ddd6c4);background:radial-gradient(circle,#fffdf5,#f3eddd);color:var(--rarity,#8b7b58);font:23px 'Ma Shan Zheng',serif;margin-bottom:7px}
+.beast-card h3{margin:0 0 3px;font:600 12px var(--serif);color:#3b5144;line-height:1.25}
+.beast-card p{margin:0 0 7px;color:#7f8a80;font-size:8px;line-height:1.45}
+.beast-card .rarity-tag{font-size:7px;letter-spacing:1px;font-weight:700;color:var(--rarity,#8b7b58);margin-bottom:3px}
+.beast-card .action-btn{width:100%;margin-top:auto;padding:7px 4px;font-size:8px;white-space:normal;line-height:1.3}
+.beast-bonus{font-size:7.5px;color:#8a7952;line-height:1.45;margin-bottom:7px}
+.boss-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin-top:12px}
+.boss-card{padding:15px;border:1px solid #e8e8df;border-radius:9px;background:linear-gradient(150deg,#fffefa,#faf7ef)}
+.boss-card.defeated{border-color:#c9dcc7;background:linear-gradient(150deg,#f3f8ef,#fffefa)}
+.boss-card.locked{opacity:.66}
+.boss-card h3{margin:0 0 4px;font:600 15px var(--serif);color:#3b5144}
+.boss-card p{margin:0 0 8px;color:#7f8a80;font-size:9px;line-height:1.5}
+.boss-ability{font-size:8px;color:#9b6c4e;line-height:1.45;margin-bottom:8px}
+.boss-reward{font-size:8px;color:#8a7952;line-height:1.45;margin-bottom:8px}
+.boss-card .action-btn{width:100%;white-space:normal}
+.boss-battle{margin-top:15px;padding:18px;border:1px solid #e4d3ab;border-radius:9px;background:linear-gradient(135deg,#fdf8e8,#fffefa)}
+.boss-head{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.boss-glyph{width:70px;height:70px;flex-shrink:0;display:grid;place-items:center;border-radius:50%;border:1px solid #e0c98d;background:radial-gradient(circle,#fffdf2,#f3e8cd);color:#9e7b2d;font:36px 'Ma Shan Zheng',serif}
+.boss-head h3{margin:0 0 4px;font:600 20px var(--serif)}
+.boss-head small{display:block;font-size:7px;letter-spacing:1px;color:#a08850;font-weight:700;margin-bottom:4px}
+.boss-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:13px}
+.boss-actions .action-btn{flex:1 1 120px;font-size:8px;white-space:normal;line-height:1.35}
+.battle-log{margin-top:12px;padding:9px 11px;border:1px solid #ece5d4;border-radius:6px;background:#fffdf6;font-size:8px;line-height:1.6;color:#8a8573;max-height:90px;overflow:auto}
+.battle-log b{color:#655c45}
+
+/* Inheritance + secret realms */
+.legacy-grid{display:grid;gap:12px;margin-top:12px}
+.legacy-card{padding:16px;border:1px solid #e8e1cf;border-radius:9px;background:linear-gradient(135deg,#fdfaf0,#fffefa)}
+.legacy-card.discovered{border-color:#d6c79d;box-shadow:0 8px 24px rgba(126,102,42,.06)}
+.legacy-card.completed{border-color:#b9d2ba;background:linear-gradient(135deg,#f3f8ef,#fffefa)}
+.legacy-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.legacy-seal{width:44px;height:44px;flex-shrink:0;display:grid;place-items:center;border-radius:50%;border:1px solid #dfd2ab;background:#fbf5e3;color:#9e7b2d;font:23px 'Ma Shan Zheng',serif}
+.legacy-head h3{margin:0;font:600 16px var(--serif);color:#3e4d3f}
+.legacy-head small{display:block;font-size:7px;letter-spacing:.9px;color:#9a927d;margin-top:2px}
+.legacy-card>p{margin:0 0 10px;color:#7c887f;font-size:9px;line-height:1.55}
+.trial-list{display:grid;gap:6px;margin:10px 0}
+.trial-row{display:flex;align-items:center;gap:9px;padding:8px 10px;border:1px solid #ece7d8;border-radius:6px;background:#fffefa;font-size:8px;color:#7f8578}
+.trial-row.done{border-color:#cfe0cc;background:#f3f8f0;color:#5d7a63}
+.trial-check{width:19px;height:19px;flex-shrink:0;display:grid;place-items:center;border-radius:50%;border:1px solid #ddd8c8;color:#b3ab97;font-size:9px}
+.trial-row.done .trial-check{border-color:#b9d2ba;background:#e6f1e4;color:#4b7559}
+.trial-row div{flex:1;min-width:0}
+.trial-row b{display:block;font-size:9px;color:#4f5d50;margin-bottom:1px}
+.trial-row small{font-size:7px;color:#90998d;line-height:1.4}
+.trial-row .action-btn{padding:5px 8px;font-size:7px;white-space:nowrap}
+.realm-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin-top:12px}
+.realm-card{padding:15px;border:1px solid #e8e8df;border-radius:9px;background:linear-gradient(150deg,#fffefa,#f9f7ef)}
+.realm-card.cleared{border-color:#c9dcc7;background:linear-gradient(150deg,#f2f8ee,#fffefa)}
+.realm-card.locked{opacity:.65}
+.realm-card h3{margin:0 0 4px;font:600 15px var(--serif)}
+.realm-card p{margin:0 0 8px;color:#7f8a80;font-size:9px;line-height:1.5}
+.realm-meta{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
+.realm-meta span{font-size:7px;color:#8b7d55;background:#f8f1dc;border:1px solid #ece1c2;padding:3px 6px;border-radius:10px}
+.realm-card .action-btn{width:100%;white-space:normal}
+
+/* Forge */
+.forge-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin-top:12px}
+.weapon-card{padding:15px;border:1px solid #e8e8df;border-radius:9px;background:#fffefa;position:relative}
+.weapon-card.equipped{border-color:#d6c496;background:linear-gradient(150deg,#fcf7e7,#fffefa);box-shadow:inset 0 0 0 1px rgba(170,140,75,.1)}
+.weapon-card.locked{opacity:.7}
+.weapon-card h3{margin:0 0 3px;font:600 15px var(--serif);color:#3b5144}
+.weapon-card p{margin:0 0 8px;color:#7f8a80;font-size:9px;line-height:1.5}
+.weapon-card .rarity-tag{font-size:7px;letter-spacing:1px;font-weight:700;color:var(--rarity,#8b7b58)}
+.weapon-stats{display:flex;flex-wrap:wrap;gap:5px;margin:7px 0}
+.weapon-stats span{font-size:7px;color:#8a7952;border:1px solid #e9dfc3;background:#fbf5e4;padding:3px 6px;border-radius:10px}
+.weapon-ability{font-size:8px;color:#8a6d48;line-height:1.5;border-top:1px dashed #e8e1cf;padding-top:7px;margin-top:7px}
+.weapon-ability b{color:#6f5a39}
+.weapon-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+.weapon-actions .action-btn{flex:1 1 95px;font-size:8px;padding:7px 5px;white-space:normal;line-height:1.3}
+.artifact-slots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}
+.artifact-slot{padding:13px;border:1px dashed #d9d3c1;border-radius:8px;background:#fbfaf4;min-height:74px}
+.artifact-slot.filled{border-style:solid;border-color:#d6c496;background:linear-gradient(145deg,#fcf7e7,#fffefa)}
+.artifact-slot small{display:block;font-size:7px;letter-spacing:.9px;color:#9c9584;margin-bottom:5px}
+.artifact-slot b{display:block;font:600 12px var(--serif);color:#4d5b4e;margin-bottom:3px}
+.artifact-slot p{margin:0;font-size:8px;color:#8b8a78;line-height:1.45}
+
+/* Fate */
+.luck-hero{display:flex;align-items:center;gap:17px;padding:19px;border:1px solid #e6d9b8;border-radius:9px;background:linear-gradient(130deg,#fcf7e8,#fffefa)}
+.luck-orb{width:66px;height:66px;flex-shrink:0;display:grid;place-items:center;border-radius:50%;border:1px solid #d9c382;background:radial-gradient(circle,#fffdf3,#f5e9c9);color:#9e7b2d;font:31px 'Ma Shan Zheng',serif}
+.luck-hero h2{margin:0 0 3px;font:600 25px var(--serif)}
+.luck-hero p{margin:0;color:#888a77;font-size:9px;line-height:1.5}
+.fate-options{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.fate-options .action-btn{flex:1 1 130px;white-space:normal;line-height:1.35;font-size:8px}
+.merchant-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+.merchant-offer{padding:14px;border:1px solid #e8e1cf;border-radius:8px;background:#fffefa;display:flex;flex-direction:column;align-items:flex-start}
+.merchant-offer .offer-seal{width:34px;height:34px;display:grid;place-items:center;border-radius:50%;border:1px solid #e2d4ac;background:#fbf5e3;color:#9e7b2d;font:18px 'Ma Shan Zheng',serif;margin-bottom:8px}
+.merchant-offer h3{margin:0 0 4px;font:600 12px var(--serif)}
+.merchant-offer p{margin:0 0 8px;color:#7f8a80;font-size:8px;line-height:1.45}
+.merchant-offer .action-btn{width:100%;margin-top:auto;font-size:8px;white-space:normal}
+.log-list{display:grid;gap:5px;margin-top:9px}
+.log-line{padding:7px 9px;border-left:2px solid #d9c382;background:#fbf9f1;color:#888474;font-size:8px;line-height:1.5}
+
+/* Codex, achievements, rankings, quests */
+.codex-tabs-panel{margin-bottom:12px}
+.achievement-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:12px}
+.achievement{display:flex;gap:10px;align-items:flex-start;padding:11px;border:1px solid #e8e8df;border-radius:7px;background:#fffefa}
+.achievement.unlocked{border-color:#c9dcc7;background:linear-gradient(145deg,#f2f8ee,#fffefa)}
+.achievement.hidden-ach{opacity:.6;background:#f8f7f1}
+.achievement-icon{width:26px;height:26px;flex-shrink:0;display:grid;place-items:center;border-radius:50%;border:1px solid #e2ddce;background:#f8f6ee;color:#a69d85;font-size:11px}
+.achievement.unlocked .achievement-icon{border-color:#b9d2ba;background:#e6f1e4;color:#4b7559}
+.achievement b{display:block;font-size:9px;color:#4d5b4e;margin-bottom:2px}
+.achievement small{display:block;font-size:7px;color:#90998d;line-height:1.45}
+.achievement .reward{color:#9a8352;font-weight:700}
+.rank-list{display:grid;gap:5px;margin-top:11px}
+.rank-row{display:flex;align-items:center;gap:11px;padding:9px 11px;border:1px solid #eceee6;border-radius:6px;background:#fffefa;font-size:9px;color:#7d877d}
+.rank-row.me{border-color:#b9d2ba;background:#f2f8ee;color:#43634e;font-weight:700}
+.rank-row .rank-no{width:24px;height:24px;display:grid;place-items:center;border-radius:50%;border:1px solid #e4e6dd;background:#f8f7f1;color:#9a9885;font-size:8px;font-weight:700;flex-shrink:0}
+.rank-row:nth-child(1) .rank-no,.rank-row:nth-child(2) .rank-no,.rank-row:nth-child(3) .rank-no{border-color:#e0cd9b;background:#faf2dc;color:#a28545}
+.rank-row .rank-name{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rank-row b{color:#58684f;font-size:9px}
+.building-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+.building-card{padding:14px;border:1px solid #e8e8df;border-radius:8px;background:#fffefa}
+.building-card h3{margin:0 0 3px;font:600 13px var(--serif);color:#3b5144}
+.building-card p{margin:0 0 7px;color:#7f8a80;font-size:8px;line-height:1.45}
+.building-level{display:flex;justify-content:space-between;gap:8px;font-size:8px;color:#8a7952;margin-bottom:7px}
+.building-card .action-btn{width:100%;font-size:8px;white-space:normal}
+.quest-card{padding:15px;border:1px solid #e8e1cf;border-radius:8px;background:linear-gradient(140deg,#fdfaf0,#fffefa);margin-top:10px}
+.quest-card h3{margin:0 0 3px;font:600 14px var(--serif);color:#3e4d3f}
+.quest-card .npc{font-size:7px;letter-spacing:.8px;color:#a08a51;font-weight:700;margin-bottom:6px}
+.quest-card p{margin:0 0 8px;color:#7c887f;font-size:9px;line-height:1.55}
+.quest-card .action-btn{white-space:normal}
+.quest-progress{display:flex;justify-content:space-between;gap:8px;font-size:8px;color:#8a7952;margin-top:6px}
+
+/* Daily challenges / tracker */
+.daily-challenge-list{display:grid;gap:7px;margin-top:11px}
+.daily-row{display:flex;align-items:center;gap:10px;padding:9px 11px;border:1px solid #eceee6;border-radius:6px;background:#fffefa}
+.daily-row.done{border-color:#c9dcc7;background:#f2f8ee}
+.daily-row .daily-check{width:22px;height:22px;flex-shrink:0;display:grid;place-items:center;border-radius:50%;border:1px solid #e2ddce;background:#f8f6ee;color:#b0a88f;font-size:9px}
+.daily-row.done .daily-check{border-color:#b9d2ba;background:#e6f1e4;color:#4b7559}
+.daily-row div{flex:1;min-width:0}
+.daily-row b{display:block;font-size:9px;color:#4d5b4e}
+.daily-row small{display:block;font-size:7px;color:#90998d;margin-top:1px}
+.daily-row .action-btn{padding:5px 8px;font-size:7px}
+.quest-tracker{display:flex;align-items:center;gap:12px;margin-top:10px;padding:10px 12px;border:1px solid #ece7d8;border-radius:7px;background:#fbfaf4}
+.quest-tracker .quest-seal{width:30px;height:30px;flex-shrink:0;display:grid;place-items:center;border-radius:50%;border:1px solid #e2d4ac;background:#fbf5e3;color:#9e7b2d;font:16px 'Ma Shan Zheng',serif}
+.quest-tracker div{flex:1;min-width:0}
+.quest-tracker b{display:block;font-size:9px;color:#4d5b4e}
+.quest-tracker small{display:block;font-size:7px;color:#90998d;margin-top:1px}
+
+/* Rarity */
+.rarity-common{--rarity:#87918a}
+.rarity-rare{--rarity:#4d7fa8}
+.rarity-epic{--rarity:#7a5fa8}
+.rarity-legendary{--rarity:#b78b35}
+.rarity-mythical{--rarity:#b05a61}
+.rarity-heavenly{--rarity:#b78b35}
+.rarity-divine{--rarity:#8a5aa8}
+.rarity-tag{display:inline-block;font-size:7px;letter-spacing:1px;font-weight:700;color:var(--rarity,#8b7b58)}
+
+/* Trial / battle animation */
+.tribulation{position:fixed;inset:0;z-index:60;pointer-events:none;background:radial-gradient(circle at 50% 20%,rgba(240,236,204,.5),rgba(20,33,31,.82));animation:tribFade 2.1s ease both;overflow:hidden}
+.tribulation .bolt{position:absolute;left:50%;top:-10%;width:4px;height:105%;background:linear-gradient(#fffdf0,#d9c979 35%,#f4e9b0 65%,#fff);box-shadow:0 0 22px 8px rgba(240,229,170,.75),0 0 60px 20px rgba(215,199,128,.35);transform:translateX(-50%) skew(-6deg);animation:tribBolt .9s ease-out both}
+.tribulation .bolt.two{left:38%;width:2px;transform:translateX(-50%) skew(8deg);animation-delay:.18s;opacity:.7}
+.tribulation .bolt.three{left:63%;width:2px;transform:translateX(-50%) skew(-3deg);animation-delay:.32s;opacity:.6}
+.tribulation .trib-text{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:#fffdf0;font:600 30px var(--serif);letter-spacing:2px;text-shadow:0 2px 30px rgba(241,229,170,.8);animation:tribText .5s .45s ease both}
+.tribulation.fail{background:radial-gradient(circle at 50% 20%,rgba(180,110,95,.35),rgba(20,33,31,.86))}
+.tribulation.fail .bolt{background:linear-gradient(#f3d7cc,#b25d4b 50%,#f5ded5)}
+@keyframes tribFade{0%{opacity:0}12%{opacity:1}78%{opacity:1}100%{opacity:0}}
+@keyframes tribBolt{0%{opacity:0;transform:translateX(-50%) skew(-6deg) scaleY(.2)}18%{opacity:1}40%{opacity:.45}55%{opacity:1}75%{opacity:.2}100%{opacity:0;transform:translateX(-50%) skew(-6deg) scaleY(1)}}
+@keyframes tribText{0%{opacity:0;transform:scale(.94)}100%{opacity:1;transform:scale(1)}}
+
+/* Empty states and small utilities */
+.empty-tab{padding:26px 18px;text-align:center;color:#8a9388}
+.empty-tab .empty-mark{margin:0 auto 10px}
+.empty-tab h3{font:600 17px var(--serif);margin:0 0 5px;color:#4d5b4e}
+.empty-tab p{font-size:10px;line-height:1.6;margin:0 auto;max-width:390px}
+.subtle{color:#939b91;font-size:8px;line-height:1.5}
+.gold-text{color:#9a7d3c;font-weight:700}
+.small-note{margin-top:9px;font-size:8px;line-height:1.55;color:#90988d}
+.action-btn.gold{background:#fbf3dc;border-color:#e5d6ac;color:#8f7440}
+.action-btn.gold:hover{background:#f7ecc9;border-color:#cbb87d}
+.action-btn.danger{background:#fbf0eb;border-color:#ecd6cd;color:#a15f4c}
+.action-btn.danger:hover{background:#f8e6dd;border-color:#d9b6a8}
+.inline-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+
+@media(max-width:1120px){
+  .meridian-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .beast-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .merchant-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:850px){
+  .main-nav{margin-top:30px}
+  .root-layout{grid-template-columns:1fr}
+  .dao-grid{grid-template-columns:1fr}
+  .realm-grid{grid-template-columns:1fr}
+  .forge-grid{grid-template-columns:1fr}
+  .building-grid{grid-template-columns:1fr}
+  .achievement-grid{grid-template-columns:1fr}
+  .meridian-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .feature-grid{grid-template-columns:1fr}
+  .boss-grid{grid-template-columns:1fr}
+}
+@media(max-width:650px){
+  .tabs{gap:5px;margin-bottom:12px}
+  .tab-btn{padding:7px 11px}
+  .banner-card{padding:11px 12px;gap:10px;align-items:flex-start}
+  .banner-card .action-btn,.banner-card .buy-btn{white-space:normal;padding:7px 9px}
+  .banner-symbol{width:32px;height:32px;font-size:17px}
+  .root-catalog{grid-template-columns:1fr 1fr}
+  .meridian-grid{grid-template-columns:1fr 1fr}
+  .beast-grid{grid-template-columns:1fr 1fr}
+  .merchant-grid{grid-template-columns:1fr}
+  .weapon-actions .action-btn{flex:1 1 100%}
+  .artifact-slots{grid-template-columns:1fr}
+  .boss-head{gap:10px}
+  .boss-glyph{width:52px;height:52px;font-size:28px}
+  .boss-actions .action-btn{flex:1 1 100%}
+  .root-showcase{padding:18px}
+  .root-orb{width:88px;height:88px;font-size:41px}
+  .luck-hero{padding:15px}
+  .luck-orb{width:55px;height:55px;font-size:26px}
+  .daily-row{align-items:flex-start}
+}
+@media(max-width:650px){
+  .toast{bottom:calc(72px + env(safe-area-inset-bottom));max-width:calc(100% - 30px);text-align:center}
+  .mobile-nav{scroll-snap-type:x proximity;scroll-padding-left:10px}
+  .mobile-nav button{scroll-snap-align:center}
+}
+@media(max-width:390px){
+  .meridian-grid{grid-template-columns:1fr}
+  .beast-grid{grid-template-columns:1fr}
+  .root-catalog{grid-template-columns:1fr}
+}

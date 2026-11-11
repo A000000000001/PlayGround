@@ -22,11 +22,16 @@
       <nav class="main-nav" aria-label="Main navigation">
         <button class="nav-item active" data-view="cultivate"><span class="nav-icon">◉</span><span>Cultivate</span><span class="nav-dot"></span></button>
         <button class="nav-item" data-view="paths"><span class="nav-icon">☯</span><span>Cultivation Paths</span></button>
+        <button class="nav-item" data-view="dao"><span class="nav-icon">道</span><span>Inner Dao</span><span class="nav-dot hidden" id="daoDot"></span></button>
         <button class="nav-item" data-view="combat"><span class="nav-icon">⚔</span><span>Spirit Beasts</span></button>
         <button class="nav-item" data-view="sect"><span class="nav-icon">青</span><span>Sect Hall</span></button>
         <button class="nav-item" data-view="techniques"><span class="nav-icon">卷</span><span>Techniques</span><span class="nav-count" id="techCount">0/3</span></button>
         <button class="nav-item" data-view="expeditions"><span class="nav-icon">⌁</span><span>Expeditions</span><span class="nav-dot hidden" id="expDot"></span></button>
         <button class="nav-item" data-view="alchemy"><span class="nav-icon">⚗</span><span>Alchemy</span></button>
+        <button class="nav-item" data-view="inherit"><span class="nav-icon">傳</span><span>Inheritance</span><span class="nav-dot hidden" id="legacyDot"></span></button>
+        <button class="nav-item" data-view="forge"><span class="nav-icon">⚒</span><span>Forge</span></button>
+        <button class="nav-item" data-view="fate"><span class="nav-icon">✦</span><span>Fate &amp; Fortune</span><span class="nav-dot hidden" id="fateDot"></span></button>
+        <button class="nav-item" data-view="ascension"><span class="nav-icon">仙</span><span>Ascension</span></button>
         <button class="nav-item" data-view="codex"><span class="nav-icon">▤</span><span>Codex</span></button>
       </nav>
       <div class="sidebar-bottom">
@@ -53,8 +58,10 @@
       <section class="view active" id="view-cultivate">
         <div class="welcome-row">
           <div><div class="eyebrow"><span class="eyebrow-line"></span> THE LONG ROAD BEGINS</div><h1>Your path unfolds, <em>Wanderer.</em></h1><p class="subtitle">Still your breath. Gather the world's vital essence.</p></div>
-          <div class="day-chip"><span class="sun-mark">☼</span><span><small>IN THE MORTAL REALM</small><b>Day <span id="welcomeDay">1</span> of your journey</b></span></div>
+          <div class="day-chip"><span class="sun-mark">☼</span><span><small id="worldLabel">IN THE MORTAL REALM</small><b>Day <span id="welcomeDay">1</span> of your journey</b></span></div>
         </div>
+
+        <div id="eventBanners" class="banner-row"></div>
 
         <div class="cultivation-grid">
           <article class="hero-card">
@@ -83,7 +90,9 @@
                 <div class="stat-row"><span class="stat-icon qi-icon">◉</span><span class="stat-name">Qi control</span><div class="stat-meter"><i id="controlMeter"></i></div><b id="controlStat">1</b></div>
                 <div class="stat-row"><span class="stat-icon spirit-icon">✧</span><span class="stat-name">Spirit</span><div class="stat-meter"><i id="spiritMeter"></i></div><b id="spiritStat">1</b></div>
                 <div class="stat-row"><span class="stat-icon body-icon">◈</span><span class="stat-name">Body</span><div class="stat-meter"><i id="bodyMeter"></i></div><b id="bodyStat">1</b></div>
+                <div class="stat-row"><span class="stat-icon luck-icon">✦</span><span class="stat-name">Fortune</span><div class="stat-meter"><i id="luckMeter"></i></div><b id="luckStat">5</b></div>
               </div>
+              <div class="root-chip" id="rootChip"><span class="root-seal">空</span><span><small>SPIRITUAL ROOT</small><b>Unawakened</b></span></div>
               <div class="stats-note"><span>✦</span><span>Balanced foundations lead to a longer path.</span></div>
             </article>
             <article class="panel daily-panel">
@@ -101,20 +110,27 @@
           <article class="panel path-panel"><div class="panel-heading"><div><div class="eyebrow">THE IMMORTAL LADDER</div><h3>Realms of cultivation</h3></div><button class="small-link" data-view="codex">VIEW CODEX ↗</button></div><div class="realm-path" id="realmPath"></div></article>
           <article class="panel next-panel"><div class="panel-heading"><div><div class="eyebrow">YOUR NEXT MILESTONE</div><h3 id="nextTitle">First breath</h3></div><span class="milestone-icon">✦</span></div><p id="nextText">Gather 100 qi and take your first step into the cultivation world.</p><div class="next-foot"><span id="nextReward">REWARD <b>+10 spirit stones</b></span><span id="nextProgress">0 / 100 qi</span></div><div class="mini-track"><i id="nextFill"></i></div></article>
         </div>
+        <article class="panel challenge-panel" id="dailyChallenges"></article>
+        <article class="panel challenge-panel" id="questTracker"></article>
       </section>
 
       <section class="view subview" id="view-paths"></section>
+      <section class="view subview" id="view-dao"></section>
       <section class="view subview" id="view-combat"></section>
       <section class="view subview" id="view-sect"></section>
       <section class="view subview" id="view-techniques"></section>
       <section class="view subview" id="view-expeditions"></section>
       <section class="view subview" id="view-alchemy"></section>
+      <section class="view subview" id="view-inherit"></section>
+      <section class="view subview" id="view-forge"></section>
+      <section class="view subview" id="view-fate"></section>
+      <section class="view subview" id="view-ascension"></section>
       <section class="view subview" id="view-codex"></section>
       <footer class="footer"><span>☯ &nbsp; In stillness, the way reveals itself.</span><span>YOUR PROGRESS IS SAVED AUTOMATICALLY <i>•</i> <span id="saveStatus">SYNCED</span></span></footer>
     </main>
   </div>
   <nav class="mobile-nav" aria-label="Mobile navigation">
-    <button class="active" data-view="cultivate"><i>◉</i>Home</button><button data-view="paths"><i>☯</i>Paths</button><button data-view="combat"><i>⚔</i>Fight</button><button data-view="sect"><i>青</i>Sect</button><button data-view="techniques"><i>卷</i>Arts</button><button data-view="expeditions"><i>⌁</i>Travel</button><button data-view="alchemy"><i>⚗</i>Alchemy</button><button data-view="codex"><i>▤</i>Codex</button>
+    <button class="active" data-view="cultivate"><i>◉</i>Home</button><button data-view="paths"><i>☯</i>Paths</button><button data-view="dao"><i>道</i>Dao</button><button data-view="combat"><i>⚔</i>Beasts</button><button data-view="sect"><i>青</i>Sect</button><button data-view="techniques"><i>卷</i>Arts</button><button data-view="expeditions"><i>⌁</i>Travel</button><button data-view="alchemy"><i>⚗</i>Alchemy</button><button data-view="inherit"><i>傳</i>Legacy</button><button data-view="forge"><i>⚒</i>Forge</button><button data-view="fate"><i>✦</i>Fate</button><button data-view="ascension"><i>仙</i>Ascend</button><button data-view="codex"><i>▤</i>Codex</button>
   </nav>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <div class="modal-backdrop" id="modalBackdrop" hidden><div class="modal" role="dialog" aria-modal="true"><button class="modal-close" id="modalClose">×</button><div class="modal-symbol" id="modalSymbol">✧</div><div class="eyebrow" id="modalEyebrow">REALM BREAKTHROUGH</div><h2 id="modalTitle">The threshold awaits</h2><p id="modalText"></p><div class="modal-actions" id="modalActions"></div></div></div>
