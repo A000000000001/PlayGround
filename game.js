@@ -254,7 +254,9 @@
     const taskCount = [meditateDone, qiDone, tripDone].filter(Boolean).length;
     $('taskProgress').textContent = `${state.dailyClaimed ? 3 : taskCount} / 3`;
     $('dailyClaim').disabled = state.dailyClaimed || taskCount < 3;
-    $('dailyClaim').textContent = state.dailyClaimed ? 'Daily reward claimed' : taskCount === 3 ? 'Claim daily reward →' : 'Complete all practices →';
+    $('dailyClaim').textContent = state.dailyClaimed ? 'Daily rewards claimed' : taskCount === 3 ? 'Claim all daily rewards →' : 'Complete all practices →';
+    const nextReward = 12 + Math.floor((state.stage + 1) / 2) * 3;
+    $('nextReward').innerHTML = `BREAKTHROUGH REWARD <b>+${nextReward} spirit stones</b>`;
     const nextTitle = state.stage === 0 ? 'First breath' : `Step ${state.stage + 1} · ${realmTitle(state.stage + 1)}`;
     $('nextTitle').textContent = nextTitle;
     $('nextText').textContent = state.stage === 0 ? 'Gather 100 qi and take your first step into the cultivation world.' : `Refine ${nfmt(goal)} qi to advance toward ${realmTitle(state.stage + 1)}.`;
