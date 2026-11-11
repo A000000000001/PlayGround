@@ -8,6 +8,29 @@
 @media(max-width:390px){.right-stack{grid-template-columns:1fr}.hero-actions{grid-template-columns:1fr}.primary-btn,.breakthrough-btn{height:42px}.hero-art{height:170px}.welcome-row h1{font-size:22px}.cultivation-grid{gap:10px}}
 
 /* Cultivation paths, combat, and sect progression */
+.path-floor-label{width:100%;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin:14px 0 7px;color:#7a877d;font-size:9px;line-height:1.45}
+.path-floor-label span{font-weight:600}
+.path-floor-label b{color:#365d4d;font-size:10px;text-align:right;white-space:nowrap}
+.path-progress-track{width:100%;height:8px;overflow:hidden;border-radius:20px;background:#e9ece4;box-shadow:inset 0 1px 2px rgba(24,38,31,.08)}
+.path-progress-track i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#4c896c,#a4c38e);transition:width .25s ease}
+.path-progress-track.body-track i{background:linear-gradient(90deg,#a4854d,#d1bb7d)}
+.path-progress-caption{width:100%;margin-top:7px;color:#849087;font-size:9px;line-height:1.5}
+.path-warning{margin-top:9px;padding:9px 10px;border:1px solid #eadfce;border-radius:5px;background:#faf5eb;color:#9a6d43;font-size:9px;line-height:1.5}
+.path-bonus-line{width:100%;margin-top:8px;padding:8px 10px;border-left:2px solid #9db89b;background:#f4f7f0;color:#55715b;font-size:9px;line-height:1.45}
+.progression-panel{margin-top:16px}
+.progression-unlock-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}
+.progression-unlock{display:flex;align-items:center;gap:10px;min-width:0;padding:11px;border:1px solid #e8e9df;border-radius:6px;background:#fffefa}
+.progression-unlock>span{width:27px;height:27px;flex-shrink:0;display:grid;place-items:center;border:1px solid #e6e8df;border-radius:50%;color:#9ba49a}
+.progression-unlock>div{display:grid;gap:4px;min-width:0}
+.progression-unlock b{color:#69776c;font:600 11px var(--serif)}
+.progression-unlock small{color:#8a958b;font-size:8px;line-height:1.4}
+.progression-unlock em{margin-left:auto;color:#9ba49a;font-size:7px;font-style:normal;font-weight:700;letter-spacing:.5px;text-align:right}
+.progression-unlock.unlocked{border-color:#dbe7d9;background:#f7faf4}
+.progression-unlock.unlocked>span{border-color:#d6e4d6;background:#edf4ec;color:#4e8063}
+.progression-unlock.unlocked b{color:#375b48}
+.gear-card.gear-locked{background:#f8f7f2;border-style:dashed}
+.gear-card.gear-locked .tech-seal{opacity:.65}
+
 .path-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
 .path-card{position:relative;display:flex;flex-direction:column;align-items:flex-start;min-width:0;padding:23px;border:1px solid var(--line);border-radius:9px;background:var(--panel);box-shadow:var(--shadow);overflow:hidden}
 .path-card:before{content:"";position:absolute;inset:0 0 auto;height:4px;background:linear-gradient(90deg,#52866c,#b3c9a9)}
