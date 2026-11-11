@@ -18,7 +18,7 @@
     { id: 'qiPill', name: 'Qi-Gathering Pill', seal: '丹', desc: 'A warm current of essence, carefully sealed in jade.', cost: 12, ingredients: { herb: 2, root: 1 }, effect: 'Instantly gain 45 qi.', type: 'qi', amount: 45 },
     { id: 'focusTea', name: 'Stillwater Tea', seal: '茶', desc: 'A fragrant infusion that steadies the wandering mind.', cost: 10, ingredients: { herb: 3 }, effect: 'Restore 30 health and gain 30 qi.', type: 'heal', amount: 30 },
     { id: 'bodyPill', name: 'Ironroot Elixir', seal: '根', desc: 'A bitter tonic that fortifies the meridians.', cost: 18, ingredients: { root: 3 }, effect: 'Permanently gain +8% qi / sec.', type: 'boost', amount: .08 },
-    { id: 'fortune', name: 'Fortune Incense', seal: '香', desc: 'Auspicious smoke that draws a few stray spirit stones.', cost: 8, ingredients: { herb: 1, flower: 1 }, effect: 'Gain 20 spirit stones.', type: 'stones', amount: 20 }
+    { id: 'fortune', name: 'Fortune Incense', seal: '香', desc: 'Auspicious smoke that draws spirit stones and gathers qi.', cost: 10, ingredients: { herb: 1, flower: 1 }, effect: 'Gain 1,000 spirit stones and 1,000 qi.', type: 'fortune', amount: 1000 }
   ];
   const enemyKinds = [
     { name: 'Mistfang Wolf', icon: '狼', hp: 42, damage: 5, stones: 10, rep: 4, drop: 'herb' },
@@ -269,6 +269,12 @@
     if (recipe.type === 'heal') { state.hp = Math.min(state.maxHp, state.hp + recipe.amount); state.qi += 30; state.qiToday += 30; state.totalQi += 30; }
     if (recipe.type === 'boost') { state.boosts += recipe.amount; state.milestones.push(`pill-${Date.now()}`); }
     if (recipe.type === 'stones') state.stones += recipe.amount;
+    if (recipe.type === 'fortune') {
+      state.stones += recipe.amount;
+      state.qi += recipe.amount;
+      state.qiToday += recipe.amount;
+      state.totalQi += recipe.amount;
+    }
     showToast(`${recipe.name} prepared.`); save(); render();
   }
   function trainPath(id) {
