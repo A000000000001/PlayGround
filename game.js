@@ -21,11 +21,37 @@
     { id: 'fortune', name: 'Fortune Incense', seal: '香', desc: 'Auspicious smoke that draws spirit stones and gathers qi.', cost: 10, ingredients: { herb: 1, flower: 1 }, effect: 'Gain 1,000 spirit stones and 1,000 qi.', type: 'fortune', amount: 1000 }
   ];
   const enemyKinds = [
-    { name: 'Mistfang Wolf', icon: '狼', hp: 42, damage: 5, stones: 10, rep: 4, drop: 'herb' },
-    { name: 'Brambleback Boar', icon: '豕', hp: 58, damage: 7, stones: 14, rep: 5, drop: 'root' },
-    { name: 'Moonlit Wisp', icon: '魄', hp: 36, damage: 8, stones: 12, rep: 6, drop: 'flower' }
+    { name: 'Mistfang Wolf', icon: '狼', sect: 'azure', hp: 42, damage: 5, stones: 10, rep: 4, drop: 'herb' },
+    { name: 'Brambleback Boar', icon: '豕', sect: 'azure', hp: 58, damage: 7, stones: 14, rep: 5, drop: 'root' },
+    { name: 'Moonlit Wisp', icon: '魄', sect: 'jade', hp: 36, damage: 8, stones: 12, rep: 6, drop: 'flower' },
+    { name: 'Ashenhorn Stag', icon: '鹿', sect: 'crimson', hp: 52, damage: 8, stones: 18, rep: 7, drop: 'root' },
+    { name: 'Emberscale Serpent', icon: '蛇', sect: 'crimson', hp: 44, damage: 10, stones: 20, rep: 8, drop: 'flower' },
+    { name: 'Jadewing Crane', icon: '鶴', sect: 'jade', hp: 48, damage: 6, stones: 16, rep: 7, drop: 'herb' }
   ];
-  const defaultState = () => ({ qi: 0, stones: 25, stage: 0, active: false, totalSeconds: 0, totalQi: 0, qiToday: 0, medSeconds: 0, expeditions: 0, completedTrips: 0, trip: null, upgrades: { sutra: 0, array: 0, body: 0 }, boosts: 0, teaUntil: 0, dailyClaimed: false, dailyDate: 1, brews: 0, milestones: [], lastSeen: Date.now(), hp: 60, maxHp: 60, enemy: null, pathLevels: { body: 0, spirit: 0 }, herbs: { herb: 0, root: 0, flower: 0 }, sectRep: 0, sectRank: 0, tripToday: 0 });
+  const sects = {
+    azure: { name: 'Azure Cloud', seal: '青', bonus: 'Qi generation +10%', qi: .1, attack: 0 },
+    crimson: { name: 'Crimson Forge', seal: '炎', bonus: 'Attack damage +15%', qi: 0, attack: .15 },
+    jade: { name: 'Jade Lotus', seal: '蓮', bonus: 'Qi generation +5% · attack +5%', qi: .05, attack: .05 }
+  };
+  const sectSpells = {
+    azure: { name: 'Cloudburst Palm', seal: '雲', cost: 12, damage: 24, desc: 'A focused wave of compressed spirit qi.' },
+    crimson: { name: 'Blazing Phoenix', seal: '炎', cost: 16, damage: 36, desc: 'A fierce flame art that scorches one foe.' },
+    jade: { name: 'Lotus Bind', seal: '蓮', cost: 10, damage: 20, heal: 8, desc: 'Entangling petals strike and restore a little health.' }
+  };
+  const missions = [
+    { id: 'hunt3', name: 'Clear the Beast Trail', desc: 'Defeat 3 spirit beasts.', target: 3, stones: 80, tokens: 8, merit: 12 },
+    { id: 'hunt5', name: 'Guard the Mountain Pass', desc: 'Defeat 5 spirit beasts.', target: 5, stones: 150, tokens: 15, merit: 22 }
+  ];
+  const gearCatalog = [
+    { id: 'sword', name: 'Sword', seal: '劍', tokens: 8, bonus: 'Attack +6 / level', stat: 'attack', value: 6 },
+    { id: 'helmet', name: 'Helmet', seal: '盔', tokens: 6, bonus: 'Qi flow +4% / level', stat: 'qi', value: .04 },
+    { id: 'gloves', name: 'Gloves', seal: '手', tokens: 6, bonus: 'Attack +3 / level', stat: 'attack', value: 3 },
+    { id: 'pants', name: 'Pants', seal: '褲', tokens: 6, bonus: 'Max health +10 / level', stat: 'health', value: 10 },
+    { id: 'vest', name: 'Vest', seal: '甲', tokens: 7, bonus: 'Qi flow +5% / level', stat: 'qi', value: .05 },
+    { id: 'shoes', name: 'Shoes', seal: '履', tokens: 5, bonus: 'Incoming damage -1 / level', stat: 'guard', value: 1 }
+  ];
+  const emptyEquipment = () => Object.fromEntries(gearCatalog.map(item => [item.id, { owned: false, level: 0 }]));
+  const defaultState = () => ({ qi: 0, stones: 25, stage: 0, active: false, totalSeconds: 0, totalQi: 0, qiToday: 0, medSeconds: 0, expeditions: 0, completedTrips: 0, trip: null, upgrades: { sutra: 0, array: 0, body: 0 }, boosts: 0, teaUntil: 0, dailyClaimed: false, dailyDate: 1, brews: 0, milestones: [], lastSeen: Date.now(), hp: 60, maxHp: 60, enemy: null, pathLevels: { body: 0, spirit: 0 }, herbs: { herb: 0, root: 0, flower: 0 }, sectRep: 0, sectRank: 0, tripToday: 0, sectId: 'azure', sectTokens: 0, mission: null, equipment: emptyEquipment() });
   let state = loadState();
   let activeView = 'cultivate';
   let toastTimer;
@@ -37,7 +63,9 @@
       const saved = JSON.parse(localStorage.getItem(SAVE_KEY));
       if (!saved) return defaultState();
       const defaults = defaultState();
-      const fresh = { ...defaults, ...saved, upgrades: { ...defaults.upgrades, ...(saved.upgrades || {}) }, pathLevels: { ...defaults.pathLevels, ...(saved.pathLevels || {}) }, herbs: { ...defaults.herbs, ...(saved.herbs || {}) }, milestones: saved.milestones || [] };
+      const fresh = { ...defaults, ...saved, upgrades: { ...defaults.upgrades, ...(saved.upgrades || {}) }, pathLevels: { ...defaults.pathLevels, ...(saved.pathLevels || {}) }, herbs: { ...defaults.herbs, ...(saved.herbs || {}) }, equipment: { ...defaults.equipment, ...(saved.equipment || {}) }, milestones: saved.milestones || [] };
+      Object.keys(fresh.equipment).forEach(id => { fresh.equipment[id] = { owned: false, level: 0, ...(fresh.equipment[id] || {}) }; });
+      if (!sects[fresh.sectId]) fresh.sectId = 'azure';
       fresh.maxHp = Math.max(60, Number(fresh.maxHp) || 60);
       fresh.hp = Math.max(0, Math.min(fresh.maxHp, Number(fresh.hp ?? fresh.maxHp)));
       const away = Math.min(28800, Math.max(0, (Date.now() - (fresh.lastSeen || Date.now())) / 1000));
@@ -63,7 +91,30 @@
     $('saveStatus').textContent = 'SYNCED';
   }
   function requirement(stage = state.stage) { return stage === 0 ? 100 : Math.round(100 * Math.pow(1.47, stage)); }
-  function rateFor(s = state) { return (0.8 + s.upgrades.sutra * .45 + (s.pathLevels?.spirit || 0) * .2) * (1 + s.boosts) * (s.active ? 1 : .2); }
+  function sectData(s = state) { return sects[s.sectId] || sects.azure; }
+  function gearStat(stat, s = state) { return gearCatalog.reduce((sum, item) => sum + (item.stat === stat && s.equipment?.[item.id]?.owned ? item.value * s.equipment[item.id].level : 0), 0); }
+  function attackDamage(base) { return Math.round((base + gearStat('attack')) * (1 + sectData().attack + state.sectRank * .03)); }
+  function rateFor(s = state) { return (0.8 + s.upgrades.sutra * .45 + (s.pathLevels?.spirit || 0) * .2) * (1 + s.boosts + gearStat('qi', s) + sectData(s).qi + s.sectRank * .02) * (s.active ? 1 : .2); }
+  function currentSpell() { return sectSpells[state.sectId] || sectSpells.azure; }
+  function damageEnemy(damage, source) {
+    const enemy = state.enemy;
+    if (!enemy) return;
+    enemy.hp -= damage;
+    if (enemy.hp <= 0) {
+      state.enemy = null; state.wins = (state.wins || 0) + 1;
+      state.stones += enemy.stones; addRep(enemy.rep);
+      if (enemy.drop && state.herbs[enemy.drop] !== undefined) state.herbs[enemy.drop] += 1;
+      if (state.mission) state.mission.progress = Math.min(state.mission.progress + 1, missions.find(m => m.id === state.mission.id)?.target || Infinity);
+      showToast(`${enemy.name} defeated · +${enemy.stones} stones · +${enemy.rep} merit${enemy.drop ? ` · ${enemy.drop} gathered` : ''}`);
+      return;
+    }
+    const taken = Math.max(1, enemy.damage - Math.floor(state.pathLevels.body / 2) - Math.floor(gearStat('guard')));
+    state.hp = Math.max(0, state.hp - taken);
+    if (state.hp <= 0) {
+      state.enemy = null; state.hp = Math.max(1, Math.floor(state.maxHp * .35));
+      showToast(`You were overcome and carried to safety · restored to ${state.hp} health.`);
+    } else showToast(`${source} dealt ${damage} damage and suffered ${taken} in return.`);
+  }
   function currentBand(stage = state.stage) { return realmBands.find(b => stage >= b.start && stage <= b.end); }
   function realmTitle(stage = state.stage) {
     if (stage === 0) return 'Mortal';
@@ -107,10 +158,10 @@
     const control = Math.max(1, 1 + state.stage + state.upgrades.sutra * 2);
     const spirit = Math.max(1, 1 + Math.floor(state.stage / 2) + state.upgrades.array * 2 + state.pathLevels.spirit * 3);
     const body = Math.max(1, 1 + state.stage + state.upgrades.body * 2 + state.pathLevels.body * 3);
-    state.maxHp = Math.max(60, 60 + body * 5 + state.pathLevels.body * 12 + state.sectRank * 10);
+    state.maxHp = Math.max(60, 60 + body * 5 + state.pathLevels.body * 12 + state.sectRank * 10 + gearStat('health'));
     state.hp = Math.min(state.hp, state.maxHp);
     $('sectRankLabel').textContent = sectRanks[state.sectRank]?.name || sectRanks[0].name;
-    $('sectName').textContent = state.sectRank >= 4 ? 'Azure Cloud' : 'Azure Cloud';
+    $('sectName').textContent = sectData().name;
     [['control', control], ['spirit', spirit], ['body', body]].forEach(([key, val]) => {
       $(`${key}Stat`).textContent = val; $(`${key}Meter`).style.width = `${Math.min(100, 8 + val * 8)}%`;
     });
@@ -181,7 +232,8 @@
   }
   function renderCombat() {
     const enemy = state.enemy;
-    const enemyCard = enemy ? `<div class="enemy-card"><div class="enemy-glyph">${enemy.icon}</div><div class="enemy-info"><div class="eyebrow">WILDERNESS ENCOUNTER · ${enemy.level ? `REALM ${enemy.level}` : 'BEAST'}</div><h2>${enemy.name}</h2><div class="health-label"><span>HEALTH</span><b>${Math.max(0, enemy.hp)} / ${enemy.maxHp}</b></div><div class="health-track"><i style="width:${Math.max(0, enemy.hp / enemy.maxHp * 100)}%"></i></div></div></div><div class="combat-actions"><button class="action-btn body-strike" data-action="attack" data-style="body">Body strike · ${3 + state.pathLevels.body * 4 + state.stage}–${7 + state.pathLevels.body * 5 + state.stage} dmg</button><button class="action-btn spirit-strike" data-action="attack" data-style="spirit" ${state.qi < 8 ? 'disabled' : ''}>Spirit art · ${6 + state.pathLevels.spirit * 5 + state.stage}–${12 + state.pathLevels.spirit * 6 + state.stage} dmg · 8 qi</button><button class="action-btn" data-action="flee">Retreat</button></div>` : `<div class="encounter-empty"><div class="empty-mark">⚔</div><h2>The forest is quiet—for now.</h2><p>Seek a spirit beast to test your cultivation. Victory earns spirit stones, sect merit, and a chance at rare ingredients.</p><button class="action-btn" data-action="seek-enemy">Seek a spirit beast</button></div>`;
+    const spell = currentSpell();
+    const enemyCard = enemy ? `<div class="enemy-card"><div class="enemy-glyph">${enemy.icon}</div><div class="enemy-info"><div class="eyebrow">${sects[enemy.sect]?.name || 'WILDERNESS'} ENCOUNTER · ${enemy.level ? `REALM ${enemy.level}` : 'BEAST'}</div><h2>${enemy.name}</h2><div class="health-label"><span>HEALTH</span><b>${Math.max(0, enemy.hp)} / ${enemy.maxHp}</b></div><div class="health-track"><i style="width:${Math.max(0, enemy.hp / enemy.maxHp * 100)}%"></i></div></div></div><div class="combat-actions"><button class="action-btn body-strike" data-action="attack" data-style="body">Body strike · ${attackDamage(3 + state.pathLevels.body * 4 + state.stage)}–${attackDamage(7 + state.pathLevels.body * 5 + state.stage)} dmg</button><button class="action-btn spirit-strike" data-action="attack" data-style="spirit" ${state.qi < 8 ? 'disabled' : ''}>Spirit art · ${attackDamage(6 + state.pathLevels.spirit * 5 + state.stage)}–${attackDamage(12 + state.pathLevels.spirit * 6 + state.stage)} dmg · 8 qi</button><button class="action-btn sect-spell" data-action="cast-spell" ${state.qi < spell.cost ? 'disabled' : ''}>${spell.seal} ${spell.name} · ${attackDamage(spell.damage + state.pathLevels.spirit * 4 + state.stage)} dmg · ${spell.cost} qi</button><button class="action-btn" data-action="flee">Retreat</button></div>` : `<div class="encounter-empty"><div class="empty-mark">⚔</div><h2>The forest is quiet—for now.</h2><p>Seek a ${sectData().name} spirit beast to test your cultivation. Victory earns spirit stones, sect merit, and a chance at rare ingredients.</p><button class="action-btn" data-action="seek-enemy">Seek a spirit beast</button></div>`;
     const hpPercent = Math.max(0, state.hp / state.maxHp * 100);
     $('view-combat').innerHTML = `${subHead('TRIAL BY COMBAT', 'Spirit beast grounds', 'Face the creatures beyond the sect wall. Choose how to fight, watch your health, and claim the spoils.', '⚔')}<div class="subview-layout"><div class="subview-main"><article class="content-panel combat-panel"><div class="eyebrow">${enemy ? 'ACTIVE BATTLE' : 'READY YOURSELF'}</div>${enemyCard}</article><article class="content-panel"><div class="eyebrow">YOUR VITALITY</div><h2>${Math.ceil(state.hp)} / ${state.maxHp} health</h2><div class="health-track player-health"><i style="width:${hpPercent}%"></i></div><p class="combat-tip">Body strikes are free and scale with body cultivation. Spirit arts spend 8 qi but hit harder. A prepared healing pill restores health.</p></article></div><aside class="subview-aside"><article class="content-panel"><div class="eyebrow">BATTLE RECORD</div><h2>${state.wins || 0} victories</h2><div class="inventory-row"><span>Spirit stones</span><b>◇ ${nfmt(state.stones)}</b></div><div class="inventory-row"><span>Sect merit</span><b>${state.sectRep}</b></div><div class="inventory-row"><span>Herb · root · flower</span><b>${state.herbs.herb} · ${state.herbs.root} · ${state.herbs.flower}</b></div></article><article class="feature-card"><div class="eyebrow">FIELD COUNSEL</div><h3>Prepare before you hunt</h3><p>Craft Stillwater Tea in the Alchemy Pavilion to restore health. If your health reaches zero, you are carried back to safety at a fraction of your vitality.</p><button class="action-btn" data-view="alchemy">Visit alchemy</button></article></aside></div>`;
   }
@@ -189,7 +241,14 @@
     const rank = sectRanks[state.sectRank] || sectRanks[0], next = sectRanks[state.sectRank + 1];
     const progress = next ? Math.min(100, state.sectRep / next.need * 100) : 100;
     const ranks = sectRanks.map((r, i) => `<div class="sect-rank ${i <= state.sectRank ? 'unlocked' : ''}"><span>${i <= state.sectRank ? '✦' : '·'}</span><div><b>${r.name}</b><small>${r.need} merit</small></div>${i === state.sectRank ? '<em>CURRENT</em>' : ''}</div>`).join('');
-    $('view-sect').innerHTML = `${subHead('AZURE CLOUD DISCIPLES', 'Sect Hall', 'Earn merit through service and battle to rise through the sect ranks.', '青')}<div class="subview-layout"><div class="subview-main"><article class="content-panel sect-progress"><div class="eyebrow">YOUR STANDING</div><h2>${rank.name}</h2><p>${next ? `${next.need - state.sectRep} merit until promotion to ${next.name}.` : 'You have reached the highest station in the Azure Cloud Sect.'}</p><div class="mini-track"><i style="width:${progress}%"></i></div><div class="inventory-row"><span>Sect merit</span><b>${state.sectRep} / ${next?.need || 'MAX'}</b></div><button class="action-btn" data-action="donate" ${state.stones < 10 || !next ? 'disabled' : ''}>Donate 10 spirit stones · +4 merit</button></article><article class="content-panel"><div class="eyebrow">THE LADDER OF SERVICE</div><h2>Disciple ranks</h2><div class="sect-rank-list">${ranks}</div></article></div><aside class="subview-aside"><article class="feature-card"><div class="eyebrow">AZURE CLOUD SECT</div><h3>A home for every path</h3><p>Members who protect the sect and contribute resources are rewarded with stronger foundations. Every promotion grants +10 maximum health.</p><div class="feature-stats"><span>CURRENT RANK <b>${rank.name}</b></span><span>MAX HEALTH <b>${state.maxHp}</b></span></div></article><article class="content-panel"><div class="eyebrow">EARN MERIT</div><h2>Serve the sect</h2><p>Defeat wilderness beasts for merit and spirit stones. Expeditions also bring merit, herbs, and roots back to the pavilion.</p></article></aside></div>`;
+    const sectCards = Object.entries(sects).map(([id, sect]) => `<article class="sect-choice ${state.sectId === id ? 'selected' : ''}"><div class="tech-seal">${sect.seal}</div><h3>${sect.name}</h3><p>${sect.bonus}</p><button class="action-btn" data-action="join-sect" data-id="${id}" ${state.sectId === id ? 'disabled' : ''}>${state.sectId === id ? 'Current sect' : 'Join sect'}</button></article>`).join('');
+    const mission = state.mission && missions.find(m => m.id === state.mission.id);
+    const missionPanel = mission ? `<div class="inventory-row"><span>${mission.name}</span><b>${Math.min(state.mission.progress, mission.target)} / ${mission.target}</b></div><p>${mission.desc} Reward: ${mission.stones} stones · ${mission.tokens} sect tokens · ${mission.merit} merit.</p><button class="action-btn" data-action="claim-mission" ${state.mission.progress < mission.target ? 'disabled' : ''}>${state.mission.progress >= mission.target ? 'Claim mission reward' : 'Mission in progress'}</button>` : missions.map(m => `<div class="mission-row"><h3>${m.name}</h3><p>${m.desc}</p><small>Reward · ${m.stones} stones · ${m.tokens} tokens · ${m.merit} merit</small><button class="action-btn" data-action="accept-mission" data-id="${m.id}">Accept mission</button></div>`).join('');
+    const equipment = gearCatalog.map(item => {
+      const gear = state.equipment[item.id], upgradeCost = 35 * (gear.level + 1);
+      return `<article class="gear-card"><div class="tech-seal">${item.seal}</div><h3>${item.name}</h3><p>${item.bonus}</p><div class="tech-level">${gear.owned ? `EQUIPPED · LEVEL ${gear.level}` : 'NOT OWNED'}</div>${gear.owned ? `<button class="action-btn" data-action="upgrade-gear" data-id="${item.id}" ${state.stones < upgradeCost || gear.level >= 10 ? 'disabled' : ''}>${gear.level >= 10 ? 'Max level' : `Upgrade · ◇ ${upgradeCost}`}</button>` : `<button class="action-btn" data-action="buy-gear" data-id="${item.id}" ${state.sectTokens < item.tokens ? 'disabled' : ''}>Buy · ${item.tokens} sect tokens</button>`}</article>`;
+    }).join('');
+    $('view-sect').innerHTML = `${subHead('THE GREAT SECTS', 'Sect Hall', 'Choose a sect, complete its missions, and earn the gear to strengthen your path.', sectData().seal)}<div class="subview-layout"><div class="subview-main"><article class="content-panel"><div class="eyebrow">CHOOSE YOUR ALLIANCE</div><h2>Three sects, three disciplines</h2><div class="sect-choice-grid">${sectCards}</div><div class="feature-stats"><span>SECT RANK BONUS <b>+${state.sectRank * 3}% attack · +${state.sectRank * 2}% qi</b></span><span>FACTION BONUS <b>${sectData().bonus}</b></span></div></article><article class="content-panel sect-progress"><div class="eyebrow">YOUR STANDING · ${sectData().name}</div><h2>${rank.name}</h2><p>${next ? `${next.need - state.sectRep} merit until promotion to ${next.name}.` : 'You have reached the highest sect rank.'}</p><div class="mini-track"><i style="width:${progress}%"></i></div><div class="inventory-row"><span>Sect merit</span><b>${state.sectRep} / ${next?.need || 'MAX'}</b></div><button class="action-btn" data-action="donate" ${state.stones < 10 || !next ? 'disabled' : ''}>Donate 10 spirit stones · +4 merit</button></article><article class="content-panel"><div class="eyebrow">SECT MISSIONS</div><h2>Earn tokens and merit</h2><p>Complete beast-hunting assignments to earn sect tokens, spirit stones, and promotion merit.</p><div class="inventory-row"><span>Sect tokens</span><b>✦ ${nfmt(state.sectTokens)}</b></div>${missionPanel}</article><article class="content-panel"><div class="eyebrow">ARMORY · TOKENS ${nfmt(state.sectTokens)} · STONES ${nfmt(state.stones)}</div><h2>Equipment and refinement</h2><p>Buy each gear piece with sect tokens, then spend spirit stones to upgrade its bonus.</p><div class="gear-grid">${equipment}</div></article><article class="content-panel"><div class="eyebrow">THE LADDER OF SERVICE</div><h2>Disciple ranks</h2><div class="sect-rank-list">${ranks}</div></article></div><aside class="subview-aside"><article class="feature-card"><div class="eyebrow">${sectData().name}</div><h3>Your sect empowers your cultivation</h3><p>Promotions strengthen your attacks and qi flow. Gear adds further bonuses, while your sect's unique spell is available in combat.</p><div class="feature-stats"><span>CURRENT RANK <b>${rank.name}</b></span><span>MAX HEALTH <b>${state.maxHp}</b></span><span>ATTACK BONUS <b>+${Math.round((sectData().attack + state.sectRank * .03) * 100)}%</b></span><span>QI FLOW BONUS <b>+${Math.round((sectData().qi + state.sectRank * .02 + gearStat('qi')) * 100)}%</b></span></div></article><article class="content-panel"><div class="eyebrow">SECT SERVICE</div><h2>Rise together</h2><p>Defeat beasts to earn merit and progress your active mission. Every promotion also grants +10 maximum health.</p></article></aside></div>`;
   }
   function renderSubView() {
     if (activeView === 'paths') renderPaths();
@@ -287,38 +346,72 @@
   }
   function seekEnemy() {
     if (state.enemy) return;
-    const template = enemyKinds[Math.floor(Math.random() * enemyKinds.length)];
+    const sectEnemies = enemyKinds.filter(enemy => enemy.sect === state.sectId);
+    const pool = sectEnemies.length ? sectEnemies : enemyKinds;
+    const template = pool[Math.floor(Math.random() * pool.length)];
     const scale = 1 + state.stage * .12 + (state.wins || 0) * .035;
     const maxHp = Math.round(template.hp * scale);
     state.enemy = { ...template, hp: maxHp, maxHp, damage: Math.max(2, Math.round(template.damage * scale)), stones: Math.round(template.stones * scale), level: state.stage + 1 };
     showToast(`${template.name} emerges from the mist!`); save(); render();
   }
   function attackEnemy(style) {
-    const enemy = state.enemy;
-    if (!enemy) return;
-    let damage;
+    if (!state.enemy) return;
+    let base;
     if (style === 'spirit') {
       if (state.qi < 8) return showToast('You need 8 qi to form a spirit art.');
       state.qi -= 8;
-      damage = 6 + state.pathLevels.spirit * 5 + state.stage + Math.floor(Math.random() * (7 + state.pathLevels.spirit));
+      base = 6 + state.pathLevels.spirit * 5 + state.stage + Math.floor(Math.random() * (7 + state.pathLevels.spirit));
     } else {
-      damage = 3 + state.pathLevels.body * 4 + state.stage + Math.floor(Math.random() * (5 + state.pathLevels.body));
+      base = 3 + state.pathLevels.body * 4 + state.stage + Math.floor(Math.random() * (5 + state.pathLevels.body));
     }
-    enemy.hp -= damage;
-    if (enemy.hp <= 0) {
-      state.enemy = null; state.wins = (state.wins || 0) + 1;
-      state.stones += enemy.stones; addRep(enemy.rep);
-      if (enemy.drop) state.herbs[enemy.drop] += 1;
-      showToast(`${enemy.name} defeated · +${enemy.stones} stones · +${enemy.rep} merit · ${enemy.drop} gathered`);
-    } else {
-      const taken = Math.max(1, enemy.damage - Math.floor(state.pathLevels.body / 2));
-      state.hp = Math.max(0, state.hp - taken);
-      if (state.hp <= 0) {
-        state.enemy = null; state.hp = Math.max(1, Math.floor(state.maxHp * .35));
-        showToast(`You were overcome and carried to safety · restored to ${state.hp} health.`);
-      } else showToast(`You dealt ${damage} damage and suffered ${taken} in return.`);
-    }
+    damageEnemy(attackDamage(base), style === 'spirit' ? 'Your spirit art' : 'Your body strike');
     save(); render();
+  }
+  function castSectSpell() {
+    if (!state.enemy) return;
+    const spell = currentSpell();
+    if (state.qi < spell.cost) return showToast(`You need ${spell.cost} qi to cast ${spell.name}.`);
+    state.qi -= spell.cost;
+    damageEnemy(attackDamage(spell.damage + state.pathLevels.spirit * 4 + state.stage), spell.name);
+    if (spell.heal) state.hp = Math.min(state.maxHp, state.hp + spell.heal);
+    save(); render();
+  }
+  function joinSect(id) {
+    if (!sects[id] || id === state.sectId) return;
+    state.sectId = id;
+    showToast(`You have joined the ${sects[id].name} Sect. Its arts and beasts await.`);
+    save(); render();
+  }
+  function acceptMission(id) {
+    const mission = missions.find(item => item.id === id);
+    if (!mission || state.mission) return showToast('Complete or claim your current mission first.');
+    state.mission = { id, progress: 0 };
+    showToast(`Mission accepted · ${mission.name}`); save(); render();
+  }
+  function claimMission() {
+    const mission = state.mission && missions.find(item => item.id === state.mission.id);
+    if (!mission || state.mission.progress < mission.target) return showToast('Defeat the required spirit beasts before claiming this mission.');
+    state.stones += mission.stones;
+    state.sectTokens += mission.tokens;
+    addRep(mission.merit);
+    state.mission = null;
+    showToast(`Mission complete · +${mission.stones} stones · +${mission.tokens} sect tokens`);
+    save(); render();
+  }
+  function buyGear(id) {
+    const item = gearCatalog.find(entry => entry.id === id);
+    if (!item || state.equipment[id]?.owned || state.sectTokens < item.tokens) return showToast('You need more sect tokens to buy that equipment.');
+    state.sectTokens -= item.tokens;
+    state.equipment[id] = { owned: true, level: 1 };
+    showToast(`${item.name} equipped · ${item.bonus}`); render(); save();
+  }
+  function upgradeGear(id) {
+    const item = gearCatalog.find(entry => entry.id === id), gear = state.equipment[id];
+    if (!item || !gear?.owned || gear.level >= 10) return;
+    const cost = 35 * (gear.level + 1);
+    if (state.stones < cost) return showToast('Not enough spirit stones to refine this equipment.');
+    state.stones -= cost; gear.level += 1;
+    showToast(`${item.name} refined to level ${gear.level}.`); render(); save();
   }
   function donateToSect() {
     if (state.stones < 10 || state.sectRank >= sectRanks.length - 1) return;
@@ -337,7 +430,13 @@
       case 'train-path': trainPath(action.dataset.id); break;
       case 'seek-enemy': seekEnemy(); break;
       case 'attack': attackEnemy(action.dataset.style); break;
+      case 'cast-spell': castSectSpell(); break;
       case 'flee': state.enemy = null; showToast('You retreat safely from the encounter.'); save(); render(); break;
+      case 'join-sect': joinSect(action.dataset.id); break;
+      case 'accept-mission': acceptMission(action.dataset.id); break;
+      case 'claim-mission': claimMission(); break;
+      case 'buy-gear': buyGear(action.dataset.id); break;
+      case 'upgrade-gear': upgradeGear(action.dataset.id); break;
       case 'donate': donateToSect(); break;
       case 'attempt-break': attemptBreak(); break;
       case 'close-modal': $('modalBackdrop').hidden = true; break;
