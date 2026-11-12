@@ -789,3 +789,185 @@ body.focus-mode .banner-row,body.focus-mode .challenge-panel,body.focus-mode .no
   .arena-duelists{grid-template-columns:1fr;gap:6px}
   .duel-vs{justify-self:center;font-size:16px}
 }
+
+/* ============================================================
+   DUAL CULTIVATION — SPIRIT & BODY
+   ============================================================ */
+.dual-cultivation-section{margin-top:17px}
+#dualCultivation{display:grid;gap:15px}
+.lower-grid>.panel{min-width:0}
+.realm-path.long{display:grid;grid-template-columns:repeat(15,minmax(76px,1fr));width:100%;max-width:100%;min-width:0;overflow-x:auto;padding-bottom:7px;scrollbar-width:thin;scrollbar-color:#c8bd97 #eee9dc}
+.realm-path.long .realm-step{min-width:0}
+.realm-path.long .realm-step span:last-child{white-space:normal;line-height:1.25;font-size:7px}
+.realm-path.long::-webkit-scrollbar{height:5px}
+.realm-path.long::-webkit-scrollbar-thumb{background:#d4cba9;border-radius:5px}
+
+.shared-qi{position:relative;display:grid;grid-template-columns:50px minmax(0,1.15fr) minmax(180px,.85fr) minmax(210px,1fr);gap:17px;align-items:center;padding:19px 21px;border:1px solid #345349;border-radius:10px;background:radial-gradient(circle at 8% 12%,#2b4b40,#17312b 62%,#122824);color:#f2eedb;overflow:hidden;box-shadow:0 10px 30px rgba(18,40,35,.16)}
+.shared-qi:after{content:'氣';position:absolute;right:12px;bottom:-38px;font:130px 'Ma Shan Zheng',serif;color:rgba(222,204,150,.055);pointer-events:none}
+.shared-seal{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(219,196,132,.55);background:radial-gradient(circle,#2f5547,#1b382f);color:#e7d49b;font:27px 'Ma Shan Zheng',serif;box-shadow:0 0 0 5px rgba(222,201,141,.05);position:relative;z-index:1}
+.shared-copy{position:relative;z-index:1;min-width:0}
+.shared-copy .eyebrow{color:#a9c1ae}
+.shared-copy h3{font:600 22px var(--serif);margin:4px 0 5px;color:#f4efdc;letter-spacing:-.2px}
+.shared-copy p{font-size:9px;line-height:1.55;color:#aebfb2;margin:0;max-width:360px}
+.shared-meter{position:relative;z-index:1}
+.shared-meter .qi-track{background:#2a463d;border:1px solid #3b5a4e}
+.shared-meter .qi-fill{background:linear-gradient(90deg,#b39a58,#dfcc92)}
+.shared-meter>span{display:block;margin-top:7px;color:#a9b8aa;font-size:8px;letter-spacing:.55px}
+.shared-realms{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.shared-realms>span{border:1px solid #335348;border-radius:7px;background:#1c3931;padding:8px 10px;min-width:0}
+.shared-realms small{display:block;font-size:6.5px;letter-spacing:1.15px;color:#93a598;font-weight:700}
+.shared-realms b{display:block;font:600 11px var(--serif);color:#e6d5a1;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.dual-path-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.cultivation-card{position:relative;display:flex;flex-direction:column;padding:20px;border-radius:10px;border:1px solid #35534a;background:linear-gradient(160deg,#1e3c34,#152e28 58%,#122722);color:#eef0e2;box-shadow:0 10px 28px rgba(21,45,39,.12);overflow:hidden}
+.cultivation-card:before{content:'';position:absolute;inset:0 0 auto;height:2px;background:linear-gradient(90deg,#c9b270,#8f7640 45%,transparent)}
+.cultivation-card.body-card:before{background:linear-gradient(90deg,#a9bd93,#6f8b68 45%,transparent)}
+.cultivation-card:after{content:'';position:absolute;right:-60px;top:-70px;width:210px;height:210px;border-radius:50%;border:1px solid rgba(218,200,145,.08);pointer-events:none}
+.cultivation-card.locked{border-style:dashed;border-color:#3d5048;background:linear-gradient(160deg,#1b332d,#142a25)}
+.cult-card-head{position:relative;z-index:1;display:grid;grid-template-columns:50px minmax(0,1fr) auto;gap:12px;align-items:center}
+.cult-seal{width:49px;height:49px;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(212,191,130,.55);background:radial-gradient(circle,#31523f,#1b362d);color:#e3cf94;font:27px 'Ma Shan Zheng',serif;box-shadow:0 0 0 4px rgba(222,201,141,.05)}
+.body-card .cult-seal{border-color:rgba(169,189,147,.5);color:#c7d7b3;background:radial-gradient(circle,#2c4737,#192f29)}
+.cult-card-title{min-width:0}
+.cult-card-title .eyebrow{color:#9cb3a2;font-size:7.5px;letter-spacing:1.5px}
+.cult-card-title h2{font:600 19px var(--serif);margin:4px 0 3px;color:#f3eeda;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cult-card-title h2 em{font-style:normal;color:#dcc487;margin-left:3px}
+.body-card .cult-card-title h2 em{color:#bcd0a7}
+.cult-card-title small{display:block;font-size:7.5px;color:#8fa294;letter-spacing:.35px}
+.cult-pill{align-self:flex-start;border:1px solid #4a6356;border-radius:20px;padding:4px 8px;font-size:6.5px;letter-spacing:1px;font-weight:700;color:#b7c9b8;background:#213d34;white-space:nowrap}
+.cult-pill.spirit{border-color:#6b5f39;color:#e3cd8d;background:#2b3a2f}
+.cult-pill.body{border-color:#4e6850;color:#c1d6ae;background:#243b2e}
+.cult-stage-track{position:relative;z-index:1;display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:4px;margin:18px 0 5px}
+.stage-pip{display:grid;place-items:center;height:21px;border:1px solid #39574b;border-radius:4px;background:#1a352d;color:#7f9586;font-size:7px;font-weight:700;letter-spacing:.2px;transition:.2s}
+.stage-pip.done{border-color:#826e3e;background:#3b422f;color:#e4d09a}
+.body-card .stage-pip.done{border-color:#658058;background:#2f4636;color:#d0dfbd}
+.stage-pip.current{border-color:#d5c186;background:#f0e5bd;color:#5d522f;box-shadow:0 0 0 2px rgba(213,193,134,.14)}
+.body-card .stage-pip.current{border-color:#b3ca9c;background:#dce8cd;color:#476140;box-shadow:0 0 0 2px rgba(179,202,156,.13)}
+.cult-progress-label{position:relative;z-index:1;display:flex;justify-content:space-between;gap:10px;margin:12px 0 7px;font-size:7.5px;letter-spacing:1px;color:#95a99a;font-weight:700}
+.cult-progress-label b{font-size:9px;letter-spacing:0;color:#d6c387;font-weight:600;white-space:nowrap}
+.body-card .cult-progress-label b{color:#bfd4aa}
+.cultivation-card .qi-track{position:relative;z-index:1;background:#2a453c;border:1px solid #3b594d;height:8px}
+.cultivation-card .qi-fill{background:linear-gradient(90deg,#bda15c,#e1cd93)}
+.cultivation-card .body-fill{background:linear-gradient(90deg,#769468,#b5cba0)}
+.cult-next-line{position:relative;z-index:1;display:flex;justify-content:space-between;gap:10px;margin-top:8px;font-size:7.5px;color:#8fa395;letter-spacing:.35px}
+.cult-next-line b{color:#e1d1a0;font-weight:600}
+.body-card .cult-next-line b{color:#c4d9b0}
+.cult-actions{position:relative;z-index:1;margin-top:14px}
+.cult-actions .action-btn{width:100%;display:flex;justify-content:space-between;align-items:center;gap:9px;border:1px solid #6d5e37;background:linear-gradient(180deg,#f2e6bd,#e4d39e);color:#5d512f;padding:11px 13px;border-radius:6px;font-size:9px;letter-spacing:.35px;box-shadow:0 2px 0 rgba(0,0,0,.14)}
+.cult-actions .action-btn:hover:not(:disabled){background:linear-gradient(180deg,#f8eecb,#e9da9f);border-color:#927b42;transform:translateY(-1px)}
+.cult-actions .action-btn:disabled{opacity:.45;filter:saturate(.7)}
+.cult-actions .action-btn span{font-weight:600;color:#826a39;white-space:nowrap}
+.cult-actions .body-advance-btn,.cult-actions .body-break-btn{border-color:#5f7c54;background:linear-gradient(180deg,#e6efd7,#cbdab6);color:#405a38}
+.cult-actions .body-advance-btn:hover:not(:disabled),.cult-actions .body-break-btn:hover:not(:disabled){background:linear-gradient(180deg,#edf5e0,#d5e5c2);border-color:#77966a}
+.cult-actions .body-advance-btn span,.cult-actions .body-break-btn span{color:#5c744f}
+.cult-stats{position:relative;z-index:1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:14px}
+.cult-stat{border:1px solid #365348;border-radius:6px;background:#1a352e;padding:7px 8px;min-width:0;cursor:help}
+.body-card .cult-stat{border-color:#3b5547;background:#1b352e}
+.cult-stat small{display:block;font-size:5.8px;letter-spacing:.8px;color:#8fa295;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cult-stat b{display:block;margin-top:3px;font-size:10px;color:#e3d09a;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.body-card .cult-stat b{color:#c8dcb5}
+.cult-bonus{position:relative;z-index:1;margin:12px 0 0;padding-top:10px;border-top:1px solid #2f4b41;font-size:8px;line-height:1.55;color:#91a597}
+.cult-locked{position:relative;z-index:1;display:grid;grid-template-columns:45px minmax(0,1fr);gap:13px;align-items:start;margin-top:17px}
+.lock-mark{width:43px;height:43px;border-radius:50%;display:grid;place-items:center;border:1px dashed #53685c;background:#1b342d;color:#86988a;font:23px 'Ma Shan Zheng',serif}
+.cult-locked b{display:block;font:600 13px var(--serif);color:#d7dbc9;margin-bottom:4px}
+.cult-locked p{margin:0 0 10px;font-size:8.5px;line-height:1.6;color:#98aa9b}
+.cult-locked p b{display:inline;font-family:var(--sans);font-size:inherit;color:#ddc88d}
+.cult-locked .cult-progress-label{margin:0 0 6px}
+.cult-locked .qi-fill{background:linear-gradient(90deg,#5e7a63,#96ab7e)}
+
+.origin-card{position:relative;display:grid;grid-template-columns:58px minmax(0,1fr) auto;gap:16px;align-items:center;padding:20px 22px;border:1px solid #8f7a45;border-radius:10px;background:radial-gradient(circle at 5% 50%,#463f27,#25362d 55%,#172c26);color:#f2edd8;box-shadow:0 0 0 1px rgba(216,196,133,.1),0 12px 34px rgba(20,40,34,.2);overflow:hidden}
+.origin-card:after{content:'源';position:absolute;right:22px;bottom:-42px;font:120px 'Ma Shan Zheng',serif;color:rgba(228,207,146,.06)}
+.origin-seal{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;border:1px solid #c8ad6b;background:radial-gradient(circle,#584d2d,#2d3c2e);color:#f0dda3;font:30px 'Ma Shan Zheng',serif;box-shadow:0 0 0 5px rgba(222,201,141,.07);position:relative;z-index:1}
+.origin-copy{position:relative;z-index:1;min-width:0}
+.origin-copy .eyebrow{color:#d9c58c;font-size:7.5px}
+.origin-copy h2{font:600 21px var(--serif);margin:4px 0 6px;color:#f5efd8}
+.origin-copy h2 em{font-style:normal;color:#dcc487;margin-left:4px}
+.origin-copy>p{font-size:8.5px;line-height:1.55;color:#b6bda6;margin:0;max-width:620px}
+.origin-stats{display:flex;flex-wrap:wrap;gap:7px 16px;margin-top:10px;font-size:7px;letter-spacing:.55px;color:#9faf9b}
+.origin-stats b{color:#e0cc92;font-weight:600}
+.origin-card>.action-btn{position:relative;z-index:1;border:1px solid #8f7a45;background:#efe3ba;color:#5f512d;padding:11px 15px;border-radius:6px;font-size:9px;font-weight:700;white-space:nowrap;cursor:pointer}
+.origin-card>.action-btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* Character sheet dual realm strip */
+.char-realm-sub{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px}
+.char-realm-sub>span{display:grid;grid-template-columns:23px minmax(0,1fr);grid-template-rows:auto auto;column-gap:7px;align-items:center;border:1px solid #ece9dc;border-radius:7px;background:#fbf9f1;padding:7px 8px;min-width:0;cursor:help}
+.char-realm-sub i{grid-row:1/3;width:22px;height:22px;display:grid;place-items:center;border-radius:50%;border:1px solid #e1d7ba;background:#f7f0de;color:#9f8248;font:12px 'Ma Shan Zheng',serif;font-style:normal}
+.char-realm-sub small{font-size:5.5px;letter-spacing:.75px;color:#a19b87;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.char-realm-sub b{font-size:8px;color:#4c5e50;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
+
+/* Paths page twin cards */
+.twin-cultivation-panel{border-color:#dcd3b8;background:linear-gradient(150deg,#fffdf6,#f8f4e6)}
+.twin-path-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:14px 0 4px}
+.twin-path-card{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:12px;align-items:center;padding:14px;border:1px solid #e3dcc6;border-radius:8px;background:#fffdf6;position:relative;overflow:hidden}
+.twin-path-card:before{content:'';position:absolute;inset:0 auto 0 0;width:3px;background:#b39a58}
+.twin-path-card.body:before{background:#7d9a74}
+.twin-path-card.locked{border-style:dashed;background:#f8f7ef}
+.twin-seal{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;border:1px solid #ddcf9f;background:radial-gradient(circle,#fdf7e3,#f3ecd5);color:#9b7d3b;font:23px 'Ma Shan Zheng',serif}
+.twin-path-card.body .twin-seal{border-color:#cddbc4;background:radial-gradient(circle,#f4f9ed,#e4eddc);color:#607e57}
+.twin-path-card h3{font:600 15px var(--serif);margin:3px 0;color:#405347}
+.twin-path-card p{font-size:8px;line-height:1.5;color:#8a9388;margin:0}
+.twin-path-card .action-btn{font-size:8px;padding:8px 9px}
+.twin-path-card.locked h3{color:#8a948a}
+
+/* Codex dual lists */
+.codex-realm.current .codex-node{border-color:#6f9c7d;background:#e4efe3;color:#46745e;box-shadow:0 0 0 3px #e9f2e7}
+.codex-realm.current h3{color:#3f6a51}
+.codex-realm.body .codex-node{border-color:#cddcc4;color:#64815a}
+.codex-realm.body.unlocked .codex-node{background:#e9f1df;border-color:#bcd1ad;color:#587a4d}
+.codex-realm.body.current .codex-node{background:#dcead0;border-color:#8aa97b;color:#476a3e;box-shadow:0 0 0 3px #eef5e8}
+.codex-realm.sealed{opacity:.58}
+.codex-realm.sealed h3,.codex-realm.sealed p{filter:grayscale(.35)}
+.codex-realm h3 small{font:400 10px 'Ma Shan Zheng',serif;color:#a9945c;margin-left:4px}
+.origin-codex{border-color:#d9c78f;background:linear-gradient(150deg,#fffdf5,#f7f0d9)}
+
+/* Body tempering trial effect */
+.body-trial{position:fixed;inset:0;z-index:61;pointer-events:none;overflow:hidden;display:grid;place-items:center;background:radial-gradient(circle at 50% 48%,rgba(190,164,111,.26),rgba(16,34,28,.9));animation:trialFade 2s ease both}
+.trial-ring{position:absolute;width:36vmin;height:36vmin;border-radius:50%;border:2px solid rgba(218,198,140,.6);box-shadow:0 0 40px rgba(215,192,128,.35),inset 0 0 40px rgba(215,192,128,.18);animation:trialRing .95s ease-out both}
+.trial-ring.two{width:52vmin;height:52vmin;border-color:rgba(176,196,153,.4);animation-delay:.13s}
+.trial-shock{position:absolute;width:62vmin;height:3px;background:linear-gradient(90deg,transparent,#e7d59f,transparent);box-shadow:0 0 20px 5px rgba(231,213,159,.45);animation:trialShock .7s ease-out both}
+.trial-fist{position:relative;z-index:2;width:84px;height:84px;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(225,207,151,.7);background:radial-gradient(circle,#4c4730,#22362d);color:#f0dda6;font:44px 'Ma Shan Zheng',serif;box-shadow:0 0 0 10px rgba(222,201,141,.08),0 0 60px rgba(210,187,122,.35);animation:trialFist .8s ease both}
+.trial-text{position:absolute;inset:auto 15px 18%;text-align:center;color:#fff9e7;font:600 26px var(--serif);letter-spacing:2px;text-shadow:0 2px 28px rgba(238,220,164,.7);animation:tribText .5s .4s ease both}
+.body-trial.fail{background:radial-gradient(circle at 50% 48%,rgba(167,104,84,.26),rgba(26,30,24,.92))}
+.body-trial.fail .trial-ring{border-color:rgba(196,118,96,.55)}
+.body-trial.fail .trial-fist{border-color:rgba(204,132,110,.7);background:radial-gradient(circle,#50372f,#292e27);color:#e5b9a8}
+@keyframes trialFade{0%{opacity:0}10%{opacity:1}80%{opacity:1}100%{opacity:0}}
+@keyframes trialRing{0%{opacity:0;transform:scale(.3)}25%{opacity:1}100%{opacity:0;transform:scale(1.35)}}
+@keyframes trialShock{0%{opacity:0;transform:scaleX(.2)}25%{opacity:1}100%{opacity:0;transform:scaleX(1.4)}}
+@keyframes trialFist{0%{opacity:0;transform:scale(.55)}35%{opacity:1;transform:scale(1.06)}70%{transform:scale(1)}100%{opacity:1;transform:scale(1)}}
+
+@media(max-width:1120px){
+  .shared-qi{grid-template-columns:46px minmax(0,1fr) minmax(160px,.8fr)}
+  .shared-realms{grid-column:1/-1;grid-template-columns:1fr 1fr}
+  .dual-path-grid{grid-template-columns:1fr}
+  .cult-stats{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media(max-width:850px){
+  .shared-qi{grid-template-columns:42px minmax(0,1fr);gap:12px}
+  .shared-meter{grid-column:1/-1}
+  .shared-realms{grid-column:1/-1}
+  .twin-path-grid{grid-template-columns:1fr}
+  .origin-card{grid-template-columns:48px minmax(0,1fr);gap:12px}
+  .origin-card>.action-btn{grid-column:1/-1;width:100%}
+  .char-realm-sub{grid-template-columns:1fr 1fr}
+  .char-realm-sub>span:last-child{grid-column:1/-1}
+}
+@media(max-width:650px){
+  .dual-cultivation-section{margin-top:12px}
+  .shared-qi{padding:15px;border-radius:8px}
+  .shared-copy h3{font-size:19px}
+  .dual-path-grid{gap:11px}
+  .cultivation-card{padding:15px;border-radius:8px}
+  .cult-card-head{grid-template-columns:42px minmax(0,1fr);gap:10px}
+  .cult-seal{width:41px;height:41px;font-size:23px}
+  .cult-card-title h2{font-size:16px}
+  .cult-pill{grid-column:2;justify-self:start;margin-top:2px}
+  .cult-stage-track{gap:3px;margin-top:14px}
+  .stage-pip{height:19px;font-size:6px}
+  .cult-stats{grid-template-columns:1fr 1fr;gap:5px}
+  .cult-stat{padding:6px 7px}
+  .cult-actions .action-btn{font-size:8px;padding:10px}
+  .origin-card{padding:15px}
+  .origin-copy h2{font-size:18px}
+  .origin-seal{width:46px;height:46px;font-size:25px}
+  .trial-text{font-size:20px;bottom:15%}
+  .realm-path.long{grid-template-columns:repeat(15,minmax(68px,1fr))}
+}
