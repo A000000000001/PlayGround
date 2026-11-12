@@ -101,7 +101,8 @@
     { id: 'dao1', name: 'Attain a Dao Insight', desc: 'Comprehend a Dao once.', type: 'dao', target: 1, stones: 320, tokens: 26, merit: 40, req: 8 },
     { id: 'boss1', name: 'Fell a World Boss', desc: 'Defeat one world boss.', type: 'boss', target: 1, stones: 600, tokens: 50, merit: 70, req: 12 },
     { id: 'realm1', name: 'Enter the Hidden Realm', desc: 'Clear one secret realm.', type: 'realm', target: 1, stones: 720, tokens: 60, merit: 85, req: 14 },
-    { id: 'hunt12', name: 'The Long Patrol', desc: 'Defeat 12 spirit beasts.', type: 'kill', target: 12, stones: 900, tokens: 70, merit: 100, req: 18 }
+    { id: 'hunt12', name: 'The Long Patrol', desc: 'Defeat 12 spirit beasts.', type: 'kill', target: 12, stones: 900, tokens: 70, merit: 100, req: 18 },
+    { id: 'duel3', name: 'The Proving Grounds', desc: 'Win 3 arena duels.', type: 'duel', target: 3, stones: 300, tokens: 25, merit: 35, req: 6 }
   ];
   const sectRanks = [
     { name: 'Outer Disciple', need: 0 }, { name: 'Inner Disciple', need: 20 }, { name: 'Core Disciple', need: 60 },
@@ -249,7 +250,8 @@
     { id: 'voidpearl', name: 'Void Ancestor’s Pearl', seal: '虛', rarity: 'Mythical', bonus: { qi: .1, attack: .1, crit: .03 }, ability: 'Space folds around its bearer.' },
     { id: 'dragonpearl', name: 'Azure Dragon Pearl', seal: '龍', rarity: 'Mythical', bonus: { hp: .12, attack: .12, qi: .08 }, ability: 'The old dragon’s breath still moves inside.' },
     { id: 'starcrown', name: 'Crown of Fallen Stars', seal: '星', rarity: 'Mythical', bonus: { qi: .14, luck: 5 }, ability: 'Fortune trails you like a comet’s tail.' },
-    { id: 'karmicwheel', name: 'Karmic Wheel', seal: '輪', rarity: 'Divine', bonus: { attack: .1, hp: .1, qi: .1, luck: 4 }, ability: 'Every choice returns. Every return is a gift.' }
+    { id: 'karmicwheel', name: 'Karmic Wheel', seal: '輪', rarity: 'Divine', bonus: { attack: .1, hp: .1, qi: .1, luck: 4 }, ability: 'Every choice returns. Every return is a gift.' },
+    { id: 'laurel', name: 'Laurel of the Sect Champion', seal: '冠', rarity: 'Divine', bonus: { attack: .08, hp: .08, qi: .08, luck: 3 }, ability: 'Undefeated — the arena crowd lends its strength to every art you perform.' }
   ];
   const weaponCatalog = [
     { id: 'ironwood', name: 'Ironwood Sword', seal: '劍', rarity: 'Common', req: 1, attack: 8, cost: { stones: 120, ore: 2 }, ability: 'A dependable blade for a first disciple.' },
@@ -335,6 +337,9 @@
     { id: 'kills100', name: 'Terror of the Wilds', desc: 'Defeat 100 spirit beasts.', check: s => (s.stats?.kills || 0) >= 100, reward: { stones: 500, tokens: 40 } },
     { id: 'boss1', name: 'Boss Slayer', desc: 'Defeat a world boss.', check: s => (s.stats?.bosses || 0) >= 1, reward: { stones: 400, daoPoints: 1 } },
     { id: 'boss5', name: 'Heaven Defier', desc: 'Defeat all five world bosses.', check: s => (s.stats?.bosses || 0) >= 5, reward: { stones: 2500, daoPoints: 4 } },
+    { id: 'arena1', name: 'First Blood', desc: 'Win a duel in the sect arena.', check: s => (s.arena?.wins || 0) >= 1, reward: { stones: 150, tokens: 10 } },
+    { id: 'arenaChamp', name: 'Sect Champion', desc: 'Defeat all ten arena rivals.', check: s => (s.arena?.rank || 11) <= 1, reward: { stones: 2000, tokens: 120, daoPoints: 2, relic: 1 } },
+    { id: 'artMaster', name: 'Art Perfected', desc: 'Attune a martial art to rank 5.', check: s => Object.values(s.artRanks || {}).some(v => v >= 5), reward: { stones: 600, tokens: 30 } },
     { id: 'tame1', name: 'Kindred Spirit', desc: 'Tame a spirit beast.', check: s => Object.keys(s.taming?.beasts || {}).length >= 1, reward: { stones: 80, food: 1 } },
     { id: 'tame5', name: 'Beast Sovereign', desc: 'Bond with 5 spirit beasts.', check: s => Object.keys(s.taming?.beasts || {}).length >= 5, reward: { stones: 500, daoPoints: 2 } },
     { id: 'dao3', name: 'Dao Seeker', desc: 'Reach level 3 in any Dao.', check: s => daoPaths.some(d => daoLevel(d.id, s) >= 3), reward: { stones: 200, daoPoints: 1 } },
@@ -360,7 +365,8 @@
     { id: 'q3', npc: 'The Wandering Blade', name: 'A Duel at Dawn', req: 8, desc: 'A nameless swordswoman waits at the eastern gate. She will not leave until someone gives her a real fight.', type: 'kill', target: 10, reward: { stones: 300, daoXp: { sword: 120 } } },
     { id: 'q4', npc: 'Alchemist Yun', name: 'The Missing Cauldron', req: 12, desc: 'Yun’s cauldron vanished overnight. The residue on the floor smells of moonflower and fear.', type: 'brew', target: 3, reward: { stones: 420, essence: 2 } },
     { id: 'q5', npc: 'The Veiled Oracle', name: 'Threads of Fate', req: 16, desc: 'The oracle will read your fate, but only if you bring her a treasure that fate never intended you to find.', type: 'map', target: 2, reward: { stones: 800, luckBonus: 2 } },
-    { id: 'q6', npc: 'The Last Disciple', name: 'The Last Disciple', req: 22, desc: 'An old disciple guards a sect that no longer exists. They ask only that someone remember its name.', type: 'realm', target: 1, reward: { stones: 1500, relic: 1, daoPoints: 2 } }
+    { id: 'q6', npc: 'The Last Disciple', name: 'The Last Disciple', req: 22, desc: 'An old disciple guards a sect that no longer exists. They ask only that someone remember its name.', type: 'realm', target: 1, reward: { stones: 1500, relic: 1, daoPoints: 2 } },
+    { id: 'q7', npc: 'Arena Keeper Gan', name: 'The Empty Pedestal', req: 15, desc: 'Keeper Gan has polished the champion’s pedestal for twenty years. He asks you to give the crowd a duel worth remembering.', type: 'duel', target: 2, reward: { stones: 750, tokens: 25, daoPoints: 1 } }
   ];
   const dailyPool = [
     { id: 'kill3', label: 'Defeat 3 spirit beasts', type: 'kill', target: 3, reward: { stones: 40, tokens: 3 } },
@@ -371,6 +377,7 @@
     { id: 'tame1', label: 'Tame or hatch a beast', type: 'tame', target: 1, reward: { stones: 70, food: 1 } },
     { id: 'realm1', label: 'Clear a secret realm', type: 'realm', target: 1, reward: { stones: 120, keys: 1 } },
     { id: 'wboss1', label: 'Defeat a world boss', type: 'wboss', target: 1, reward: { stones: 160, tokens: 10 } },
+    { id: 'duel1', label: 'Win 1 arena duel', type: 'duel', target: 1, reward: { stones: 70, tokens: 4 } },
     { id: 'gather8', label: 'Gather 8 resources', type: 'gather', target: 8, reward: { stones: 60, herb: 2 } }
   ];
   const rankNames = ['Shen Yuling', 'Bai Wuchen', 'Lin Ruoxue', 'Mo Yuan', 'Xiao Tian', 'Jiang Li', 'Qin Feng', 'Su Ming', 'Han Yue', 'Ye Chen', 'Gu Changge', 'Nangong Wan'];
@@ -449,6 +456,18 @@
     { id: 'copy', name: 'Copy Scriptures', seal: '抄', desc: 'Patience with old ink. +40 Dao insight spread across the laws.', merit: 5, tokens: 2, dao: 40, qi: -25 },
     { id: 'train', name: 'Train the Recruits', seal: '練', desc: 'A strong sect is a shared sect. +6 merit, +35 sect reputation power.', merit: 6, tokens: 2, stones: 40, qi: -15 }
   ];
+  const arenaRivals = [
+    { id: 'wenshuang', rank: 10, name: 'Wen Shuang', title: 'Outer Gate Sentinel', seal: '霜', sect: 'azure', req: 1, hp: 120, damage: 4, type: 'guard', stones: 80, tokens: 6, merit: 8, dao: { id: 'water', xp: 30 }, trait: 'Patient Guard — takes 3 less damage while above half health.', quote: 'The gate is closed to the unworthy. Show me something worth remembering.' },
+    { id: 'baiwuchen', rank: 9, name: 'Bai Wuchen', title: 'Sword Attendant', seal: '劍', sect: 'crimson', req: 4, hp: 270, damage: 7, type: 'double', stones: 130, tokens: 9, merit: 12, dao: { id: 'sword', xp: 40 }, trait: 'Twin Cut — every third retaliation strikes twice.', quote: 'A blade is only honest when it is drawn.' },
+    { id: 'linruoxue', rank: 8, name: 'Lin Ruoxue', title: 'Jade Lotus Envoy', seal: '蓮', sect: 'jade', req: 7, hp: 470, damage: 10, type: 'drain', stones: 190, tokens: 12, merit: 16, dao: { id: 'life', xp: 50 }, trait: 'Lotus Breath — drains 8 qi with every retaliation.', quote: 'You fight as if the world owes you something. It does not.' },
+    { id: 'moyuan', rank: 7, name: 'Mo Yuan', title: 'Ashen Fist', seal: '拳', sect: 'crimson', req: 10, hp: 720, damage: 13, type: 'burn', stones: 260, tokens: 16, merit: 22, dao: { id: 'fire', xp: 60 }, trait: 'Cinder Fist — retaliation burns for 5 extra damage.', quote: 'Bones break. Ash remembers.' },
+    { id: 'xiaotian', rank: 6, name: 'Xiao Tian', title: 'Thunder Runner', seal: '雷', sect: 'azure', req: 13, hp: 1050, damage: 16, type: 'storm', stones: 360, tokens: 20, merit: 28, dao: { id: 'lightning', xp: 70 }, trait: 'Heaven’s Tempo — every third turn releases a double strike.', quote: 'You cannot block what has already passed.' },
+    { id: 'jiangli', rank: 5, name: 'Jiang Li', title: 'Moonlit Blade', seal: '月', sect: 'jade', req: 16, hp: 1450, damage: 20, type: 'pierce', stones: 500, tokens: 26, merit: 36, dao: { id: 'space', xp: 80 }, trait: 'Moon Pierce — ignores half your guard.', quote: 'The moon does not argue with the tide. It simply moves it.' },
+    { id: 'qinfeng', rank: 4, name: 'Qin Feng', title: 'Formation Master', seal: '陣', sect: 'azure', req: 19, hp: 1950, damage: 24, type: 'heal', stones: 700, tokens: 32, merit: 46, dao: { id: 'water', xp: 90 }, trait: 'Repairing Seal — restores 5% health each turn.', quote: 'I have already read the end of this duel.' },
+    { id: 'suming', rank: 3, name: 'Su Ming', title: 'Void Step', seal: '虛', sect: 'jade', req: 22, hp: 2550, damage: 28, type: 'dodge', stones: 950, tokens: 40, merit: 58, dao: { id: 'space', xp: 110 }, trait: 'Fold Step — 18% chance to evade your strike.', quote: 'Where were you looking? I was never there.' },
+    { id: 'hanyue', rank: 2, name: 'Han Yue', title: 'Frost Sovereign', seal: '冰', sect: 'jade', req: 25, hp: 3300, damage: 33, type: 'reflect', stones: 1300, tokens: 50, merit: 72, dao: { id: 'life', xp: 130 }, trait: 'Frost Mirror — returns 18% of the damage you deal.', quote: 'Stillness is not peace. It is the knife before the cut.' },
+    { id: 'nangongwan', rank: 1, name: 'Nangong Wan', title: 'Sect Champion', seal: '冠', sect: 'azure', req: 28, hp: 4200, damage: 39, type: 'champion', stones: 2000, tokens: 80, merit: 100, dao: { id: 'sword', xp: 180 }, trait: 'Ten Thousand Forms — heals 3% each turn, and every third strike lands twice.', quote: 'I have held this seat for thirty years. Show me why I should stand.' }
+  ];
   const legacyBoons = [
     { id: 'cache', name: 'Ancestral Cache', seal: '匣', points: 3, desc: 'A sealed cache of spirit stones.', grant: { stones: 400 } },
     { id: 'insight', name: 'Whisper of the Dao', seal: '悟', points: 4, desc: 'One point of pure Dao insight.', grant: { daoPoints: 1 } },
@@ -510,12 +529,13 @@
     luckBonus: 0,
     fate: { pending: null, log: [], merchant: [], merchantDate: 0, merchantRefreshDate: 0, maps: 0, fragments: 0, clock: 0, encounters: 0, luckBuff: 0, luckBuffUntil: 0, offeringLuck: 0, offeringUntil: 0, divinations: 0 },
     world: { active: null, defeated: {}, tier: 1 },
+    arena: { rank: 11, defeated: {}, wins: 0, battle: null, lastWin: 0 },
     rebirth: { count: 0, points: 0, upgrades: { qi: 0, attack: 0, luck: 0, dao: 0 }, world: 0 },
     achievements: {}, hiddenFound: [],
     quests: { active: null, completed: [], progress: {} },
     daily: { date: 0, list: [] },
     stats: { kills: 0, bosses: 0, tames: 0, dao: 0, brews: 0, trips: 0, realms: 0, tribulations: 0, crit: 0, chests: 0 },
-    activeArts: ['cloudpalm'], breakBuff: 0,
+    activeArts: ['cloudpalm'], artRanks: { cloudpalm: 1 }, breakBuff: 0,
     worldEvent: { id: null, ends: 0, next: 240 },
     story: { mercy: 0, npcMet: [] },
     rankClaimDate: 0,
@@ -557,10 +577,16 @@
       if (!Array.isArray(fresh.inheritance.boons)) fresh.inheritance.boons = [];
       if (!fresh.fate || typeof fresh.fate !== 'object') fresh.fate = { pending: null, log: [], merchant: [], merchantDate: 0, merchantRefreshDate: 0, maps: 0, fragments: 0, clock: 0, encounters: 0, luckBuff: 0, luckBuffUntil: 0, offeringLuck: 0, offeringUntil: 0, divinations: 0 };
       fresh.world.tier = Math.max(1, fresh.world.tier || 1);
+      if (!fresh.arena || typeof fresh.arena !== 'object') fresh.arena = { rank: 11, defeated: {}, wins: 0, battle: null, lastWin: 0 };
+      fresh.arena.rank = clamp(Number(fresh.arena.rank) || 11, 1, 11);
+      fresh.arena.defeated = fresh.arena.defeated && typeof fresh.arena.defeated === 'object' ? fresh.arena.defeated : {};
+      fresh.arena.wins = Number(fresh.arena.wins) || 0;
       if (!sects[fresh.sectId]) fresh.sectId = 'azure';
       fresh.maxHp = Math.max(60, Number(fresh.maxHp) || 60);
       fresh.hp = Math.max(0, Math.min(fresh.maxHp, Number(fresh.hp ?? fresh.maxHp)));
       if (!Array.isArray(fresh.activeArts)) fresh.activeArts = ['cloudpalm'];
+      if (!fresh.artRanks || typeof fresh.artRanks !== 'object') fresh.artRanks = {};
+      fresh.activeArts.forEach(id => { if (!fresh.artRanks[id]) fresh.artRanks[id] = 1; });
       if (fresh.worldEvent?.ends && Date.now() > fresh.worldEvent.ends) fresh.worldEvent = { id: null, ends: 0, next: (fresh.totalSeconds || 0) + 180 };
       const away = Math.min(28800, Math.max(0, (Date.now() - (fresh.lastSeen || Date.now())) / 1000));
       if (away > 15) {
@@ -696,6 +722,14 @@
     let c = .02 + rootBonus('crit', s) + daoLevel('lightning', s) * .02 + artifactBonus('crit', s) + beastBonus('crit', s);
     if (currentEvent(s)?.buff === 'attack') c += .05;
     return clamp(c, 0, .6);
+  }
+  function artRank(id, s = state) {
+    if (!s.activeArts?.includes(id)) return 0;
+    return clamp(Number(s.artRanks?.[id]) || 1, 1, 5);
+  }
+  function artDamageMult(id, s = state) {
+    const rank = artRank(id, s);
+    return rank ? 1 + (rank - 1) * .18 : 1;
   }
   function maxHpFor(s = state) {
     const body = 1 + (s.stage || 0) + (s.upgrades?.body || 0) * 2 + (s.pathLevels?.body || 0) * 3;
@@ -985,7 +1019,7 @@
     aid('nextText', state.stage === 0 ? 'Gather 100 qi and take your first step into the cultivation world.' : `Refine ${nfmt(goal)} qi to advance toward ${realmTitle(state.stage + 1)}.${isMajor(state.stage + 1) ? ' A heavenly tribulation guards this threshold.' : ''}`);
     aid('nextProgress', `${nfmt(qi)} / ${nfmt(goal)} qi`);
     const nextFill = $('nextFill'); if (nextFill) nextFill.style.width = `${Math.min(100, state.qi / goal * 100)}%`;
-    aid('techCount', `${Object.values(state.upgrades).reduce((a, b) => a + b, 0)}/${techniques.length + martialArts.length}`);
+    aid('techCount', `${Object.values(state.upgrades).filter(v => v > 0).length + state.activeArts.length}/${techniques.length + martialArts.length}`);
     $('expDot')?.classList.toggle('hidden', !(state.trip && Date.now() >= state.trip.ends));
     $('daoDot')?.classList.toggle('hidden', !(state.daoPoints > 0 || state.root.essence >= 6));
     $('fateDot')?.classList.toggle('hidden', !(state.fate?.pending || state.fate?.maps > 0 || state.fate?.merchant?.some(o => !o.bought)));
@@ -1045,6 +1079,7 @@
         ${statTile('PATH NODES', `${treeTotal} / 18`, TIP.path)}
         ${statTile('SPIRIT POWER', `+${Math.round((spiritPowerMult() - 1) * 100)}%`, TIP.spiritPower)}
         ${statTile('COMPANIONS', Object.keys(state.taming.beasts).length, TIP.companion)}
+        ${statTile('ARENA', state.arena?.rank <= 10 ? `#${state.arena.rank}` : '—', 'Your seat in the Sect Arena. Win duels in the Sect Hall to climb the ladder and claim the champion’s laurel.')}
         ${statTile('EQUIPPED', `${equippedCount} pieces`, TIP.weapon)}
       </div>
       <div class="char-loadout">
@@ -1164,10 +1199,14 @@
     if (uiTabs.techniques === 'arts') {
       const cards = martialArts.map(a => {
         const learned = state.activeArts.includes(a.id);
+        const rank = artRank(a.id);
         const can = state.stage >= a.req && state.stones >= a.cost;
-        return `<article class="technique-card"><div class="tech-seal">${a.seal}</div><div class="tech-copy"><h3>${a.name}</h3><p>${a.desc}</p><div class="tech-level">${learned ? `ATTUNED · ${a.qi} QI · ${a.damage} BASE DAMAGE` : `REQUIRES STAGE ${a.req} · ${a.cost} STONES`}</div></div>${learned ? '<span class="stat-pill green">Learned</span>' : `<button class="buy-btn" data-action="unlock-art" data-id="${a.id}" ${can ? '' : 'disabled'}>Learn<span>◇ ${a.cost}</span></button>`}</article>`;
+        const trainCost = Math.round(150 * Math.pow(rank + 1, 1.45));
+        const trainQi = Math.round(60 * (rank + 1));
+        const canTrain = learned && rank < 5 && state.stones >= trainCost && state.qi >= trainQi;
+        return `<article class="technique-card"><div class="tech-seal">${a.seal}</div><div class="tech-copy"><h3>${a.name}</h3><p>${a.desc}</p><div class="tech-level">${learned ? `RANK ${rank} / 5 · ${a.qi} QI · ${Math.round(a.damage * artDamageMult(a.id))} BASE DAMAGE` : `REQUIRES STAGE ${a.req} · ${a.cost} STONES`}</div></div>${learned ? `<button class="buy-btn" data-action="train-art" data-id="${a.id}" ${canTrain ? '' : 'disabled'}>${rank >= 5 ? 'Mastered' : `Attune rank ${rank + 1}`}<span>${rank >= 5 ? 'MAX RANK' : `◇ ${nfmt(trainCost)} · ${trainQi} qi`}</span></button>` : `<button class="buy-btn" data-action="unlock-art" data-id="${a.id}" ${can ? '' : 'disabled'}>Learn<span>◇ ${a.cost}</span></button>`}</article>`;
       }).join('');
-      body = `<article class="content-panel"><div class="eyebrow">MARTIAL ARTS</div><h2>Battle techniques</h2><p>Active arts appear in combat and boss battles. They scale with spirit cultivation and your Dao, and each has a distinct effect.</p>${cards}</article>`;
+      body = `<article class="content-panel"><div class="eyebrow">MARTIAL ARTS · MASTERY</div><h2>Battle techniques</h2><p>Active arts appear in every battle, boss fight and arena duel. Attune a learned art to raise its rank from 1 to 5; each rank adds 18% base damage. Arts also scale with spirit cultivation, your weapon and your Dao.</p>${cards}</article>`;
     } else {
       const cards = techniques.map(t => {
         const level = state.upgrades[t.id] || 0, cost = Math.ceil(t.base * Math.pow(level + 1, 1.55));
@@ -1339,9 +1378,10 @@
     else if (tab === 'armory') body = renderArmory();
     else if (tab === 'vault') body = renderSectVault();
     else if (tab === 'duties') body = renderSectDuties();
+    else if (tab === 'arena') body = renderArena();
     else body = renderSectOverview();
     $('view-sect').innerHTML = `${subHead('THE GREAT SECTS', 'Sect Hall', 'Choose a sect, complete its missions, climb its rankings, raise its halls, and serve its daily needs.', sectData().seal)}
-      ${tabs('sect', [['overview', 'Overview'], ['missions', 'Missions'], ['rankings', 'Rankings'], ['buildings', 'Buildings'], ['armory', 'Armory'], ['vault', 'Vault'], ['duties', 'Duties']])}
+      ${tabs('sect', [['overview', 'Overview'], ['arena', 'Arena'], ['missions', 'Missions'], ['rankings', 'Rankings'], ['buildings', 'Buildings'], ['armory', 'Armory'], ['vault', 'Vault'], ['duties', 'Duties']])}
       ${body}`;
   }
   function renderSectOverview() {
@@ -1356,7 +1396,8 @@
     <article class="content-panel sect-progress"><div class="eyebrow">YOUR STANDING · ${sectData().name}</div><h2>${rank.name}</h2><p>${next ? `${next.need - state.sectRep} merit until promotion to ${next.name}.` : 'You have reached the highest sect rank.'}</p><div class="mini-track"><i style="width:${progress}%"></i></div><div class="inventory-row"><span>Sect merit</span><b>${state.sectRep} / ${next?.need || 'MAX'}</b></div><div class="inventory-row"><span>Sect tokens</span><b>✦ ${nfmt(state.sectTokens)}</b></div><button class="action-btn" data-action="donate" ${state.stones < 10 || !next ? 'disabled' : ''}>Donate 10 spirit stones · +4 merit</button></article>
     <article class="content-panel"><div class="eyebrow">THE LADDER OF SERVICE</div><h2>Disciple ranks</h2><div class="sect-rank-list">${ranks}</div></article></div>
     <aside class="subview-aside"><article class="feature-card"><div class="eyebrow">SECT BLESSINGS</div><h3>${worldName()}</h3><p>Your sect grants a permanent cultivation bonus and access to its armory. Rank furthers both. Sect buildings add another layer of permanent strength.</p><div class="feature-stats"><span>RANK <b>${rank.name}</b></span><span>MERIT <b>${state.sectRep}</b></span><span>TOKENS <b>${nfmt(state.sectTokens)}</b></span></div></article>
-    <article class="content-panel"><div class="eyebrow">TODAY'S DUTY</div><h2>Sect missions</h2><p>Hunt beasts, chart expeditions, and fell world bosses to earn tokens and merit. Missions scale with your realm.</p><button class="action-btn" data-tab-view="sect" data-action="tab" data-tab="missions">Open mission board</button></article></aside></div>`;
+    <article class="content-panel"><div class="eyebrow">TODAY'S DUTY</div><h2>Sect missions</h2><p>Hunt beasts, chart expeditions, and fell world bosses to earn tokens and merit. Missions scale with your realm.</p><button class="action-btn" data-tab-view="sect" data-action="tab" data-tab="missions">Open mission board</button></article>
+    <article class="content-panel"><div class="eyebrow">THE STONE RING</div><h2>${arenaRankTitle()}</h2><p>${state.arena?.rank <= 10 ? `You hold rank ${state.arena.rank} of ten. The next seat is one duel away.` : 'Ten rivals hold the arena ladder. Claim a seat, then climb toward the champion’s pedestal.'}</p><div class="feature-stats"><span>WINS <b>${state.arena?.wins || 0}</b></span><span>FELLED <b>${Object.keys(state.arena?.defeated || {}).length} / 10</b></span></div><button class="action-btn" data-tab-view="sect" data-action="tab" data-tab="arena">Enter the arena</button></article></aside></div>`;
   }
   function renderMissions() {
     const mission = state.mission && missions.find(m => m.id === state.mission.id);
@@ -1423,6 +1464,213 @@
       <article class="content-panel"><div class="eyebrow">SERVICE RECORD</div><h2>What duty has taught you</h2><div class="feature-stats"><span>MERIT <b>${state.sectRep}</b></span><span>TOKENS <b>${nfmt(state.sectTokens)}</b></span><span>TODAY <b>${doneToday ? 'SERVED' : 'OPEN'}</b></span></div></article></div>
       <aside class="subview-aside"><article class="feature-card"><div class="eyebrow">CURRENT BLESSING</div><h3>${blessing ? blessingNames[blessing] : 'No blessing active'}</h3><p>${blessing ? 'The sect’s regard follows you into cultivation and combat.' : 'Serve a duty to receive a temporary blessing from the hall elders.'}</p><div class="feature-stats"><span>DUTY DATE <b>${doneToday ? 'Today' : 'Available'}</b></span><span>RANK <b>${sectRanks[state.sectRank]?.name}</b></span></div></article>
       <article class="content-panel"><div class="eyebrow">THE QUIET WORK</div><h2>Why sweep?</h2><p>Merit accumulates toward promotion. Each rank grants permanent attack, qi and health bonuses, and unlocks deeper armory stock and sect buildings.</p></article></aside></div>`;
+  }
+
+  /* ---------------- SECT ARENA ---------------- */
+  function arenaRankTitle(rank = state.arena?.rank || 11) {
+    if (rank <= 1) return 'Sect Champion';
+    if (rank <= 3) return 'Sect Elite';
+    if (rank <= 6) return 'Inner Ring Duelist';
+    if (rank <= 10) return 'Outer Ring Duelist';
+    return 'Unranked Challenger';
+  }
+  function nextArenaRival() {
+    return arenaRivals.find(r => r.rank === (state.arena?.rank || 11) - 1) || null;
+  }
+  function arenaRivalStats(def) {
+    const wins = state.arena?.defeated?.[def.id] || 0;
+    return { maxHp: Math.round(def.hp * (1 + wins * .12)), damage: Math.round(def.damage * (1 + wins * .08)) };
+  }
+  function renderArena() {
+    const rank = state.arena?.rank || 11;
+    const wins = state.arena?.wins || 0;
+    const cleared = Object.keys(state.arena?.defeated || {}).length;
+    const next = nextArenaRival();
+    const battle = state.arena?.battle;
+    const champion = arenaRivals.find(r => r.rank === 1);
+    const progress = clamp((11 - rank) / 10 * 100, 0, 100);
+    let battleHtml = '';
+    if (battle) {
+      const def = arenaRivals.find(r => r.id === battle.id);
+      const stats = def ? arenaRivalStats(def) : null;
+      const pct = clamp(battle.hp / battle.maxHp * 100, 0, 100);
+      const log = (battle.log || []).slice(-5).map(line => `<div>${line}</div>`).join('');
+      battleHtml = `<article class="content-panel arena-battle"><div class="arena-battle-head"><div><div class="eyebrow">THE PROVING GROUND · DUEL IN PROGRESS</div><h2>${def?.name || 'Unknown rival'}</h2></div><span class="stat-pill red">TURN ${(battle.turn || 0) + 1}</span></div>
+        <div class="arena-duelists">
+          <div class="duelist"><span class="duelist-seal">${sectData().seal}</span><div><small>YOU · ${arenaRankTitle()}</small><b>${realmTitle()}</b><div class="health-track"><i style="width:${clamp(state.hp / state.maxHp * 100, 0, 100)}%"></i></div><span>${Math.ceil(state.hp)} / ${state.maxHp} health</span></div></div>
+          <span class="duel-vs">對</span>
+          <div class="duelist rival"><span class="duelist-seal">${def?.seal || '?'}</span><div><small>RANK ${def?.rank || '?'} · ${def?.title || ''}</small><b>${def?.name || 'Unknown'}</b><div class="health-track"><i style="width:${pct}%"></i></div><span>${nfmt(Math.max(0, battle.hp))} / ${nfmt(battle.maxHp)} health</span></div></div>
+        </div>
+        <p class="boss-ability">${def?.trait || ''}</p>
+        <div class="boss-actions"><button class="action-btn body-strike" data-action="arena-attack" data-style="body">Body strike · ${attackDamage(3 + state.pathLevels.body * 4 + state.stage)}–${attackDamage(7 + state.pathLevels.body * 5 + state.stage)} dmg</button><button class="action-btn spirit-strike" data-action="arena-attack" data-style="spirit" ${state.qi < 10 ? 'disabled' : ''}>Spirit art · 10 qi</button><button class="action-btn sect-spell" data-action="arena-spell" ${state.qi < currentSpell().cost ? 'disabled' : ''}>${currentSpell().seal} ${currentSpell().name} · ${currentSpell().cost} qi</button>${state.activeArts.map(id => { const a = martialArts.find(x => x.id === id); return a ? `<button class="action-btn" data-action="arena-art" data-id="${a.id}" ${state.qi < a.qi ? 'disabled' : ''}>${a.seal} ${a.name} · ${a.qi} qi</button>` : ''; }).join('')}<button class="action-btn danger" data-action="arena-retreat">Yield</button></div>
+        <div class="battle-log arena-log">${log}</div></article>`;
+    }
+    const ladder = arenaRivals.map(def => {
+      const rivalStats = arenaRivalStats(def);
+      const defeated = state.arena?.defeated?.[def.id] || 0;
+      const isCleared = rank <= def.rank;
+      const isNext = rank === def.rank + 1;
+      const isLocked = def.rank < rank - 1;
+      const stageLocked = state.stage < def.req;
+      const can = !battle && (isNext || isCleared) && !stageLocked;
+      const action = battle ? 'Duel underway' : stageLocked ? `Requires stage ${def.req}` : isNext ? 'Challenge' : isCleared ? 'Rematch' : 'Locked';
+      return `<div class="arena-rival ${isCleared ? 'cleared' : ''} ${isNext ? 'next' : ''} ${isLocked ? 'locked' : ''}"${tipAttr(`${def.name} · ${def.trait} ${def.quote}`)}>
+        <span class="arena-rank-no">${def.rank}</span><span class="arena-seal">${def.seal}</span>
+        <div class="arena-rival-copy"><div class="arena-rival-head"><h3>${def.name}</h3><small>${def.title} · ${sects[def.sect].name}</small></div><p>${def.trait}</p><div class="arena-statline"><span>${nfmt(rivalStats.maxHp)} HP</span><span>${rivalStats.damage} ATK</span><span>${defeated ? `${defeated} win${defeated === 1 ? '' : 's'}` : 'Undefeated'}</span></div><div class="arena-reward-line">${rewardsText({ stones: def.stones, tokens: def.tokens, merit: def.merit })}${defeated ? ' · rematch reward reduced' : ' · first clear'}</div></div>
+        <button class="action-btn ${isNext ? 'gold' : ''}" data-action="challenge-rival" data-id="${def.id}" ${can ? '' : 'disabled'}>${action}</button>
+      </div>`;
+    }).join('');
+    const nextCard = next
+      ? `<article class="arena-callout"><span class="arena-callout-seal">${next.seal}</span><div><small>YOUR NEXT OPPONENT · RANK ${next.rank}</small><b>${next.name} · ${next.title}</b><p>“${next.quote}”</p></div><button class="action-btn gold" data-action="challenge-rival" data-id="${next.id}" ${state.stage >= next.req && !battle ? '' : 'disabled'}>${state.stage < next.req ? `Requires stage ${next.req}` : 'Enter the ring'}</button></article>`
+      : `<article class="arena-callout champion"><span class="arena-callout-seal">冠</span><div><small>THE SEAT IS YOURS</small><b>Sect Champion · ${state.arena?.wins || 0} victories</b><p>No rival stands above you. Rematch the fallen for sport, or turn your attention to the wider world.</p></div><button class="action-btn" data-action="tab" data-tab-view="sect" data-tab="rankings">View rankings</button></article>`;
+    return `<div class="subview-layout"><div class="subview-main">
+      <article class="arena-hero"><div class="arena-hero-mark">擂</div><div class="arena-hero-copy"><div class="eyebrow light">THE PROVING GROUND · ${rank <= 10 ? `RANK ${rank} OF 10` : 'UNRANKED CHALLENGER'}</div><h2>${arenaRankTitle()}</h2><p>${rank <= 1 ? 'The pedestal is polished. The crowd has learned your name. Every duel from here is a defense of the seat.' : 'The sect’s oldest stone ring accepts any disciple with the nerve to step inside. Climb one rank at a time; the crowd remembers every exchange.'}</p><div class="arena-progress"><i style="width:${progress}%"></i></div><div class="arena-meta"><span>DUELS WON <b>${wins}</b></span><span>RIVALS FELLED <b>${cleared} / 10</b></span><span>CHAMPION <b>${champion?.name || 'Vacant'}</b></span></div></div><div class="arena-crowd"><span>觀眾</span><small>THE CROWD<br>IS WATCHING</small></div></article>
+      ${battleHtml}
+      ${battle ? '' : nextCard}
+      <article class="content-panel"><div class="eyebrow">THE LADDER · TEN SEATS</div><h2>Rivals of the stone ring</h2><p>Challenge the seat immediately above yours. A victory claims that rank forever; rematches award a reduced purse but still count toward missions and daily challenges. The arena ward mends both duelists before every bout.</p><div class="arena-ladder">${ladder}</div></article>
+      </div>
+      <aside class="subview-aside"><article class="feature-card"><div class="eyebrow">DUEL RECORD</div><h3>${wins} victories in the ring</h3><p>${battle ? 'Finish the bout or yield. The crowd dislikes a half-finished story.' : next ? `Next: ${next.name}, ${next.title}. Their seal is ${next.seal}.` : 'You hold the champion’s seat. The pedestal is yours until someone stronger arrives.'}</p><div class="feature-stats"><span>RANK <b>${rank <= 10 ? `#${rank}` : '—'}</b></span><span>WINS <b>${wins}</b></span><span>FELLED <b>${cleared} / 10</b></span></div></article>
+      <article class="content-panel"><div class="eyebrow">ARENA RULES</div><h2>How the ring works</h2><p>Only the seat directly above you may be challenged for rank. Defeated rivals can be fought again for a smaller purse. Every first victory grants spirit stones, sect tokens, merit and Dao insight. Victory also advances arena missions, daily challenges and story quests.</p><div class="inventory-row"><span>Current title</span><b>${arenaRankTitle()}</b></div><div class="inventory-row"><span>Champion’s prize</span><b>Laurel of the Sect Champion</b></div></article>
+      <article class="feature-card"><div class="eyebrow">KEEPER GAN’S ADVICE</div><h3>Read the stance</h3><p>Rivals telegraph their specialties. The Frost Sovereign turns your damage back on you, the Formation Master repairs himself, and the Void Step slips away from heavy blows. Bring a companion, a full qi reserve and a healing art.</p><button class="action-btn" data-view="forge">Prepare at the forge</button></article></aside></div>`;
+  }
+  function challengeRival(id) {
+    if (state.arena.battle) return showToast('A duel is already underway.');
+    const def = arenaRivals.find(r => r.id === id); if (!def) return;
+    const rank = state.arena.rank || 11;
+    const canFirst = rank === def.rank + 1;
+    const canRematch = rank <= def.rank;
+    if (!canFirst && !canRematch) return showToast('Defeat the rival above you first.');
+    if (state.stage < def.req) return showToast(`You must reach stage ${def.req} to face ${def.name}.`);
+    recalc();
+    state.hp = state.maxHp;
+    const stats = arenaRivalStats(def);
+    state.arena.battle = { id, hp: stats.maxHp, maxHp: stats.maxHp, damage: stats.damage, turn: 0, log: [`${def.name} steps into the ring. “${def.quote}”`] };
+    notify(`Arena duel begun · ${def.name}, ${def.title}.`, 'sect', true);
+    showToast(`The arena ward restores you. ${def.name} takes the opposite mark.`);
+    save(); render();
+  }
+  function arenaHit(base, source) {
+    const battle = state.arena.battle; if (!battle) return;
+    const def = arenaRivals.find(r => r.id === battle.id);
+    if (!def) { state.arena.battle = null; save(); render(); return; }
+    const hit = calculateHit(base);
+    const evaded = def.type === 'dodge' && Math.random() < .18;
+    if (evaded) {
+      battle.log.push(`${def.name} folds the space where you strike. Your ${source} finds nothing.`);
+    } else {
+      battle.hp -= hit.damage;
+      battle.log.push(`${source} lands for ${hit.damage}${hit.crit ? ' critical' : ''} damage.`);
+    }
+    if (battle.hp <= 0) { defeatArenaRival(def); return; }
+    battle.turn = (battle.turn || 0) + 1;
+    if (def.type === 'reflect' && !evaded) {
+      const reflected = Math.max(1, Math.round(hit.damage * .18));
+      state.hp = Math.max(0, state.hp - reflected);
+      battle.log.push(`Frost Mirror returns ${reflected} damage.`);
+      if (state.hp <= 0) { loseArenaDuel(def); return; }
+    }
+    if (def.type === 'heal' || def.type === 'champion') {
+      const heal = Math.round(battle.maxHp * (def.type === 'heal' ? .05 : .03));
+      battle.hp = Math.min(battle.maxHp, battle.hp + heal);
+      battle.log.push(`${def.name} recovers ${heal} health.`);
+    }
+    if (def.type === 'drain') {
+      const drain = Math.min(state.qi, 8);
+      state.qi -= drain;
+      battle.log.push(`${def.name} draws ${drain} qi from your channels.`);
+    }
+    let damage = Math.round(battle.damage * (0.9 + Math.random() * .2));
+    if (def.type === 'burn') damage += 5;
+    if ((def.type === 'double' || def.type === 'champion') && battle.turn % 3 === 0) {
+      damage *= 2;
+      battle.log.push('A second strike follows the first!');
+    }
+    if (def.type === 'storm' && battle.turn % 3 === 0) {
+      damage = Math.round(damage * 1.6);
+      battle.log.push('Thunder answers the crowd’s roar!');
+    }
+    const guard = def.type === 'pierce' ? Math.floor(guardFor() * .5) : guardFor();
+    damage = Math.max(1, damage - guard);
+    state.hp = Math.max(0, state.hp - damage);
+    battle.log.push(`${def.name} retaliates for ${damage}.`);
+    if (state.hp <= 0) { loseArenaDuel(def); return; }
+    save(); render();
+  }
+  function arenaAttack(style) {
+    if (!state.arena.battle) return;
+    let base;
+    if (style === 'spirit') {
+      if (state.qi < 10) return showToast('You need 10 qi to form a spirit art.');
+      state.qi -= 10;
+      base = attackDamage(7 + state.pathLevels.spirit * 5 + state.stage + Math.random() * (7 + state.pathLevels.spirit));
+      arenaHit(base, 'Your spirit art');
+    } else {
+      base = attackDamage(3 + state.pathLevels.body * 4 + state.stage + Math.random() * (5 + state.pathLevels.body));
+      arenaHit(base, 'Your body strike');
+    }
+  }
+  function arenaSpell() {
+    if (!state.arena.battle) return;
+    const spell = currentSpell();
+    if (state.qi < spell.cost) return showToast(`You need ${spell.cost} qi to cast ${spell.name}.`);
+    state.qi -= spell.cost;
+    if (spell.heal) state.hp = Math.min(state.maxHp, state.hp + spell.heal);
+    arenaHit(attackDamage(spell.damage + state.pathLevels.spirit * 4 + state.stage), spell.name);
+  }
+  function arenaArt(id) {
+    if (!state.arena.battle) return;
+    const art = martialArts.find(a => a.id === id); if (!art) return;
+    if (state.qi < art.qi) return showToast(`You need ${art.qi} qi for ${art.name}.`);
+    state.qi -= art.qi;
+    if (art.effect === 'heal') state.hp = Math.min(state.maxHp, state.hp + (art.heal || 20));
+    if (art.effect === 'crit') state.breakBuff = (state.breakBuff || 0) + 3;
+    arenaHit(attackDamage(art.damage * artDamageMult(art.id) + state.pathLevels.spirit * 4 + state.stage), art.name);
+  }
+  function defeatArenaRival(def) {
+    const first = !(state.arena.defeated[def.id] > 0);
+    const rank = state.arena.rank || 11;
+    const claimed = first && rank === def.rank + 1;
+    state.arena.defeated[def.id] = (state.arena.defeated[def.id] || 0) + 1;
+    state.arena.wins = (state.arena.wins || 0) + 1;
+    state.arena.lastWin = Date.now();
+    if (claimed) state.arena.rank = def.rank;
+    state.arena.battle = null;
+    const mult = first ? 1 : .35;
+    const stones = Math.max(1, Math.round(def.stones * mult));
+    const tokens = Math.max(1, Math.round(def.tokens * mult));
+    const merit = Math.max(1, Math.round(def.merit * mult));
+    state.stones += stones;
+    state.sectTokens += tokens;
+    addRep(merit);
+    if (def.dao) state.dao[def.dao.id].xp = (state.dao[def.dao.id].xp || 0) + Math.round(def.dao.xp * mult * daoGainMult(def.dao.id));
+    if (first && def.rank === 1) grantArtifact('laurel');
+    dailyStep('duel'); missionStep('duel'); questStep('duel');
+    state.stats.duels = (state.stats.duels || 0) + 1;
+    state.hp = state.maxHp;
+    notify(`Arena victory · ${def.name} defeated${claimed ? ` · rank ${state.arena.rank} claimed` : ' · rematch'}.`, 'reward');
+    save(); render();
+    if (first && def.rank === 1) {
+      openModal('冠', 'THE SEAT IS CLAIMED', 'Sect Champion', `Nangong Wan yields the champion’s seat.<br><br>+${nfmt(stones)} spirit stones · +${tokens} tokens · +${merit} merit<br><b>Artifact claimed · Laurel of the Sect Champion</b><br><br>The stone ring will remember this day.`, '<button class="primary-btn" data-action="close-modal">Take the pedestal</button>');
+    } else if (first) {
+      fxBurst('rare', def.seal, `${def.name} defeated`, `You claim rank ${claimed ? state.arena.rank : def.rank} in the sect arena.`, rewardsText({ stones, tokens, merit }));
+    } else {
+      rewardFloat(`+ ${rewardsText({ stones, tokens, merit })}`);
+    }
+  }
+  function loseArenaDuel(def) {
+    state.arena.battle = null;
+    state.hp = Math.max(1, Math.floor(state.maxHp * .4));
+    notify(`${def.name} wins the exchange. The arena ward carries you from the ring.`, 'info');
+    showToast(`${def.name} wins the bout. The ward mends your wounds — try again when you are stronger.`);
+    save(); render();
+  }
+  function arenaRetreat() {
+    if (!state.arena.battle) return;
+    const def = arenaRivals.find(r => r.id === state.arena.battle.id);
+    state.arena.battle = null;
+    state.hp = Math.max(1, Math.floor(state.maxHp * .5));
+    showToast(`You yield the bout to ${def?.name || 'your rival'}. The crowd murmurs, but the seat remains.`);
+    save(); render();
   }
 
   /* ---------------- INNER DAO ---------------- */
@@ -2004,7 +2252,7 @@
     state.qi -= art.qi;
     if (art.effect === 'heal') state.hp = Math.min(state.maxHp, state.hp + (art.heal || 20));
     if (art.effect === 'crit') state.breakBuff = (state.breakBuff || 0) + 3;
-    damageEnemy(attackDamage(art.damage + state.pathLevels.spirit * 4 + state.stage), art.name);
+    damageEnemy(attackDamage(art.damage * artDamageMult(art.id) + state.pathLevels.spirit * 4 + state.stage), art.name);
   }
   function flee() { state.enemy = null; showToast('You retreat safely from the encounter.'); save(); render(); }
 
@@ -2041,7 +2289,7 @@
     if (state.qi < art.qi) return showToast(`You need ${art.qi} qi for ${art.name}.`);
     state.qi -= art.qi;
     if (art.effect === 'heal') state.hp = Math.min(state.maxHp, state.hp + (art.heal || 20));
-    damageBoss(attackDamage(art.damage + state.pathLevels.spirit * 4 + state.stage), art.name);
+    damageBoss(attackDamage(art.damage * artDamageMult(art.id) + state.pathLevels.spirit * 4 + state.stage), art.name);
   }
   function damageBoss(base, source) {
     const active = state.world.active; if (!active) return;
@@ -2129,7 +2377,7 @@
     if (state.qi < art.qi) return showToast(`You need ${art.qi} qi for ${art.name}.`);
     state.qi -= art.qi;
     if (art.effect === 'heal') state.hp = Math.min(state.maxHp, state.hp + (art.heal || 20));
-    damageRealm(attackDamage(art.damage + state.pathLevels.spirit * 4 + state.stage), art.name);
+    damageRealm(attackDamage(art.damage * artDamageMult(art.id) + state.pathLevels.spirit * 4 + state.stage), art.name);
   }
   function damageRealm(base, source) {
     const rb = state.realms.boss; if (!rb) return;
@@ -2552,7 +2800,23 @@
     if (state.stage < art.req) return showToast(`You must reach stage ${art.req}.`);
     if (state.stones < art.cost) return showToast(`Learning this art costs ◇ ${art.cost}.`);
     state.stones -= art.cost; state.activeArts.push(id);
+    if (!state.artRanks) state.artRanks = {};
+    state.artRanks[id] = Math.max(1, state.artRanks[id] || 1);
     showToast(`${art.name} learned · it now appears in battle.`);
+    save(); render();
+  }
+  function trainArt(id) {
+    const art = martialArts.find(a => a.id === id); if (!art) return;
+    if (!state.activeArts.includes(id)) return showToast('Learn this art first.');
+    const rank = artRank(id);
+    if (rank >= 5) return showToast(`${art.name} has reached its final rank.`);
+    const cost = Math.round(150 * Math.pow(rank + 1, 1.45));
+    const qiCost = Math.round(60 * (rank + 1));
+    if (state.stones < cost || state.qi < qiCost) return showToast(`Attuning rank ${rank + 1} needs ◇ ${nfmt(cost)} and ${qiCost} qi.`);
+    state.stones -= cost; state.qi -= qiCost;
+    if (!state.artRanks) state.artRanks = {};
+    state.artRanks[id] = rank + 1;
+    notify(`${art.name} attuned to rank ${rank + 1} · base damage ${Math.round(art.damage * artDamageMult(id))}.`, 'reward');
     save(); render();
   }
   function startTrip(id) {
@@ -2895,6 +3159,7 @@
       case 'tab': { const view = button.dataset.tabView; if (view && uiTabs[view]) { uiTabs[view] = button.dataset.tab; render(); } break; }
       case 'upgrade': buyUpgrade(id); break;
       case 'unlock-art': unlockArt(id); break;
+      case 'train-art': trainArt(id); break;
       case 'start-trip': startTrip(id); break;
       case 'collect-trip': collectTrip(); break;
       case 'select-region': selectRegion(id); break;
@@ -2916,6 +3181,11 @@
       case 'claim-rank': claimRank(); break;
       case 'buy-vault': buyVault(id); break;
       case 'perform-duty': performDuty(id); break;
+      case 'challenge-rival': challengeRival(id); break;
+      case 'arena-attack': arenaAttack(button.dataset.style); break;
+      case 'arena-spell': arenaSpell(); break;
+      case 'arena-art': arenaArt(id); break;
+      case 'arena-retreat': arenaRetreat(); break;
       case 'clear-notifications': clearNotifications(); break;
       case 'attempt-break': attemptBreak(); break;
       case 'close-modal': closeModal(); break;
