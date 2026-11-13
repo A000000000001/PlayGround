@@ -971,3 +971,22 @@ body.focus-mode .banner-row,body.focus-mode .challenge-panel,body.focus-mode .no
   .trial-text{font-size:20px;bottom:15%}
   .realm-path.long{grid-template-columns:repeat(15,minmax(68px,1fr))}
 }
+
+/* Journey completion */
+.completion-badge{display:inline-flex;align-items:center;gap:7px;margin-left:18px;padding:6px 11px;border:1px solid #d9c78f;border-radius:20px;background:linear-gradient(120deg,#fbf3da,#fffdf4);color:#8f7336;font-size:8px;font-weight:700;letter-spacing:1.25px;white-space:nowrap}
+.completion-badge.hidden{display:none}
+.banner-card.ending{border-color:#d3b96f;background:linear-gradient(120deg,#fbf1d3,#fffdf5);box-shadow:0 8px 24px rgba(143,115,54,.09)}
+.banner-card.ending .banner-symbol{background:#f6e8bd;border-color:#dcc888;color:#8d6d2b}
+.ending-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:16px 0;text-align:left}
+.ending-stats span{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:8px 10px;border:1px solid #ece2c6;border-radius:6px;background:#fffdf4}
+.ending-stats small{font-size:7px;letter-spacing:.9px;color:#9d9377;font-weight:700}
+.ending-stats b{font-size:10px;color:#655532;text-align:right}
+.ending-copy{font:italic 11px/1.65 var(--serif);color:#867c64;margin:0}
+.ending-panel{border-color:#dcc98d;background:linear-gradient(140deg,#fdf7e6,#fffefa)}
+@media(max-width:900px){
+  .completion-badge{display:none}
+}
+@media(max-width:650px){
+  .ending-stats{grid-template-columns:1fr}
+  .modal{width:min(430px,100%);padding:26px 19px}
+}

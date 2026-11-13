@@ -367,6 +367,7 @@
     { id: 'body15', name: 'Eternal Godbody', desc: 'Reach Eternal Godbody X.', check: s => s.body?.realm >= 14 && s.body?.stage >= 9, reward: { stones: 6000, tokens: 200, daoPoints: 5, relic: 2 } },
     { id: 'spirit15', name: 'Eternal Dao Ancestor', desc: 'Reach Eternal Dao Ancestor X.', check: s => s.spirit?.realm >= 14 && s.spirit?.stage >= 9, reward: { stones: 6000, tokens: 200, daoPoints: 5, keys: 3 } },
     { id: 'origin', name: 'Beyond the Origin', desc: 'Unlock the hidden third progression.', hidden: true, check: s => !!s.origin?.unlocked, reward: { stones: 10000, daoPoints: 10, relic: 3 } },
+    { id: 'ending', name: 'The End of All Roads', desc: 'Complete all ten steps of Beyond the Origin.', hidden: true, check: s => !!s.ending?.complete, reward: { stones: 50000, daoPoints: 20, relic: 5, rootEssence: 10 } },
     { id: 'tame1', name: 'Kindred Spirit', desc: 'Tame a spirit beast.', check: s => Object.keys(s.taming?.beasts || {}).length >= 1, reward: { stones: 80, food: 1 } },
     { id: 'tame5', name: 'Beast Sovereign', desc: 'Bond with 5 spirit beasts.', check: s => Object.keys(s.taming?.beasts || {}).length >= 5, reward: { stones: 500, daoPoints: 2 } },
     { id: 'dao3', name: 'Dao Seeker', desc: 'Reach level 3 in any Dao.', check: s => daoPaths.some(d => daoLevel(d.id, s) >= 3), reward: { stones: 200, daoPoints: 1 } },
@@ -542,6 +543,7 @@
     spirit: { realm: 0, stage: 0, breaks: 0, criticals: 0, failures: 0, migratedFrom: 0, bonuses: { qi: 0, spell: 0, dao: 0 } },
     body: { realm: 0, stage: 0, unlocked: false, breaks: 0, criticals: 0, failures: 0, bonuses: { hp: 0, attack: 0, guard: 0 } },
     origin: { unlocked: false, level: 0, name: 'Beyond the Origin' },
+    ending: { complete: false, day: 0 },
     completedTrips: 0, trip: null,
     upgrades: { sutra: 0, array: 0, body: 0, beast: 0, alchemy: 0, fortune: 0, dao: 0 },
     boosts: 0, teaUntil: 0, dailyClaimed: false, dailyDate: 1, brews: 0, milestones: [], lastSeen: Date.now(),
@@ -617,6 +619,9 @@
       if (!fresh.sectPerks) fresh.sectPerks = { dutyDate: 0, dutyType: '', blessing: null, blessingUntil: 0 };
       if (!Array.isArray(fresh.inheritance.boons)) fresh.inheritance.boons = [];
       if (!fresh.fate || typeof fresh.fate !== 'object') fresh.fate = { pending: null, log: [], merchant: [], merchantDate: 0, merchantRefreshDate: 0, maps: 0, fragments: 0, clock: 0, encounters: 0, luckBuff: 0, luckBuffUntil: 0, offeringLuck: 0, offeringUntil: 0, divinations: 0 };
+      if (!fresh.ending || typeof fresh.ending !== 'object') fresh.ending = { complete: false, day: 0 };
+      fresh.ending.complete = !!fresh.ending.complete;
+      fresh.ending.day = Math.max(0, Number(fresh.ending.day) || 0);
       fresh.world.tier = Math.max(1, fresh.world.tier || 1);
       if (!fresh.arena || typeof fresh.arena !== 'object') fresh.arena = { rank: 11, defeated: {}, wins: 0, battle: null, lastWin: 0 };
       fresh.arena.rank = clamp(Number(fresh.arena.rank) || 11, 1, 11);
@@ -747,7 +752,7 @@
     return c.stage >= 9 ? breakthroughCost(path, s) : stageCost(path, s);
   }
   function originUnlocked(s = state) { return s.spirit.realm === spiritRealms.length - 1 && s.spirit.stage === 9 && s.body.realm === bodyRealms.length - 1 && s.body.stage === 9; }
-  function originCost(s = state) { return Math.round(1000000 * Math.pow(2.45, s.origin.level)); }
+  function originCost(s = state) { return Math.round(50000 * Math.pow(1.55, s.origin.level)); }
   function spiritQiBonus(s = state) { return s.spirit.realm * .02 + s.spirit.stage * .002 + s.spirit.bonuses.qi * .02; }
   function spiritSpellBonus(s = state) { return s.spirit.realm * .04 + s.spirit.stage * .004 + s.spirit.bonuses.spell * .02; }
   function spiritDaoBonus(s = state) { return s.spirit.realm * .025 + s.spirit.stage * .0025 + s.spirit.bonuses.dao * .01; }
@@ -1152,9 +1157,9 @@
     aid('realmName', spiritTitle());
     const stageEl = $('stageBadge');
     if (stageEl) stageEl.innerHTML = `${spiritRealms[state.spirit.realm].cn} <span>${ROMAN[state.spirit.stage]}</span>`;
-    aid('qiText', nfmt(qi)); aid('qiGoal', nfmt(goal));
-    const fill = $('qiFill'); if (fill) fill.style.width = `${Math.min(100, qi / goal * 100)}%`;
-    aid('qiPercent', `${Math.min(100, Math.floor(qi / goal * 100))}%`);
+    aid('qiText', nfmt(qi)); aid('qiGoal', spiritMaxed() ? '∞' : nfmt(goal));
+    const fill = $('qiFill'); if (fill) fill.style.width = spiritMaxed() ? '100%' : `${Math.min(100, qi / goal * 100)}%`;
+    aid('qiPercent', spiritMaxed() ? 'PATH COMPLETE' : `${Math.min(100, Math.floor(qi / goal * 100))}%`);
     aid('qiRate', rateFor().toFixed(1));
     aid('meditateLabel', state.active ? 'Meditation in progress' : 'Begin Meditation');
     aid('meditateHint', state.active ? 'BREATHE DEEPLY · THE QI GATHERS' : 'LET THE QI FLOW THROUGH YOU');
@@ -1163,7 +1168,7 @@
     if ($('breakthroughBtn')) $('breakthroughBtn').disabled = !canBreak;
     aid('breakBtnLabel', spiritMaxed() ? 'Spirit path complete' : state.spirit.stage < 9 ? 'Advance Spirit' : 'Break Through');
     aid('breakHint', spiritMaxed()
-      ? (bodyMaxed() ? 'THE HIDDEN REALM AWAITS' : 'COMPLETE THE BODY PATH')
+      ? (state.ending?.complete ? 'THE JOURNEY IS COMPLETE' : bodyMaxed() ? 'THE HIDDEN REALM AWAITS' : 'COMPLETE THE BODY PATH')
       : canBreak ? (state.spirit.stage < 9 ? 'READY · GUARANTEED STAGE ADVANCE' : `READY · ${spiritBreakChance()}% SUCCESS · TRIBULATION`) : `${nfmt(Math.max(0, goal - qi))} QI TO THE THRESHOLD`);
     const control = Math.max(1, 1 + state.spirit.realm * 2 + state.spirit.stage + state.upgrades.sutra * 2 + daoLevel('water') * 2);
     const spirit = Math.max(1, 1 + state.spirit.realm * 2 + Math.floor(state.spirit.stage / 2) + state.upgrades.array * 2 + state.pathLevels.spirit * 3 + totalMastery() * 2);
@@ -1203,6 +1208,7 @@
     $('expDot')?.classList.toggle('hidden', !(state.trip && Date.now() >= state.trip.ends));
     $('daoDot')?.classList.toggle('hidden', !(state.daoPoints > 0 || state.root.essence >= 6));
     $('fateDot')?.classList.toggle('hidden', !(state.fate?.pending || state.fate?.maps > 0 || state.fate?.merchant?.some(o => !o.bought)));
+    $('completionBadge')?.classList.toggle('hidden', !state.ending?.complete);
     const trialsReady = inheritanceCatalog.some(inc => state.inheritance.discovered.includes(inc.id) && inc.trials.some((t, i) => !(state.inheritance.trials[inc.id]?.[i]) && safeCheck(t)));
     $('legacyDot')?.classList.toggle('hidden', !(trialsReady || (state.realms.keys > 0 && secretRealms.some(r => state.stage >= r.req))));
     const root = rootData();
@@ -1377,6 +1383,9 @@
     if (ev) {
       const left = Math.max(0, Math.ceil((state.worldEvent.ends - Date.now()) / 1000));
       cards.push(`<div class="banner-card event"><div class="banner-symbol">${ev.seal}</div><div class="banner-body"><small>LIMITED CULTIVATION EVENT · ${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}</small><b>${ev.name}</b><span>${ev.desc}</span></div><span class="world-event-count">EVENT ACTIVE</span></div>`);
+    }
+    if (state.ending?.complete) {
+      cards.push(`<div class="banner-card ending"><div class="banner-symbol">終</div><div class="banner-body"><small>THE END OF ALL ROADS · JOURNEY COMPLETE</small><b>Beyond the Origin X</b><span>Spirit and body have reached their final rung and the hidden path has been walked to its end. Your legend is complete.</span></div><button class="action-btn gold" data-action="show-ending">View your legend</button></div>`);
     }
     if (state.fate?.pending) {
       cards.push(`<div class="banner-card fate"><div class="banner-symbol">✦</div><div class="banner-body"><small>A FORTUNE AWAITS YOUR ATTENTION</small><b>${state.fate.pending.title}</b><span>A strange encounter waits on the road. Go to Fate &amp; Fortune to see how it unfolds.</span></div><button class="action-btn gold" data-view="fate">Attend</button></div>`);
@@ -2176,7 +2185,9 @@
       const cost = u.level + 1;
       return `<article class="feature-card-lite"><div class="eyebrow">${u.seal} · RANK ${u.level}</div><h3>${u.name}</h3><p>${u.desc}</p><small>Next rank · ${cost} reincarnation point${cost === 1 ? '' : 's'}</small><button class="action-btn" data-action="rebirth-upgrade" data-id="${u.id}" ${state.rebirth.points >= cost ? '' : 'disabled'}>Deepen the soul</button></article>`;
     }).join('');
+    const endingCard = state.ending?.complete ? `<article class="content-panel ending-panel"><div class="eyebrow gold-text">THE END OF ALL ROADS · COMPLETE</div><h2>Your legend is finished</h2><p>Both cultivation paths reached their final stage, and all ten steps beyond the Origin have been claimed. The charted Dao lies behind you. What remains is a world that remembers your name.</p><div class="feature-stats"><span>COMPLETED ON DAY <b>${state.ending.day || dayIndex()}</b></span><span>ACHIEVEMENTS <b>${Object.keys(state.achievements || {}).length} / ${achievementDefs.length}</b></span><span>SPIRIT <b>${spiritTitle()}</b></span><span>BODY <b>${bodyTitle()}</b></span></div><div class="inline-actions"><button class="action-btn gold" data-action="show-ending">Read the ending</button><button class="action-btn" data-action="reincarnate">Walk the wheel again</button></div></article>` : '';
     $('view-ascension').innerHTML = `${subHead('THE WHEEL AND THE HIGHER SKY', 'Reincarnation & ascension', 'Death is a door, not an ending. Carry your permanent strength into a new life, or climb to a higher world.', '仙')}<div class="subview-layout"><div class="subview-main"><article class="content-panel"><div class="eyebrow">THE WHEEL TURNS</div><h2>${world}</h2><p>Reincarnation strips away realm, qi and mortal standing, but the root, meridians, Dao, beasts, inheritances and forged weapons remain. Ascension carries you to a higher world with all your strength intact.</p><div class="feature-stats"><span>REBIRTHS <b>${state.rebirth.count || 0}</b></span><span>POINTS <b>${state.rebirth.points || 0}</b></span><span>NEXT LIFE VALUE <b>${points}</b></span><span>WORLD BONUS <b>+${(state.rebirth.world || 0) * 20}% qi · +${(state.rebirth.world || 0) * 15}% attack</b></span></div><div class="inline-actions"><button class="action-btn gold" data-action="reincarnate" ${state.spirit.realm >= 4 ? '' : 'disabled'}>${state.spirit.realm >= 4 ? `Reincarnate · earn ${points} points` : 'Reach Soul Transformation to reincarnate'}</button><button class="action-btn" data-action="ascend-world" ${state.spirit.realm >= 9 && (state.rebirth.world || 0) < worldNames.length - 1 ? '' : 'disabled'}>${(state.rebirth.world || 0) >= worldNames.length - 1 ? 'The highest sky' : state.spirit.realm >= 9 ? 'Ascend to the next world' : 'Reach True Immortal to ascend'}</button></div></article>
+      ${endingCard}
       <article class="content-panel"><div class="eyebrow">SOUL UPGRADES</div><h2>Strengthen what death cannot take</h2><p>Reincarnation points are permanent. Spend them here; the cost rises with every rank.</p><div class="feature-grid">${upgrades}</div></article>
       <article class="content-panel"><div class="eyebrow">WHAT REMAINS</div><h2>The immortal ledger</h2><p>Roots, meridians, Dao insight, beast bonds, inheritances, artifacts, forged weapons, achievements, sect buildings and world boss records persist through reincarnation. Realm, qi, stones, paths, mission progress and daily practice begin again.</p></article></div>
       <aside class="subview-aside"><article class="feature-card"><div class="eyebrow">ASCENSION</div><h3>${state.rebirth.world >= worldNames.length - 1 ? 'Beyond the heavens' : `Next world · ${worldNames[(state.rebirth.world || 0) + 1]}`}</h3><p>Each higher world grants +20% qi and +15% attack permanently. Ascension requires <b>True Immortal I</b> in spirit cultivation.</p><div class="feature-stats"><span>SPIRIT <b>${spiritTitle()}</b></span><span>BODY <b>${state.body.unlocked ? bodyTitle() : 'Sealed'}</b></span><span>DAO LEVELS <b>${totalMastery()}</b></span><span>BOSSES <b>${state.stats.bosses || 0}</b></span></div></article>
@@ -2523,13 +2534,38 @@
     const cost = originCost();
     if (state.qi < cost) return showToast(`You need ${nfmt(cost)} qi to step beyond the Origin.`);
     state.qi -= cost; state.origin.level += 1;
+    if (state.origin.level >= 10) { state.ending.complete = true; state.ending.day = dayIndex(); }
     syncCultivation(); recalc();
     notify(`Beyond the Origin · step ${state.origin.level} of 10.`, 'breakthrough');
     if (state.origin.level >= 10) {
-      openModal('源', 'THE END OF ALL ROADS', 'Beyond the Origin', 'Ten steps past the final realm. Spirit, body and Dao are no longer separate things. The hidden progression is complete.', '<button class="primary-btn" data-action="close-modal">Become the origin</button>');
       fxBurst('rare', '源', 'Origin Complete', 'The secret final progression has been mastered.', 'Beyond the Origin X');
-    } else showToast(`Origin step ${state.origin.level} claimed · all cultivation permanently strengthened.`);
-    save(); render();
+      save(); render();
+      showEnding();
+    } else {
+      showToast(`Origin step ${state.origin.level} claimed · all cultivation permanently strengthened.`);
+      save(); render();
+    }
+  }
+  function showEnding() {
+    if (!state.ending?.complete) return showToast('The final road has not yet been walked.');
+    const stats = [
+      ['DAY', dayIndex()],
+      ['SPIRIT', spiritTitle()],
+      ['BODY', state.body.unlocked ? bodyTitle() : 'Unawakened'],
+      ['ORIGIN', `${state.origin.level} / 10`],
+      ['DAO LEVELS', totalMastery()],
+      ['BEASTS FELLED', state.stats.kills || 0],
+      ['WORLD BOSSES', state.stats.bosses || 0],
+      ['ARENA', arenaRankTitle()],
+      ['ACHIEVEMENTS', `${Object.keys(state.achievements || {}).length} / ${achievementDefs.length}`],
+      ['REBIRTHS', state.rebirth?.count || 0],
+      ['WORLD', worldName()]
+    ].map(([label, value]) => `<span><small>${label}</small><b>${value}</b></span>`).join('');
+    openModal('終', 'THE END OF ALL ROADS', 'The journey is complete',
+      `Spirit and body have ended at the same summit, and ten steps have carried you past it. The charted Dao lies behind you; the quiet country beyond it has no name.<br><br>
+      <div class="ending-stats">${stats}</div>
+      <p class="ending-copy">Everything you gathered — roots, meridians, companions, forged blades and old promises — remains part of the story. The wheel may turn again, but this life has been finished in full.</p>`,
+      '<button class="secondary-btn" data-action="close-modal">Continue exploring</button><button class="primary-btn" data-action="reincarnate">Walk the wheel again</button>');
   }
 
   /* ---------------- MERIDIANS & DAO ---------------- */
@@ -3615,6 +3651,7 @@
       case 'attempt-spirit-break': attemptSpiritBreak(); break;
       case 'attempt-body-break': attemptBodyBreak(); break;
       case 'advance-origin': advanceOrigin(); break;
+      case 'show-ending': showEnding(); break;
       case 'close-modal': closeModal(); break;
       case 'awaken-root': awakenRoot(); break;
       case 'reroll-root': rerollRoot(); break;
