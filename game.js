@@ -52,6 +52,13 @@
   const spiritRealmBases = [0, 0, 10, 13, 16, 19, 22, 25, 28, 31, 34, 37, 40, 43, 46, 49];
   const legacyRealmStarts = [[0, 0], [1, 1], [10, 2], [13, 3], [16, 4], [19, 5], [22, 6], [25, 7], [28, 8], [31, 9], [34, 10], [37, 11], [40, 12], [43, 13], [46, 14], [49, 15]];
   const GOLDEN_CORE_REALM = 3;
+  // Minor and major breakthroughs share one calculation. Only the base chance,
+  // qi cost and recovery time differ between the two kinds.
+  const BREAK_RULES = {
+    minor: { base: 72, cooldown: 20, xpGain: 1, label: 'Minor breakthrough' },
+    major: { base: 45, cooldown: 60, xpGain: 2, label: 'Major breakthrough' }
+  };
+  const BREAK_XP_BONUS = 5;
   const worldNames = ['Mortal Realm', 'Immortal Realm', 'Celestial Realm', 'Primordial Void'];
 
   const techniques = [
@@ -473,7 +480,7 @@
     tokens: 'Sect tokens are earned through missions, bosses and duties. Spend them in the Armory, Vault and sect halls.',
     merit: 'Sect merit measures your service. Enough merit promotes your rank, which grants permanent attack, qi and health bonuses.',
     rate: 'Qi per second. Meditation raises this to its full value; idle cultivation receives 35%. Base qi grows with realm, techniques, roots and the Clear Heart Sutra.',
-    breakthrough: 'The chance that a realm breakthrough succeeds. It is kept between 20% and 95%. Failure scatters 10% of your qi but never destroys your foundation.',
+    breakthrough: 'The chance that a breakthrough succeeds. Minor and major breakthroughs share one calculation, from a 10% minimum to a 95% maximum. Failure keeps your stage, consumes 20% of the qi cost, grants breakthrough insight and starts a recovery cooldown.',
     attack: 'The damage of a body strike before variance. It combines your weapon, gear, sect, root, Dao, companion, artifacts, body cultivation and spirit power.',
     guard: 'Flat damage reduction against physical retaliation. Some bosses pierce or ignore guard.',
     health: 'Your maximum health. It grows with realm, body cultivation, gear, roots, Dao and companions. At zero health you are carried to safety.',
@@ -484,8 +491,8 @@
     dao: 'Dao insight is experience toward the six laws. Comprehending costs qi and stones; insight points can be infused directly.',
     root: 'Your spiritual root grants a permanent elemental identity and bonuses. Grades multiply all root bonuses.',
     meridians: 'Meridians are permanent channels opened with meridian points, qi and stones. Sets of four grant circulation bonuses.',
-    realm: 'Your spirit cultivation realm. Mortal is the initial state with no stages; the fifteen realms above it each hold ten Roman stages. Stages I–IX are guaranteed qi upgrades and stage X opens a heavenly tribulation.',
-    stage: 'A single step within a realm, marked I–X. Stage X is the final rung and requires a major breakthrough to enter the next realm. Mortal has no stages.',
+    realm: 'Your spirit cultivation realm. Mortal is the initial state with no stages; the fifteen realms above it each hold ten Roman stages. Every stage advance is a minor breakthrough and every Stage X advance is a major breakthrough.',
+    stage: 'A single step within a realm, marked I–X. Minor breakthroughs advance I–IX. Stage X opens a major breakthrough into the next realm. Both consume qi and can fail. Mortal has no stages.',
     bodyPath: 'Body cultivation is an independent fifteen-realm path sharing the same qi. It unlocks at Golden Core I and permanently raises health, physical attack, guard and damage resistance.',
     companion: 'The active spirit beast grants a passive bonus and strikes alongside you in every battle.',
     weapon: 'The equipped weapon adds flat attack, modified by refinement, tempering and the Refining Armory.',
@@ -501,9 +508,9 @@
 
   const emptyEquipment = () => Object.fromEntries(gearCatalog.map(item => [item.id, { owned: false, level: 0 }]));
   const defaultState = () => ({
-    version: 4, qi: 0, stones: 25, stage: 0, active: false, totalSeconds: 0, totalQi: 0, qiToday: 0, medSeconds: 0,
-    spirit: { realm: 0, stage: 0, breaks: 0, criticals: 0, failures: 0, migratedFrom: 0, bonuses: { qi: 0, spell: 0, dao: 0 } },
-    body: { realm: 0, stage: 0, unlocked: false, breaks: 0, criticals: 0, failures: 0, bonuses: { hp: 0, attack: 0, guard: 0 } },
+    version: 5, qi: 0, stones: 25, stage: 0, active: false, totalSeconds: 0, totalQi: 0, qiToday: 0, medSeconds: 0,
+    spirit: { realm: 0, stage: 0, breaks: 0, criticals: 0, failures: 0, breakXp: 0, cooldownUntil: 0, migratedFrom: 0, bonuses: { qi: 0, spell: 0, dao: 0 } },
+    body: { realm: 0, stage: 0, unlocked: false, breaks: 0, criticals: 0, failures: 0, breakXp: 0, cooldownUntil: 0, bonuses: { hp: 0, attack: 0, guard: 0 } },
     origin: { unlocked: false, level: 0, name: 'Beyond the Origin' },
     completedTrips: 0, trip: null,
     upgrades: { sutra: 0, array: 0, body: 0, beast: 0, alchemy: 0, fortune: 0, dao: 0 },
@@ -567,7 +574,7 @@
         // previously stored spirit realm one place deeper.
         fresh.spirit.realm = clamp((Number(saved.spirit.realm) || 0) + 1, 0, spiritRealms.length - 1);
       }
-      fresh.version = 4;
+      fresh.version = 5;
       delete fresh.pathLevels; // Paths were removed; drop any legacy tree ranks.
       normalizeCultivation(fresh);
       fresh.stage = legacyForSpirit(fresh.spirit.realm, fresh.spirit.stage);
@@ -650,8 +657,8 @@
     return spiritRealmBases[realm] + Math.min(2, Math.floor(stage * 3 / 10));
   }
   function normalizeCultivation(s = state) {
-    if (!s.spirit || typeof s.spirit !== 'object') s.spirit = { realm: 0, stage: 0, breaks: 0, criticals: 0, failures: 0, bonuses: { qi: 0, spell: 0, dao: 0 } };
-    if (!s.body || typeof s.body !== 'object') s.body = { realm: 0, stage: 0, unlocked: false, breaks: 0, criticals: 0, failures: 0, bonuses: { hp: 0, attack: 0, guard: 0 } };
+    if (!s.spirit || typeof s.spirit !== 'object') s.spirit = { realm: 0, stage: 0, breaks: 0, criticals: 0, failures: 0, breakXp: 0, cooldownUntil: 0, bonuses: { qi: 0, spell: 0, dao: 0 } };
+    if (!s.body || typeof s.body !== 'object') s.body = { realm: 0, stage: 0, unlocked: false, breaks: 0, criticals: 0, failures: 0, breakXp: 0, cooldownUntil: 0, bonuses: { hp: 0, attack: 0, guard: 0 } };
     if (!s.origin || typeof s.origin !== 'object') s.origin = { unlocked: false, level: 0, name: 'Beyond the Origin' };
     s.spirit.realm = clamp(Math.floor(Number(s.spirit.realm) || 0), 0, spiritRealms.length - 1);
     s.spirit.stage = s.spirit.realm === 0 ? 0 : clamp(Math.floor(Number(s.spirit.stage) || 0), 0, 9);
@@ -659,7 +666,9 @@
     s.body.stage = clamp(Math.floor(Number(s.body.stage) || 0), 0, 9);
     s.spirit.bonuses = { qi: Number(s.spirit.bonuses?.qi) || 0, spell: Number(s.spirit.bonuses?.spell) || 0, dao: Number(s.spirit.bonuses?.dao) || 0 };
     s.body.bonuses = { hp: Number(s.body.bonuses?.hp) || 0, attack: Number(s.body.bonuses?.attack) || 0, guard: Number(s.body.bonuses?.guard) || 0 };
-    ['breaks', 'criticals', 'failures'].forEach(k => { s.spirit[k] = Number(s.spirit[k]) || 0; s.body[k] = Number(s.body[k]) || 0; });
+    ['breaks', 'criticals', 'failures', 'breakXp'].forEach(k => { s.spirit[k] = Number(s.spirit[k]) || 0; s.body[k] = Number(s.body[k]) || 0; });
+    s.spirit.cooldownUntil = Number(s.spirit.cooldownUntil) || 0;
+    s.body.cooldownUntil = Number(s.body.cooldownUntil) || 0;
     if (s.spirit.realm >= GOLDEN_CORE_REALM) s.body.unlocked = true;
     s.origin.level = clamp(Math.floor(Number(s.origin.level) || 0), 0, 10);
     s.origin.unlocked = !!s.origin.unlocked;
@@ -881,36 +890,50 @@
     const base = 30 + luckFor(s) * 1.5 + (s.upgrades?.beast || 0) * 4 + daoLevel('life', s) * 2 + buildingLevel('beastpen', s) * 2 + (currentEvent(s)?.buff === 'beast' ? 15 : 0);
     return clamp(Math.round(base - (def.rarity === 'Mythical' ? 20 : def.rarity === 'Epic' ? 10 : 0)), 5, 92);
   }
-  function spiritBreakChance(s = state) {
-    // Every modifier is applied once. Technique, formation, pill, root,
-    // meridians, Dao insight and spirit control are distinct sources.
-    const control = 1 + s.spirit.realm * 2 + s.spirit.stage + (s.upgrades?.sutra || 0) * 1.5;
-    const ch = 50
-      + Math.min(10, control * .35)                                  // spirit attributes
-      + Math.min(12, daoLevel('water', s) * 1.4 + totalMastery(s) * .25) // Dao comprehension
-      + (s.upgrades?.body || 0) * 2                                  // Jade Body Tempering
-      + buildingLevel('formation', s) * 2.2                          // Formation Hall
-      + (s.breakBuff || 0)                                           // Tribulation Pill
+  function breakKind(path = 'spirit', s = state) {
+    const c = path === 'body' ? s.body : s.spirit;
+    if (path === 'spirit' && c.realm === 0) return 'minor';
+    return c.stage >= 9 ? 'major' : 'minor';
+  }
+  function breakCost(path = 'spirit', kind = breakKind(path), s = state) {
+    return kind === 'major' ? breakthroughCost(path, s) : stageCost(path, s);
+  }
+  function breakCooldownLeft(path = 'spirit', s = state) {
+    const c = path === 'body' ? s.body : s.spirit;
+    return Math.max(0, Math.ceil(((c.cooldownUntil || 0) - Date.now()) / 1000));
+  }
+  function breakthroughChance(path = 'spirit', kind = breakKind(path), s = state) {
+    // One shared formula for minor and major attempts. Kind changes the base
+    // chance and realm resistance; path changes which attributes support it.
+    const c = path === 'body' ? s.body : s.spirit;
+    const rules = BREAK_RULES[kind] || BREAK_RULES.minor;
+    const control = c.realm * 2 + c.stage + (path === 'spirit' ? (s.upgrades?.sutra || 0) * 1.5 : openedMeridians(s) * .5);
+    const support = path === 'spirit'
+      ? Math.min(12, daoLevel('water', s) * 1.4 + totalMastery(s) * .25)
+      : Math.min(12, openedMeridians(s) * .8);
+    const ch = rules.base
+      + Math.min(10, control * .4)                                  // cultivation control
+      + support                                                     // path insight
+      + (s.upgrades?.body || 0) * (path === 'body' ? 3.2 : 2)       // tempering technique
+      + buildingLevel('formation', s) * 2                           // Formation Hall
+      + (s.breakBuff || 0)                                          // Tribulation Pill
       + rootBonus('break', s) * 100
       + meridianBonus('break', s) * 100
       + daoTreeBonus('break', s)
       + sectBlessing('break', s) * 5
-      - s.spirit.realm * 2.2;                                        // realm resistance
-    return Math.round(clamp(ch, 20, 95));
+      + (c.breakXp || 0) * BREAK_XP_BONUS                          // failure insight
+      - c.realm * (kind === 'major' ? 2.2 : .7);                    // realm resistance
+    return Math.round(clamp(ch, 10, 95));
   }
-  function bodyBreakChance(s = state) {
-    // Body attributes, technique, meridians and sect support each contribute once.
-    const control = s.body.realm * 2 + s.body.stage + s.body.bonuses.hp + s.body.bonuses.attack + s.body.bonuses.guard;
-    const ch = 48
-      + Math.min(10, control * .6)                                  // body attributes
-      + (s.upgrades?.body || 0) * 3.2                                // Body Tempering Technique
-      + Math.min(10, openedMeridians(s) * .9)
-      + buildingLevel('formation', s) * 1.4
-      + sectBlessing('break', s) * 4
-      - s.body.realm * 2.2;                                         // realm resistance
-    return Math.round(clamp(ch, 20, 95));
-  }
+  function spiritBreakChance(s = state) { return breakthroughChance('spirit', breakKind('spirit', s), s); }
+  function bodyBreakChance(s = state) { return breakthroughChance('body', breakKind('body', s), s); }
   function breakChance(s = state) { return spiritBreakChance(s); }
+  function breakthroughCriticalChance(path = 'spirit', s = state) {
+    const bonus = path === 'body'
+      ? s.body.realm * .008 + openedMeridians(s) * .004
+      : daoLevel('water', s) * .01 + totalMastery(s) * .002;
+    return clamp(.1 + bonus, .1, .3);
+  }
   function alchemyLevel(s = state) { return 1 + Math.floor((s.brews || 0) / 5); }
   function questObjective(q, s = state) { return q.type === 'gather' ? (s.herbs?.[q.key] || 0) : (s.quests?.progress?.[q.id] || 0); }
   function questDone(q, s = state) { return questObjective(q, s) >= q.target; }
@@ -1128,12 +1151,16 @@
     aid('meditateLabel', state.active ? 'Meditation in progress' : 'Begin Meditation');
     aid('meditateHint', state.active ? 'BREATHE DEEPLY · THE QI GATHERS' : 'LET THE QI FLOW THROUGH YOU');
     $('meditateBtn')?.classList.toggle('meditating', state.active);
-    const canBreak = state.qi >= goal && !spiritMaxed();
+    const spiritKind = breakKind('spirit');
+    const spiritChance = breakthroughChance('spirit', spiritKind);
+    const spiritCooldown = breakCooldownLeft('spirit');
+    const canBreak = state.qi >= goal && !spiritMaxed() && spiritCooldown <= 0;
     if ($('breakthroughBtn')) $('breakthroughBtn').disabled = !canBreak;
-    aid('breakBtnLabel', spiritMaxed() ? 'Spirit path complete' : state.spirit.realm === 0 ? 'Begin Cultivation' : state.spirit.stage < 9 ? 'Advance Spirit' : 'Break Through');
+    aid('breakBtnLabel', spiritMaxed() ? 'Spirit path complete' : state.spirit.realm === 0 ? 'Awaken Spirit' : spiritKind === 'major' ? 'Major Breakthrough' : 'Minor Breakthrough');
     aid('breakHint', spiritMaxed()
       ? (bodyMaxed() ? 'THE HIDDEN REALM AWAITS' : 'COMPLETE THE BODY PATH')
-      : canBreak ? (state.spirit.realm === 0 ? 'READY · AWAKEN TO QI CONDENSATION I' : state.spirit.stage < 9 ? 'READY · GUARANTEED STAGE ADVANCE' : `READY · ${spiritBreakChance()}% SUCCESS · TRIBULATION`) : `${nfmt(Math.max(0, goal - qi))} QI TO THE THRESHOLD`);
+      : spiritCooldown > 0 ? `RECOVERING · ${spiritCooldown}s`
+        : canBreak ? `${spiritChance}% SUCCESS · ${spiritKind === 'major' ? 'MAJOR' : 'MINOR'} BREAKTHROUGH` : `${nfmt(Math.max(0, goal - qi))} QI TO THE THRESHOLD`);
     const control = Math.max(1, 1 + state.spirit.realm * 2 + state.spirit.stage + state.upgrades.sutra * 2 + daoLevel('water') * 2);
     const spirit = Math.max(1, 1 + state.spirit.realm * 5 + Math.floor(state.spirit.stage / 2) + state.upgrades.array * 2 + totalMastery() * 2);
     const body = Math.max(1, state.body.unlocked ? 1 + state.body.realm * 5 + state.body.stage + state.upgrades.body * 2 + openedMeridians() * 2 : 1);
@@ -1157,15 +1184,13 @@
       $('dailyClaim').textContent = state.dailyClaimed ? 'Daily reward claimed' : taskCount === 3 ? 'Claim daily reward →' : 'Complete all practices →';
     }
     const spiritDone = spiritMaxed();
-    const nextTitle = spiritDone ? 'The spirit path is complete' : state.spirit.stage < 9 ? `Spirit · ${nextSpiritTitle()}` : `Breakthrough · ${nextSpiritTitle()}`;
+    const nextTitle = spiritDone ? 'The spirit path is complete' : `${spiritKind === 'major' ? 'Major' : 'Minor'} · ${nextSpiritTitle()}`;
     aid('nextTitle', nextTitle);
     aid('nextText', spiritDone
       ? (bodyMaxed()
         ? 'Eternal Dao Ancestor X and Eternal Godbody X. Both roads have reached their final stage, and a hidden path now waits beyond the charted Dao.'
         : `Eternal Dao Ancestor X has been reached. The spirit road is complete; ${state.body.unlocked ? `continue body cultivation from ${bodyTitle()}` : 'the body path awaits its awakening at Golden Core I'}.`)
-      : state.spirit.stage < 9
-      ? `Spend ${nfmt(goal)} qi to advance from ${spiritTitle()} to ${nextSpiritTitle()}. Stages I–IX are guaranteed.`
-      : `Gather ${nfmt(goal)} qi and face the heavenly tribulation. Success carries you to ${nextSpiritTitle()}. Failure leaves you at stage X and scatters 10% of your qi.`);
+      : `${nfmt(goal)} qi is required for a ${spiritKind} breakthrough from ${spiritTitle()} to ${nextSpiritTitle()} · ${spiritChance}% success${spiritCooldown > 0 ? ` · recovering ${spiritCooldown}s` : ''}. Failure consumes ${nfmt(Math.round(goal * .2))} qi, grants insight and starts a ${BREAK_RULES[spiritKind].cooldown}s recovery.`);
     aid('nextProgress', spiritDone ? `${spiritTitle()} · final stage` : `${nfmt(qi)} / ${nfmt(goal)} qi`);
     const nextFill = $('nextFill'); if (nextFill) nextFill.style.width = spiritDone ? '100%' : `${Math.min(100, state.qi / goal * 100)}%`;
     aid('techCount', `${Object.values(state.upgrades).filter(v => v > 0).length + state.activeArts.length}/${techniques.length + martialArts.length}`);
@@ -1198,19 +1223,22 @@
     const realm = realms[data.realm];
     const locked = isBody && !data.unlocked;
     const isMortal = !isBody && data.realm === 0;
-    const cost = nextPathCost(path);
+    const kind = breakKind(path);
+    const cost = breakCost(path, kind);
     const pct = Math.min(100, state.qi / cost * 100);
     const atPeak = !isMortal && data.stage >= 9;
     const complete = isBody ? bodyMaxed() : spiritMaxed();
-    const chance = isBody ? bodyBreakChance() : spiritBreakChance();
-    const canPay = state.qi >= cost && !complete;
+    const chance = breakthroughChance(path, kind);
+    const cooldown = breakCooldownLeft(path);
+    const xp = data.breakXp || 0;
+    const canPay = state.qi >= cost && !complete && cooldown <= 0;
     const nextLabel = complete ? 'Beyond the Origin' : isBody ? nextBodyTitle() : nextSpiritTitle();
     const realmLine = isBody
       ? `Realm ${data.realm + 1} of 15 · Stage ${ROMAN[data.stage]} of X`
       : isMortal ? 'Initial state · No stages · Awakens into Qi Condensation I'
         : `Realm ${data.realm} of 15 · Stage ${ROMAN[data.stage]} of X`;
     const title = locked ? 'Body Path Sealed' : isMortal ? 'Mortal' : `${realm.name} <em>${ROMAN[data.stage]}</em>`;
-    const pill = locked ? 'LOCKED' : isMortal ? 'MORTAL' : complete ? 'PATH COMPLETE' : atPeak ? 'STAGE X · BREAKTHROUGH' : 'CULTIVATING';
+    const pill = locked ? 'LOCKED' : isMortal ? 'MORTAL' : complete ? 'PATH COMPLETE' : cooldown > 0 ? `RECOVERING ${cooldown}s` : atPeak ? 'MAJOR · READY' : 'MINOR · READY';
     const stats = isBody
       ? [['MAX HEALTH', `+${nfmt(bodyHpBonus())}`, 'Permanent health from tempering the vessel.'],
          ['PHYSICAL ATTACK', `+${nfmt(Math.round(bodyAttackBonus() * 10) / 10)}`, 'Flat attack added to every physical strike.'],
@@ -1224,10 +1252,9 @@
     const stageDots = isMortal
       ? '<span class="stage-pip current mortal-pip">Awakening · no stages</span>'
       : ROMAN.map((num, i) => `<span class="stage-pip ${i < data.stage ? 'done' : i === data.stage ? 'current' : ''}" title="Stage ${num}">${num}</span>`).join('');
-    const progressLabel = complete ? 'FINAL REALM COMPLETE' : isMortal ? 'QI TO AWAKEN INTO QI CONDENSATION' : atPeak ? 'MAJOR BREAKTHROUGH REQUIREMENT' : `QI TO REACH STAGE ${ROMAN[data.stage + 1]}`;
-    const breakthroughBonus = isBody
-      ? `Body breakthroughs grant permanent health, attack and guard. Critical success doubles the tempering reward.`
-      : `Spirit breakthroughs grant permanent qi flow, spell power and Dao insight, plus meridian points and realm keys.`;
+    const progressLabel = complete ? 'FINAL REALM COMPLETE' : isMortal ? 'QI TO AWAKEN INTO QI CONDENSATION' : atPeak ? 'MAJOR BREAKTHROUGH REQUIREMENT' : `MINOR BREAKTHROUGH TO STAGE ${ROMAN[data.stage + 1]}`;
+    const rules = BREAK_RULES[kind];
+    const breakthroughBonus = `${kind === 'major' ? 'Major' : 'Minor'} breakthrough · ${chance}% success with ${xp ? `+${xp * BREAK_XP_BONUS}% failure insight` : 'no failure insight yet'}. Success grants permanent ${isBody ? 'health, attack and guard' : 'qi flow, spell power and Dao insight'}; critical success doubles the reward. Failure keeps your stage, consumes ${nfmt(Math.round(cost * .2))} qi, grants +${rules.xpGain} insight and starts a ${rules.cooldown}s recovery.`;
     return `<article class="cultivation-card ${isBody ? 'body-card' : 'spirit-card'} ${locked ? 'locked' : ''}">
       <div class="cult-card-head">
         <span class="cult-seal">${locked ? '鎖' : realm.seal}</span>
@@ -1246,13 +1273,11 @@
       </div>` : `<div class="cult-stage-track">${stageDots}</div>
       <div class="cult-progress-label"><span>${progressLabel}</span><b>${complete ? 'STAGE X OF X' : `${nfmt(Math.floor(state.qi))} / ${nfmt(cost)} qi`}</b></div>
       <div class="qi-track"><div class="qi-fill ${isBody ? 'body-fill' : ''}" style="width:${complete ? 100 : pct}%"></div></div>
-      <div class="cult-next-line"><span>NEXT · <b>${nextLabel}</b></span><span>${complete ? 'waiting at the summit' : atPeak ? `${chance}% success` : isMortal ? 'guaranteed awakening' : 'guaranteed'}</span></div>
+      <div class="cult-next-line"><span>NEXT · <b>${nextLabel}</b></span><span>${complete ? 'waiting at the summit' : cooldown > 0 ? `RECOVERING · ${cooldown}s${xp ? ` · insight +${xp * BREAK_XP_BONUS}%` : ''}` : `${chance}% success${xp ? ` · insight +${xp * BREAK_XP_BONUS}%` : ''}`}</span></div>
       <div class="cult-actions">
         ${complete
           ? `<button class="action-btn ${isBody ? 'body-advance-btn' : 'gold'}" disabled>${isBody ? 'The body path is complete' : 'The spirit path is complete'}<span>${isBody && !spiritMaxed() ? 'continue spirit' : !isBody && !bodyMaxed() ? 'continue body' : 'Beyond the Origin'}</span></button>`
-          : atPeak
-          ? `<button class="action-btn ${isBody ? 'body-break-btn' : 'gold'}" data-action="${isBody ? 'open-body-break' : 'open-spirit-break'}" ${canPay ? '' : 'disabled'}>${isBody ? 'Begin body tempering trial' : 'Face the heavenly tribulation'}<span>${nfmt(cost)} qi · ${chance}%</span></button>`
-          : `<button class="action-btn ${isBody ? 'body-advance-btn' : 'gold'}" data-action="${isBody ? 'advance-body' : 'advance-spirit'}" ${canPay ? '' : 'disabled'}>${isMortal ? 'Awaken · Qi Condensation I' : `Advance to ${ROMAN[data.stage + 1]}`}<span>${nfmt(cost)} qi</span></button>`}
+          : `<button class="action-btn ${isBody ? 'body-break-btn' : 'gold'}" data-action="${isBody ? 'open-body-break' : 'open-spirit-break'}" ${canPay ? '' : 'disabled'}>${atPeak ? (isBody ? 'Begin body tempering trial' : 'Face the heavenly tribulation') : isMortal ? 'Awaken · Qi Condensation I' : `Minor breakthrough · ${ROMAN[data.stage + 1]}`}<span>${cooldown > 0 ? `recovering ${cooldown}s` : `${nfmt(cost)} qi · ${chance}%`}</span></button>`}
       </div>
       <div class="cult-stats">${statHtml}</div>
       <p class="cult-bonus">${breakthroughBonus}</p>`}
@@ -1298,6 +1323,10 @@
     const goal = requirement(), pct = Math.min(100, state.qi / goal * 100);
     const equippedCount = Object.values(state.equipment || {}).filter(g => g.owned).length + (weapon ? 1 : 0) + (state.forge.equippedArtifacts || []).filter(Boolean).length;
     const spiritRealm = spiritRealms[state.spirit.realm];
+    const spiritKind = breakKind('spirit');
+    const spiritChance = breakthroughChance('spirit', spiritKind);
+    const bodyKind = breakKind('body');
+    const bodyChance = breakthroughChance('body', bodyKind);
     const spiritLine = spiritRealm.noStages
       ? `Mortal · initial state · ${worldName()}`
       : `Realm ${state.spirit.realm} / 15 · Stage ${ROMAN[state.spirit.stage]} · ${worldName()}`;
@@ -1310,7 +1339,7 @@
       <div class="char-realm-sub">
         <span${tipAttr(TIP.bodyPath)}><i>${state.body.unlocked ? bodyRealms[state.body.realm].seal : '鎖'}</i><small>BODY CULTIVATION</small><b>${state.body.unlocked ? bodyTitle() : 'Sealed · Golden Core I'}</b></span>
         <span><i>氣</i><small>SHARED QI</small><b>${nfmt(Math.floor(state.qi))} · ${rateFor().toFixed(1)}/s</b></span>
-        <span><i>✦</i><small>BREAKTHROUGH</small><b>${state.spirit.stage >= 9 ? spiritBreakChance() + '% spirit' : 'Next at stage X'}${state.body.unlocked && state.body.stage >= 9 ? ` · ${bodyBreakChance()}% body` : ''}</b></span>
+        <span><i>✦</i><small>BREAKTHROUGH</small><b>${spiritChance}% spirit${state.body.unlocked ? ` · ${bodyChance}% body` : ''}</b></span>
       </div>
       <div class="char-section-label">FOUNDATION</div>
       <div class="char-stats">
@@ -1319,8 +1348,8 @@
         ${statTile('GUARD', guardFor(), TIP.guard)}
         ${statTile('CRIT', `${Math.round(critChance() * 100)}%`, TIP.crit)}
         ${statTile('QI FLOW', `${rateFor().toFixed(1)}/s`, TIP.rate)}
-        ${statTile('SPIRIT BREAK', state.spirit.stage >= 9 ? `${spiritBreakChance()}%` : 'At stage X', TIP.breakthrough)}
-        ${statTile('BODY BREAK', !state.body.unlocked ? 'Sealed' : state.body.stage >= 9 ? `${bodyBreakChance()}%` : 'At stage X', TIP.bodyPath)}
+        ${statTile('SPIRIT BREAK', `${spiritChance}%`, TIP.breakthrough)}
+        ${statTile('BODY BREAK', !state.body.unlocked ? 'Sealed' : `${bodyChance}%`, TIP.bodyPath)}
         ${statTile('RESIST', `${Math.round(bodyDamageReduction() * 100)}%`, TIP.bodyPath)}
         ${statTile('LUCK', luckFor(), TIP.luck)}
         ${statTile('GATHERING', `+${Math.round((harvestMult() - 1) * 100)}%`, TIP.gathering)}
@@ -2207,11 +2236,11 @@
       const origin = state.origin?.unlocked ? `<article class="content-panel origin-codex"><div class="eyebrow gold-text">THE HIDDEN FINAL REALM</div><h2>Beyond the Origin</h2><p>Spirit and body have both reached their final stage. The third progression stands outside the fifteen realms, measured in Origin Steps I–X.</p><div class="inventory-row"><span>Origin step</span><b>${state.origin.level} / 10</b></div></article>` : '';
       const goal = nextPathCost('spirit');
       body = `<div class="subview-layout"><div class="subview-main">
-        <article class="content-panel"><div class="eyebrow">SPIRIT CULTIVATION · MORTAL + 15 REALMS</div><h2>The immortal spirit</h2><p>Mortal is the initial state and carries no Roman stages. Each of the fifteen cultivation realms above it holds ten stages I–X: stages I–IX are guaranteed qi upgrades, while stage X opens a heavenly tribulation into the next realm. Spirit power governs qi flow, spell damage and Dao insight.</p><div class="codex-list">${spiritRows}</div></article>
+        <article class="content-panel"><div class="eyebrow">SPIRIT CULTIVATION · MORTAL + 15 REALMS</div><h2>The immortal spirit</h2><p>Mortal is the initial state and carries no Roman stages. Each of the fifteen cultivation realms above it holds ten stages I–X. Every stage advance is a minor breakthrough; Stage X opens a major breakthrough into the next realm. Both consume qi, can fail, and share one success calculation capped between 10% and 95%. Spirit power governs qi flow, spell damage and Dao insight.</p><div class="codex-list">${spiritRows}</div></article>
         <article class="content-panel"><div class="eyebrow">BODY CULTIVATION · 15 REALMS</div><h2>The tempered vessel</h2><p>${state.body.unlocked ? 'The body path is awake. Its stages share your qi but advance independently, each one hardening health, attack, guard and resistance.' : 'The body path remains sealed until spirit cultivation reaches <b>Golden Core I</b>. It will then begin at Mortal Body I.'}</p><div class="codex-list">${bodyRows}</div></article>
         ${origin}</div>
         <aside class="subview-aside"><article class="feature-card"><div class="eyebrow">CODEX OF THE SELF</div><h3>${worldName()}</h3><p>Your root, Dao, meridians and companions all appear in the other pages of this codex. Some knowledge is earned only by living.</p><div class="feature-stats"><span>SPIRIT <b>${spiritTitle()}</b></span><span>BODY <b>${state.body.unlocked ? bodyTitle() : 'Sealed'}</b></span><span>SHARED QI <b>${nfmt(state.qi)}</b></span></div></article>
-        <article class="content-panel"><div class="eyebrow">THE NEXT SPIRIT THRESHOLD</div><h2>${nextSpiritTitle()}</h2><p>${nfmt(goal)} qi are required. ${state.spirit.realm === 0 ? 'The first awakening is a guaranteed qi upgrade into Qi Condensation I.' : state.spirit.stage >= 9 ? `A heavenly tribulation waits at this gate · ${spiritBreakChance()}% success.` : 'The stage advance is guaranteed once the qi is spent.'}</p><div class="inventory-row"><span>Body next</span><b>${state.body.unlocked ? `${nextBodyTitle()} · ${nfmt(nextPathCost('body'))} qi` : 'Golden Core I'}</b></div></article></aside></div>`;
+        <article class="content-panel"><div class="eyebrow">THE NEXT SPIRIT THRESHOLD</div><h2>${nextSpiritTitle()}</h2><p>${nfmt(goal)} qi are required. ${state.spirit.realm === 0 ? `Awakening is a minor breakthrough with ${spiritBreakChance()}% success.` : state.spirit.stage >= 9 ? `A major breakthrough waits at this gate · ${spiritBreakChance()}% success.` : `A minor breakthrough waits at this gate · ${spiritBreakChance()}% success.`} Failure consumes 20% of the qi cost, grants insight and starts a recovery cooldown.</p><div class="inventory-row"><span>Body next</span><b>${state.body.unlocked ? `${nextBodyTitle()} · ${nfmt(nextPathCost('body'))} qi` : 'Golden Core I'}</b></div></article></aside></div>`;
     }
     $('view-codex').innerHTML = `${subHead('THE IMMORTAL CODEX', 'Codex', 'Realms, achievements, story quests and the record of your long road.', '▤')}
       ${tabs('codex', [['realms', 'Realms'], ['collections', 'Collections'], ['achievements', 'Achievements'], ['quests', 'Story quests'], ['records', 'Records']])}${body}`;
@@ -2311,159 +2340,140 @@
   }
 
   /* ---------------- BREAKTHROUGH ---------------- */
-  function advanceSpirit() {
-    if (state.spirit.realm === 0) {
-      const cost = stageCost('spirit');
-      if (state.qi < cost) return showToast(`You need ${nfmt(cost)} qi to awaken your spirit.`);
-      state.qi -= cost;
-      state.spirit.realm = 1;
-      state.spirit.stage = 0;
-      syncCultivation();
-      maybeUnlockBody();
-      notify(`Spirit cultivation awakened · ${spiritTitle()} reached.`, 'breakthrough');
-      showToast('The first breath enters your meridians · Qi Condensation I.');
-      save(); render();
-      return;
-    }
-    if (state.spirit.stage >= 9) return openSpiritBreakthrough();
-    const cost = stageCost('spirit');
-    if (state.qi < cost) return showToast(`You need ${nfmt(cost)} qi to advance.`);
-    state.qi -= cost;
-    state.spirit.stage += 1;
-    syncCultivation();
-    maybeUnlockBody();
-    notify(`Spirit cultivation · ${spiritTitle()} reached.`, 'breakthrough');
-    showToast(`Qi refines into a deeper stage · ${spiritTitle()}.`);
-    save(); render();
-  }
-  function advanceBody() {
-    if (!state.body.unlocked) return showToast('Body cultivation unlocks at Golden Core I.');
-    if (state.body.stage >= 9) return openBodyBreakthrough();
-    const cost = stageCost('body');
-    if (state.qi < cost) return showToast(`You need ${nfmt(cost)} qi to temper the body.`);
-    state.qi -= cost;
-    state.body.stage += 1;
-    recalc(); syncCultivation();
-    notify(`Body cultivation · ${bodyTitle()} reached.`, 'breakthrough');
-    showToast(`The vessel hardens · ${bodyTitle()}.`);
-    save(); render();
-  }
   function openBreakthrough() {
-    if (spiritMaxed()) return showToast('The spirit path is complete. Eternal Dao Ancestor X stands at the summit.');
-    if (state.spirit.stage < 9) return advanceSpirit();
     return openSpiritBreakthrough();
   }
-  function openSpiritBreakthrough() {
-    if (spiritMaxed()) return showToast('The spirit path is complete. Eternal Dao Ancestor X stands at the summit.');
-    if (state.spirit.stage !== 9) return showToast('Spirit breakthroughs occur only at stage X.');
-    const chance = spiritBreakChance(), goal = breakthroughCost('spirit'), pill = state.breakBuff || 0, formation = buildingLevel('formation');
-    openModal('渡', 'SPIRIT BREAKTHROUGH · HEAVENLY TRIBULATION', `${spiritTitle()} → ${nextSpiritTitle()}`,
-      `Spiritual lightning gathers above the sect. Step into <b>${nextSpiritTitle()}</b>?<br><br>Required qi: ${nfmt(goal)} · Success chance: <b>${chance}%</b><br><span class="gold-text">Tribulation pill +${pill}% · Formation Hall +${Math.round(formation * 2.2)}% · Dao and spirit attributes included.</span><br><br>Success grants permanent qi flow, spell power and Dao insight. Failure leaves you at stage X and scatters <b>10%</b> of your qi.`,
-      `<button class="secondary-btn" data-action="close-modal">Not yet</button><button class="primary-btn" data-action="attempt-spirit-break">Face the tribulation</button>`);
+  function openSpiritBreakthrough() { return openBreakthroughModal('spirit'); }
+  function openBodyBreakthrough() { return openBreakthroughModal('body'); }
+  function openBreakthroughModal(path) {
+    const isBody = path === 'body';
+    const data = isBody ? state.body : state.spirit;
+    if (isBody && !data.unlocked) return showToast('Body cultivation unlocks at Golden Core I.');
+    if (isBody ? bodyMaxed() : spiritMaxed()) return showToast(`${isBody ? 'The body path' : 'The spirit path'} is complete.`);
+    const cooldown = breakCooldownLeft(path);
+    if (cooldown > 0) return showToast(`Your foundation is still recovering. Ready in ${cooldown}s.`);
+    const kind = breakKind(path);
+    const rules = BREAK_RULES[kind];
+    const cost = breakCost(path, kind);
+    if (state.qi < cost) return showToast(`You need ${nfmt(cost)} qi for this breakthrough.`);
+    const chance = breakthroughChance(path, kind);
+    const xp = data.breakXp || 0;
+    const current = isBody ? bodyTitle() : spiritTitle();
+    const next = isBody ? nextBodyTitle() : nextSpiritTitle();
+    const seal = kind === 'major' ? (isBody ? '體' : '渡') : (isBody ? '體' : '氣');
+    const flavour = isBody
+      ? (kind === 'major'
+        ? 'The arena ward seals you inside a ring of crushing stone. Endure the tempering trial and step into the next body realm.'
+        : 'Qi floods your flesh. Hold the stance, temper the vessel, and rise one stage.')
+      : (kind === 'major'
+        ? 'Spiritual lightning gathers above the sect. Face the heavenly tribulation and step into the next realm.'
+        : 'Gather your breath and refine the spirit. A minor breakthrough carries you one stage deeper.');
+    const reward = isBody
+      ? `permanent health, physical attack and guard${criticalRewardText()}`
+      : `permanent qi flow, spell power and Dao insight${criticalRewardText()}`;
+    openModal(seal, `${isBody ? 'BODY' : 'SPIRIT'} ${kind === 'major' ? 'MAJOR BREAKTHROUGH' : 'MINOR BREAKTHROUGH'}`, `${current} → ${next}`,
+      `${flavour}<br><br>Required qi: <b>${nfmt(cost)}</b> · Success chance: <b>${chance}%</b><br><span class="gold-text">Failure insight +${xp * BREAK_XP_BONUS}% · Tribulation pill +${state.breakBuff || 0}% · Formation Hall +${Math.round(buildingLevel('formation') * 2)}%</span><br><br>Success advances you and grants ${reward}. Failure keeps your current stage, consumes <b>20% of the qi cost (${nfmt(Math.round(cost * .2))})</b>, grants <b>+${rules.xpGain} breakthrough insight</b> (+${rules.xpGain * BREAK_XP_BONUS}% next attempt) and starts a <b>${rules.cooldown}s recovery</b>.`,
+      `<button class="secondary-btn" data-action="close-modal">Not yet</button><button class="primary-btn" data-action="attempt-${path}-break">${kind === 'major' ? 'Face the breakthrough' : 'Attempt breakthrough'}</button>`);
   }
-  function openBodyBreakthrough() {
-    if (!state.body.unlocked) return showToast('Body cultivation unlocks at Golden Core I.');
-    if (bodyMaxed()) return showToast('The body path is complete. Eternal Godbody X stands at the summit.');
-    if (state.body.stage !== 9) return showToast('Body breakthroughs occur only at stage X.');
-    const chance = bodyBreakChance(), goal = breakthroughCost('body'), technique = state.upgrades?.body || 0;
-    openModal('體', 'BODY BREAKTHROUGH · TEMPERING TRIAL', `${bodyTitle()} → ${nextBodyTitle()}`,
-      `The arena ward seals you inside a ring of crushing stone. Endure the tempering trial and step into <b>${nextBodyTitle()}</b>?<br><br>Required qi: ${nfmt(goal)} · Success chance: <b>${chance}%</b><br><span class="gold-text">Jade Body Tempering rank ${technique} · Body attributes and meridians included.</span><br><br>Success grants permanent health, attack and resistance. Failure leaves you at stage X and scatters <b>10%</b> of your qi.`,
-      `<button class="secondary-btn" data-action="close-modal">Not yet</button><button class="primary-btn" data-action="attempt-body-break">Enter the trial</button>`);
+  function criticalRewardText() { return '; critical success doubles the reward'; }
+  function attemptSpiritBreak() { return attemptBreakthrough('spirit'); }
+  function attemptBodyBreak() { return attemptBreakthrough('body'); }
+  function attemptBreakthrough(path) {
+    const isBody = path === 'body';
+    const data = isBody ? state.body : state.spirit;
+    if (isBody && !data.unlocked) return showToast('Body cultivation unlocks at Golden Core I.');
+    if (isBody ? bodyMaxed() : spiritMaxed()) return showToast(`${isBody ? 'The body path' : 'The spirit path'} is complete.`);
+    const cooldown = breakCooldownLeft(path);
+    if (cooldown > 0) return showToast(`Your foundation is still recovering. Ready in ${cooldown}s.`);
+    const kind = breakKind(path);
+    const cost = breakCost(path, kind);
+    if (state.qi < cost) return showToast(`You need ${nfmt(cost)} qi for this breakthrough.`);
+    closeModal();
+    const chance = breakthroughChance(path, kind);
+    const success = Math.random() * 100 < chance;
+    const critical = success && Math.random() < breakthroughCriticalChance(path);
+    finishBreakthrough(path, kind, success, critical);
   }
-  function finishSpiritBreakthrough(success, critical) {
-    const realm = spiritRealms[state.spirit.realm], next = spiritRealms[Math.min(spiritRealms.length - 1, state.spirit.realm + 1)];
-    state.stats.tribulations = (state.stats.tribulations || 0) + 1;
+  function finishBreakthrough(path, kind, success, critical) {
+    const isBody = path === 'body';
+    const data = isBody ? state.body : state.spirit;
+    const realms = isBody ? bodyRealms : spiritRealms;
+    const realm = realms[data.realm];
+    const next = realms[Math.min(realms.length - 1, data.realm + 1)];
+    const cost = breakCost(path, kind);
+    const rules = BREAK_RULES[kind];
+    if (kind === 'major') state.stats.tribulations = (state.stats.tribulations || 0) + 1;
+
     if (success) {
-      const goal = breakthroughCost('spirit');
-      state.qi = Math.max(0, state.qi - goal);
-      state.spirit.breaks += 1;
-      state.spirit.realm += 1; state.spirit.stage = 0;
-      if (critical) {
-        state.spirit.criticals += 1;
-        state.spirit.bonuses.qi += 2; state.spirit.bonuses.spell += 2; state.spirit.bonuses.dao += 2;
-      } else {
-        state.spirit.bonuses.qi += 1; state.spirit.bonuses.spell += 1; state.spirit.bonuses.dao += 1;
-      }
+      state.qi = Math.max(0, state.qi - cost);
       state.breakBuff = 0;
-      state.meridians.points = (state.meridians.points || 0) + 2;
-      state.daoPoints = (state.daoPoints || 0) + (critical ? 2 : 1);
-      state.root.essence = (state.root.essence || 0) + 1 + Math.floor(state.spirit.realm / 5) + (critical ? 1 : 0);
-      state.realms.keys = (state.realms.keys || 0) + 1;
-      state.stones += 20 + state.spirit.realm * 12;
-      if (critical) state.herbs.relic = (state.herbs.relic || 0) + 1;
+      data.breakXp = 0;
+      data.cooldownUntil = 0;
+      const amount = kind === 'major' ? (critical ? 2 : 1) : (critical ? 1 : .5);
+      if (isBody) {
+        data.bonuses.hp += amount; data.bonuses.attack += amount; data.bonuses.guard += amount;
+        if (critical) {
+          data.criticals += 1;
+          state.herbs.relic = (state.herbs.relic || 0) + 1;
+          state.sectTokens += 20;
+        }
+      } else {
+        data.bonuses.qi += amount; data.bonuses.spell += amount; data.bonuses.dao += amount;
+        if (critical) data.criticals += 1;
+      }
+
+      if (kind === 'major') {
+        data.breaks += 1;
+        data.realm += 1; data.stage = 0;
+        if (isBody) {
+          // Body major breakthroughs carry no extra resource bundle.
+        } else {
+          state.meridians.points = (state.meridians.points || 0) + 2;
+          state.daoPoints = (state.daoPoints || 0) + (critical ? 2 : 1);
+          state.root.essence = (state.root.essence || 0) + 1 + Math.floor(data.realm / 5) + (critical ? 1 : 0);
+          state.realms.keys = (state.realms.keys || 0) + 1;
+          state.stones += 20 + data.realm * 12;
+          if (critical) state.herbs.relic = (state.herbs.relic || 0) + 1;
+        }
+      } else if (!isBody && data.realm === 0) {
+        // The first breath leaves the stage-less Mortal state.
+        data.realm = 1; data.stage = 0;
+      } else {
+        data.stage += 1;
+      }
+
       syncCultivation();
+      if (isBody) recalc();
       maybeUnlockBody();
-      state.hp = state.maxHp;
-      tribulationEffect(true, critical ? 'CRITICAL · HEAVEN BOWS' : 'TRIBULATION ENDURED');
-      notify(`${critical ? 'Critical spirit breakthrough' : 'Spirit breakthrough'} · ${spiritTitle()} · +2 meridian points${critical ? ' · +1 relic · doubled permanent attributes' : ' · permanent attributes'}.`, 'breakthrough');
-      fxBurst('breakthrough', next.cn, spiritTitle(), 'Spiritual lightning parts. The next realm opens.', critical ? 'CRITICAL SUCCESS · permanent bonuses doubled' : '+2 meridian points · +1 realm key');
-      save(); render();
       maybeUnlockOrigin();
-      openModal(critical ? '極' : '破', critical ? 'CRITICAL BREAKTHROUGH' : 'SPIRIT BREAKTHROUGH', `${next.name} I`,
-        `${critical ? 'Heaven itself bends. Your tribulation ends in a rare critical success.' : 'The last bolt fades. Your foundation stands.'}<br><br><b>${spiritTitle()}</b><br>+${critical ? '2' : '1'} permanent qi flow · +${critical ? '2' : '1'} spell power · +${critical ? '2' : '1'} Dao insight<br>+2 meridian points · +1 realm key · +1 Dao insight${critical ? '<br><b>Critical reward · +1 ancient relic</b>' : ''}`,
-        '<button class="primary-btn" data-action="close-modal">Continue the ascent</button>');
+      state.hp = state.maxHp;
+      const title = isBody ? bodyTitle() : spiritTitle();
+      const label = critical ? (isBody ? 'CRITICAL · BODY REBORN' : 'CRITICAL · HEAVEN BOWS') : kind === 'major' ? (isBody ? 'TEMPERING COMPLETE' : 'TRIBULATION ENDURED') : (isBody ? 'STAGE TEMPERED' : 'STAGE ADVANCED');
+      if (isBody) bodyTemperEffect(true, label); else tribulationEffect(true, label);
+      notify(`${critical ? 'Critical ' : ''}${kind} ${isBody ? 'body' : 'spirit'} breakthrough · ${title} · +${amount} permanent ${isBody ? 'health, attack and guard' : 'qi flow, spell power and Dao insight'}.`, 'breakthrough');
+      if (kind === 'major') {
+        fxBurst(isBody ? 'rare' : 'breakthrough', isBody ? next.seal : next.cn, title, 'A greater threshold has been crossed.', critical ? 'CRITICAL SUCCESS · doubled permanent reward' : isBody ? 'Permanent body attributes increased' : '+2 meridian points · +1 realm key');
+        save(); render();
+        openModal(critical ? '極' : (isBody ? '體' : '破'), critical ? 'CRITICAL BREAKTHROUGH' : (isBody ? 'BODY BREAKTHROUGH' : 'SPIRIT BREAKTHROUGH'), `${next.name} I`,
+          `${critical ? 'The threshold breaks in a rare critical success.' : 'The threshold gives way. Your foundation stands.'}<br><br><b>${title}</b><br>+${amount} permanent ${isBody ? 'health · +' + amount + ' physical attack · +' + amount + ' guard' : 'qi flow · +' + amount + ' spell power · +' + amount + ' Dao insight'}${isBody && critical ? '<br><b>Critical reward · +1 ancient relic · +20 sect tokens</b>' : ''}${!isBody ? `<br>+2 meridian points · +1 realm key${critical ? '<br><b>Critical reward · +1 ancient relic</b>' : ''}` : ''}`,
+          `<button class="primary-btn" data-action="close-modal">Continue the ascent</button>`);
+        return;
+      }
+      showToast(`${title} · the next stage opens.`);
+      save(); render();
     } else {
-      state.spirit.failures += 1;
-      state.qi *= .9; state.breakBuff = 0;
-      tribulationEffect(false, 'THE HEAVENS REFUSE');
-      notify(`Spirit breakthrough failed · ${realm.name} X remains · 10% of qi scattered.`, 'info');
-      showToast('The tribulation resists. You remain at stage X; your foundation is intact. Gather qi and try again.');
+      const spent = Math.max(1, Math.round(cost * .2));
+      state.qi = Math.max(0, state.qi - spent);
+      state.breakBuff = 0;
+      data.failures += 1;
+      data.breakXp = (data.breakXp || 0) + rules.xpGain;
+      data.cooldownUntil = Date.now() + rules.cooldown * 1000;
+      const title = isBody ? bodyTitle() : spiritTitle();
+      if (isBody) bodyTemperEffect(false, 'THE BODY YIELDS'); else tribulationEffect(false, 'THE HEAVENS REFUSE');
+      notify(`${kind} ${isBody ? 'body' : 'spirit'} breakthrough failed · ${title} remains · ${nfmt(spent)} qi consumed · +${rules.xpGain} insight (+${rules.xpGain * BREAK_XP_BONUS}% next attempt) · ${rules.cooldown}s recovery.`, 'info');
+      showToast(`The breakthrough fails. ${nfmt(spent)} qi is spent, insight rises, and your foundation recovers for ${rules.cooldown}s.`);
       save(); render();
     }
-  }
-  function attemptSpiritBreak() {
-    if (spiritMaxed()) return showToast('The spirit path is complete. Eternal Dao Ancestor X stands at the summit.');
-    if (state.spirit.stage !== 9) return showToast('You must reach stage X before a major breakthrough.');
-    const goal = breakthroughCost('spirit');
-    if (state.qi < goal) return showToast(`You need ${nfmt(goal)} qi to face the tribulation.`);
-    closeModal();
-    const chance = spiritBreakChance();
-    const success = Math.random() * 100 < chance;
-    let critical = false;
-    if (success) critical = Math.random() < clamp(.12 + daoLevel('water') * .01 + totalMastery() * .002, .12, .3);
-    finishSpiritBreakthrough(success, critical);
-  }
-  function finishBodyBreakthrough(success, critical) {
-    const realm = bodyRealms[state.body.realm], next = bodyRealms[Math.min(bodyRealms.length - 1, state.body.realm + 1)];
-    if (success) {
-      const goal = breakthroughCost('body');
-      state.qi = Math.max(0, state.qi - goal);
-      state.body.breaks += 1;
-      state.body.realm += 1; state.body.stage = 0;
-      const amount = critical ? 2 : 1;
-      state.body.bonuses.hp += amount; state.body.bonuses.attack += amount; state.body.bonuses.guard += amount;
-      if (critical) { state.body.criticals += 1; state.herbs.relic = (state.herbs.relic || 0) + 1; state.sectTokens += 20; }
-      syncCultivation(); recalc();
-      state.hp = state.maxHp;
-      bodyTemperEffect(true, critical ? 'CRITICAL · BODY REBORN' : 'TEMPERING COMPLETE');
-      notify(`${critical ? 'Critical body breakthrough' : 'Body breakthrough'} · ${bodyTitle()} · permanent health, attack and guard.`, 'breakthrough');
-      fxBurst('rare', next.seal, bodyTitle(), 'The trial ends. Flesh, bone and blood have been reforged.', critical ? 'CRITICAL SUCCESS · doubled tempering reward' : 'Permanent body attributes increased');
-      save(); render();
-      maybeUnlockOrigin();
-      openModal(critical ? '極' : '體', critical ? 'CRITICAL BODY BREAKTHROUGH' : 'BODY BREAKTHROUGH', `${next.name} I`,
-        `${critical ? 'The stone ring shatters around you. The body is reborn beyond its old limit.' : 'The crushing waves subside. You stand, unbroken.'}<br><br><b>${bodyTitle()}</b><br>+${critical ? '2' : '1'} permanent health · +${critical ? '2' : '1'} physical attack · +${critical ? '2' : '1'} guard${critical ? '<br><b>Critical reward · +1 ancient relic · +20 sect tokens</b>' : ''}`,
-        '<button class="primary-btn" data-action="close-modal">Continue tempering</button>');
-    } else {
-      state.body.failures += 1;
-      state.qi *= .9;
-      bodyTemperEffect(false, 'THE BODY YIELDS');
-      notify(`Body breakthrough failed · ${realm.name} X remains · 10% of qi scattered.`, 'info');
-      showToast('The trial breaks your stance. You remain at stage X; the qi scatters, but your body remembers.');
-      save(); render();
-    }
-  }
-  function attemptBodyBreak() {
-    if (!state.body.unlocked) return showToast('Body cultivation unlocks at Golden Core I.');
-    if (bodyMaxed()) return showToast('The body path is complete. Eternal Godbody X stands at the summit.');
-    if (state.body.stage !== 9) return showToast('You must reach stage X before a major body breakthrough.');
-    const goal = breakthroughCost('body');
-    if (state.qi < goal) return showToast(`You need ${nfmt(goal)} qi to begin the trial.`);
-    closeModal();
-    const chance = bodyBreakChance();
-    const success = Math.random() * 100 < chance;
-    let critical = false;
-    if (success) critical = Math.random() < clamp(.1 + state.body.realm * .008 + openedMeridians() * .004, .1, .3);
-    finishBodyBreakthrough(success, critical);
   }
   function attemptBreak() { attemptSpiritBreak(); }
   function advanceOrigin() {
@@ -3546,8 +3556,6 @@
       case 'arena-retreat': arenaRetreat(); break;
       case 'clear-notifications': clearNotifications(); break;
       case 'attempt-break': attemptBreak(); break;
-      case 'advance-spirit': advanceSpirit(); break;
-      case 'advance-body': advanceBody(); break;
       case 'open-spirit-break': openSpiritBreakthrough(); break;
       case 'open-body-break': openBodyBreakthrough(); break;
       case 'attempt-spirit-break': attemptSpiritBreak(); break;
