@@ -796,7 +796,7 @@ body.focus-mode .banner-row,body.focus-mode .challenge-panel,body.focus-mode .no
 .dual-cultivation-section{margin-top:17px}
 #dualCultivation{display:grid;gap:15px}
 .lower-grid>.panel{min-width:0}
-.realm-path.long{display:grid;grid-template-columns:repeat(15,minmax(76px,1fr));width:100%;max-width:100%;min-width:0;overflow-x:auto;padding-bottom:7px;scrollbar-width:thin;scrollbar-color:#c8bd97 #eee9dc}
+.realm-path.long{display:grid;grid-template-columns:repeat(16,minmax(76px,1fr));width:100%;max-width:100%;min-width:0;overflow-x:auto;padding-bottom:7px;scrollbar-width:thin;scrollbar-color:#c8bd97 #eee9dc}
 .realm-path.long .realm-step{min-width:0}
 .realm-path.long .realm-step span:last-child{white-space:normal;line-height:1.25;font-size:7px}
 .realm-path.long::-webkit-scrollbar{height:5px}
@@ -841,6 +841,7 @@ body.focus-mode .banner-row,body.focus-mode .challenge-panel,body.focus-mode .no
 .stage-pip.done{border-color:#826e3e;background:#3b422f;color:#e4d09a}
 .body-card .stage-pip.done{border-color:#658058;background:#2f4636;color:#d0dfbd}
 .stage-pip.current{border-color:#d5c186;background:#f0e5bd;color:#5d522f;box-shadow:0 0 0 2px rgba(213,193,134,.14)}
+.stage-pip.mortal-pip{grid-column:1/-1;font-size:9px;letter-spacing:1.1px;color:#e4d09a;background:#2a3f34;border-color:#826e3e}
 .body-card .stage-pip.current{border-color:#b3ca9c;background:#dce8cd;color:#476140;box-shadow:0 0 0 2px rgba(179,202,156,.13)}
 .cult-progress-label{position:relative;z-index:1;display:flex;justify-content:space-between;gap:10px;margin:12px 0 7px;font-size:7.5px;letter-spacing:1px;color:#95a99a;font-weight:700}
 .cult-progress-label b{font-size:9px;letter-spacing:0;color:#d6c387;font-weight:600;white-space:nowrap}
@@ -969,5 +970,5 @@ body.focus-mode .banner-row,body.focus-mode .challenge-panel,body.focus-mode .no
   .origin-copy h2{font-size:18px}
   .origin-seal{width:46px;height:46px;font-size:25px}
   .trial-text{font-size:20px;bottom:15%}
-  .realm-path.long{grid-template-columns:repeat(15,minmax(68px,1fr))}
+  .realm-path.long{grid-template-columns:repeat(16,minmax(68px,1fr))}
 }

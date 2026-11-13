@@ -15,6 +15,7 @@
   /* ---------------- DUAL CULTIVATION REALMS ---------------- */
   const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
   const spiritRealms = [
+    { name: 'Mortal', cn: '凡人', seal: '凡', desc: 'The unawakened mortal state. No stage binds you yet; gather qi and take the first breath of cultivation.', noStages: true },
     { name: 'Qi Condensation', cn: '凝氣', seal: '氣', desc: 'The first breath draws the world’s vital essence into mortal channels.' },
     { name: 'Foundation Establishment', cn: '築基', seal: '基', desc: 'A stable foundation is laid beneath the sea of qi.' },
     { name: 'Golden Core', cn: '金丹', seal: '丹', desc: 'Qi condenses into a radiant core. The body path awakens at this threshold.' },
@@ -48,8 +49,9 @@
     { name: 'Primordial Body', cn: '太初體', seal: '初', desc: 'The first body, before weakness entered the world.' },
     { name: 'Eternal Godbody', cn: '永神體', seal: '永', desc: 'The final flesh. Endless, deathless, and utterly sovereign.' }
   ];
-  const spiritRealmBases = [0, 10, 13, 16, 19, 22, 25, 28, 31, 34, 37, 40, 43, 46, 49];
-  const legacyRealmStarts = [[1, 0], [10, 1], [13, 2], [16, 3], [19, 5], [22, 7], [25, 9], [28, 10], [31, 11], [34, 13], [37, 14]];
+  const spiritRealmBases = [0, 0, 10, 13, 16, 19, 22, 25, 28, 31, 34, 37, 40, 43, 46, 49];
+  const legacyRealmStarts = [[0, 0], [1, 1], [10, 2], [13, 3], [16, 4], [19, 5], [22, 6], [25, 7], [28, 8], [31, 9], [34, 10], [37, 11], [40, 12], [43, 13], [46, 14], [49, 15]];
+  const GOLDEN_CORE_REALM = 3;
   const worldNames = ['Mortal Realm', 'Immortal Realm', 'Celestial Realm', 'Primordial Void'];
 
   const techniques = [
@@ -313,7 +315,7 @@
       trials: [
         { name: 'Dragon’s Breath', desc: 'Defeat a world boss.', check: (s) => (s.stats?.bosses || 0) >= 1, reward: { stones: 500, beastCore: 2 } },
         { name: 'Five Clawed Intent', desc: 'Reach Sword Dao level 4.', check: (s) => daoLevel('sword', s) >= 4, reward: { daoXp: { sword: 150 } } },
-        { name: 'The Eastern Sea', desc: 'Reach True Immortal in spirit cultivation.', check: (s) => s.spirit?.realm >= 9, reward: { keys: 2, rootEssence: 5 } }
+        { name: 'The Eastern Sea', desc: 'Reach True Immortal in spirit cultivation.', check: (s) => s.spirit?.realm >= 10, reward: { keys: 2, rootEssence: 5 } }
       ] }
   ];
   const secretRealms = [
@@ -355,7 +357,7 @@
     { id: 'foundation', name: 'Foundation Laid', desc: 'Reach Foundation Establishment.', check: s => s.stage >= 10, reward: { stones: 100, daoPoints: 1 } },
     { id: 'core', name: 'Golden Core', desc: 'Reach Golden Core.', check: s => s.stage >= 13, reward: { stones: 200, rootEssence: 1 } },
     { id: 'soul', name: 'Nascent Soul', desc: 'Reach Nascent Soul.', check: s => s.stage >= 16, reward: { stones: 350, keys: 1 } },
-    { id: 'immortal', name: 'True Immortal', desc: 'Reach True Immortal.', check: s => s.spirit?.realm >= 9, reward: { stones: 1200, daoPoints: 3 } },
+    { id: 'immortal', name: 'True Immortal', desc: 'Reach True Immortal.', check: s => s.spirit?.realm >= 10, reward: { stones: 1200, daoPoints: 3 } },
     { id: 'kills10', name: 'Hunter', desc: 'Defeat 10 spirit beasts.', check: s => (s.stats?.kills || 0) >= 10, reward: { stones: 60 } },
     { id: 'kills100', name: 'Terror of the Wilds', desc: 'Defeat 100 spirit beasts.', check: s => (s.stats?.kills || 0) >= 100, reward: { stones: 500, tokens: 40 } },
     { id: 'boss1', name: 'Boss Slayer', desc: 'Defeat a world boss.', check: s => (s.stats?.bosses || 0) >= 1, reward: { stones: 400, daoPoints: 1 } },
@@ -365,7 +367,7 @@
     { id: 'artMaster', name: 'Art Perfected', desc: 'Attune a martial art to rank 5.', check: s => Object.values(s.artRanks || {}).some(v => v >= 5), reward: { stones: 600, tokens: 30 } },
     { id: 'bodyAwaken', name: 'Twin Roads', desc: 'Unlock body cultivation at Golden Core I.', check: s => !!s.body?.unlocked, reward: { stones: 300, rootEssence: 1 } },
     { id: 'body15', name: 'Eternal Godbody', desc: 'Reach Eternal Godbody X.', check: s => s.body?.realm >= 14 && s.body?.stage >= 9, reward: { stones: 6000, tokens: 200, daoPoints: 5, relic: 2 } },
-    { id: 'spirit15', name: 'Eternal Dao Ancestor', desc: 'Reach Eternal Dao Ancestor X.', check: s => s.spirit?.realm >= 14 && s.spirit?.stage >= 9, reward: { stones: 6000, tokens: 200, daoPoints: 5, keys: 3 } },
+    { id: 'spirit15', name: 'Eternal Dao Ancestor', desc: 'Reach Eternal Dao Ancestor X.', check: s => s.spirit?.realm >= 15 && s.spirit?.stage >= 9, reward: { stones: 6000, tokens: 200, daoPoints: 5, keys: 3 } },
     { id: 'origin', name: 'Beyond the Origin', desc: 'Unlock the hidden third progression.', hidden: true, check: s => !!s.origin?.unlocked, reward: { stones: 10000, daoPoints: 10, relic: 3 } },
     { id: 'tame1', name: 'Kindred Spirit', desc: 'Tame a spirit beast.', check: s => Object.keys(s.taming?.beasts || {}).length >= 1, reward: { stones: 80, food: 1 } },
     { id: 'tame5', name: 'Beast Sovereign', desc: 'Bond with 5 spirit beasts.', check: s => Object.keys(s.taming?.beasts || {}).length >= 5, reward: { stones: 500, daoPoints: 2 } },
@@ -423,44 +425,6 @@
     { id: 'breakPill', name: 'Tribulation Pill', seal: '劫', desc: 'Next breakthrough chance +15%.', cost: 150, grant: { breakBuff: 15 } }
   ];
 
-  const pathTrees = {
-    body: {
-      name: 'Body · Iron Vessel', seal: '體', accent: '#7d9a74',
-      desc: 'Bone, blood and breath. Every rank tempers the mortal vessel and every milestone leaves a permanent mark.',
-      nodes: [
-        { lvl: 2, name: 'Sinew Binding', desc: '+6% maximum health', bonus: { hpPct: .06 } },
-        { lvl: 4, name: 'Marrow Wash', desc: '+1 guard', bonus: { guard: 1 } },
-        { lvl: 6, name: 'Bronze Skin', desc: '+10% maximum health', bonus: { hpPct: .1 } },
-        { lvl: 9, name: 'Titan Tendons', desc: '+6% attack', bonus: { attackPct: .06 } },
-        { lvl: 12, name: 'Diamond Bones', desc: '+2 guard · +8% health', bonus: { guard: 2, hpPct: .08 } },
-        { lvl: 15, name: 'Undying Body', desc: '+10% attack · +10% health', bonus: { attackPct: .1, hpPct: .1 } }
-      ]
-    },
-    spirit: {
-      name: 'Soul · Immortal Spirit', seal: '神', accent: '#8478a8',
-      desc: 'The sea of consciousness widens with each refinement. Soul milestones sharpen arts, insight and the will to break through.',
-      nodes: [
-        { lvl: 2, name: 'Clear Sea', desc: '+6% spirit-art power', bonus: { spiritPct: .06 } },
-        { lvl: 4, name: 'Bell Mind', desc: '+3% breakthrough chance', bonus: { breakPct: 3 } },
-        { lvl: 6, name: 'Soul Lantern', desc: '+10% Dao insight', bonus: { daoPct: .1 } },
-        { lvl: 9, name: 'Star Consciousness', desc: '+10% spirit-art power', bonus: { spiritPct: .1 } },
-        { lvl: 12, name: 'Mirror Spirit', desc: '+4% breakthrough · +10% qi flow', bonus: { breakPct: 4, qiPct: .1 } },
-        { lvl: 15, name: 'Immortal Soul', desc: '+15% spirit power · +15% Dao insight', bonus: { spiritPct: .15, daoPct: .15 } }
-      ]
-    },
-    qi: {
-      name: 'Qi · Flowing Breath', seal: '氣', accent: '#4f8b83',
-      desc: 'Refine the quality of breath until the world itself lends you its essence. Qi milestones accelerate every current.',
-      nodes: [
-        { lvl: 2, name: 'First Circulation', desc: '+6% qi flow', bonus: { qiPct: .06 } },
-        { lvl: 4, name: 'Dantian Bloom', desc: '+0.4 base qi / sec', bonus: { qiFlat: .4 } },
-        { lvl: 6, name: 'River Meridians', desc: '+10% qi flow', bonus: { qiPct: .1 } },
-        { lvl: 9, name: 'Spirit Dew', desc: '+1 spirit stone every 20 sec', bonus: { stonesPer: 1 } },
-        { lvl: 12, name: 'Endless Current', desc: '+15% qi flow · +0.4 base qi', bonus: { qiPct: .15, qiFlat: .4 } },
-        { lvl: 15, name: 'Heavenly Breath', desc: '+20% qi flow · +1 stone trickle', bonus: { qiPct: .2, stonesPer: 1 } }
-      ]
-    }
-  };
   const daoMasteryNodes = [
     { total: 6, name: 'First Harmony', desc: '+5% qi flow and attack' },
     { total: 12, name: 'Sixfold Accord', desc: '+5% breakthrough · +1 luck' },
@@ -508,11 +472,11 @@
     stones: 'Spirit stones are the common currency of the cultivation world. They buy techniques, equipment, alchemy ingredients and forge work.',
     tokens: 'Sect tokens are earned through missions, bosses and duties. Spend them in the Armory, Vault and sect halls.',
     merit: 'Sect merit measures your service. Enough merit promotes your rank, which grants permanent attack, qi and health bonuses.',
-    rate: 'Qi per second. Meditation raises this to its full value; idle cultivation receives 35%. Base qi grows with realm, path ranks and the Clear Heart Sutra.',
-    breakthrough: 'The chance that a realm breakthrough succeeds. Failure scatters 20% of your qi but never destroys your foundation.',
-    attack: 'The damage of a body strike before variance. It combines your weapon, gear, sect, root, Dao, companion, artifacts and path-tree bonuses.',
+    rate: 'Qi per second. Meditation raises this to its full value; idle cultivation receives 35%. Base qi grows with realm, techniques, roots and the Clear Heart Sutra.',
+    breakthrough: 'The chance that a realm breakthrough succeeds. It is kept between 20% and 95%. Failure scatters 10% of your qi but never destroys your foundation.',
+    attack: 'The damage of a body strike before variance. It combines your weapon, gear, sect, root, Dao, companion, artifacts, body cultivation and spirit power.',
     guard: 'Flat damage reduction against physical retaliation. Some bosses pierce or ignore guard.',
-    health: 'Your maximum health. It grows with realm, body training, gear, roots, Dao and path-tree milestones. At zero health you are carried to safety.',
+    health: 'Your maximum health. It grows with realm, body cultivation, gear, roots, Dao and companions. At zero health you are carried to safety.',
     crit: 'Critical strike chance. Critical hits deal 150% damage, improved by the Sword Dao and Heaven’s Edge.',
     luck: 'Luck improves loot, rare findings, taming odds, root rarity and fortune events.',
     gathering: 'Gathering multiplier applied to expedition and resource loot. Herbs and the Life Dao raise it.',
@@ -520,8 +484,8 @@
     dao: 'Dao insight is experience toward the six laws. Comprehending costs qi and stones; insight points can be infused directly.',
     root: 'Your spiritual root grants a permanent elemental identity and bonuses. Grades multiply all root bonuses.',
     meridians: 'Meridians are permanent channels opened with meridian points, qi and stones. Sets of four grant circulation bonuses.',
-    realm: 'Your spirit cultivation realm. Each of the fifteen realms holds ten Roman stages; stages I–IX are guaranteed qi upgrades and stage X opens a heavenly tribulation.',
-    stage: 'A single step within a realm, marked I–X. Stage X is the final rung and requires a major breakthrough to enter the next realm.',
+    realm: 'Your spirit cultivation realm. Mortal is the initial state with no stages; the fifteen realms above it each hold ten Roman stages. Stages I–IX are guaranteed qi upgrades and stage X opens a heavenly tribulation.',
+    stage: 'A single step within a realm, marked I–X. Stage X is the final rung and requires a major breakthrough to enter the next realm. Mortal has no stages.',
     bodyPath: 'Body cultivation is an independent fifteen-realm path sharing the same qi. It unlocks at Golden Core I and permanently raises health, physical attack, guard and damage resistance.',
     companion: 'The active spirit beast grants a passive bonus and strikes alongside you in every battle.',
     weapon: 'The equipped weapon adds flat attack, modified by refinement, tempering and the Refining Armory.',
@@ -531,21 +495,20 @@
     relic: 'Ancient relics are required for inheritances and weapon awakening.',
     maps: 'Treasure maps lead to caches, keys and rare materials. Follow one from Fate & Fortune.',
     fragments: 'Fate fragments can reroll a pending fortune, refresh the faceless merchant or be woven into a new encounter.',
-    path: 'Path ranks are trained with qi and spirit stones. Every rank strengthens a foundation; milestones at ranks 2, 4, 6, 9, 12 and 15 grant permanent tree bonuses.',
     spiritPower: 'Spirit-art power multiplies damage from spirit strikes, sect spells and martial arts.',
     temper: 'Tempering adds a permanent +2% attack per temper to a forged weapon, up to five tempers.'
   };
 
   const emptyEquipment = () => Object.fromEntries(gearCatalog.map(item => [item.id, { owned: false, level: 0 }]));
   const defaultState = () => ({
-    version: 3, qi: 0, stones: 25, stage: 0, active: false, totalSeconds: 0, totalQi: 0, qiToday: 0, medSeconds: 0,
+    version: 4, qi: 0, stones: 25, stage: 0, active: false, totalSeconds: 0, totalQi: 0, qiToday: 0, medSeconds: 0,
     spirit: { realm: 0, stage: 0, breaks: 0, criticals: 0, failures: 0, migratedFrom: 0, bonuses: { qi: 0, spell: 0, dao: 0 } },
     body: { realm: 0, stage: 0, unlocked: false, breaks: 0, criticals: 0, failures: 0, bonuses: { hp: 0, attack: 0, guard: 0 } },
     origin: { unlocked: false, level: 0, name: 'Beyond the Origin' },
     completedTrips: 0, trip: null,
     upgrades: { sutra: 0, array: 0, body: 0, beast: 0, alchemy: 0, fortune: 0, dao: 0 },
     boosts: 0, teaUntil: 0, dailyClaimed: false, dailyDate: 1, brews: 0, milestones: [], lastSeen: Date.now(),
-    hp: 60, maxHp: 60, enemy: null, pathLevels: { body: 0, spirit: 0, qi: 0 },
+    hp: 60, maxHp: 60, enemy: null,
     herbs: { herb: 0, root: 0, flower: 0, ore: 0, essence: 0, crystal: 0, beastCore: 0, voidDust: 0, relic: 0 },
     sectRep: 0, sectRank: 0, tripToday: 0, sectId: 'azure', sectTokens: 0, mission: null, equipment: emptyEquipment(), wins: 0,
     root: { type: null, grade: 0, essence: 0, discovered: [], rerolls: 0 },
@@ -599,10 +562,16 @@
         const mapped = legacyStageToSpirit(legacyStage);
         fresh.spirit = { ...defaultState().spirit, ...mapped, migratedFrom: legacyStage };
         fresh.body = { ...defaultState().body };
+      } else if ((Number(saved.version) || 0) < 4) {
+        // Version 4 inserts Mortal as the initial spirit realm, shifting every
+        // previously stored spirit realm one place deeper.
+        fresh.spirit.realm = clamp((Number(saved.spirit.realm) || 0) + 1, 0, spiritRealms.length - 1);
       }
+      fresh.version = 4;
+      delete fresh.pathLevels; // Paths were removed; drop any legacy tree ranks.
       normalizeCultivation(fresh);
       fresh.stage = legacyForSpirit(fresh.spirit.realm, fresh.spirit.stage);
-      if (fresh.spirit.realm >= 2) fresh.body.unlocked = true;
+      if (fresh.spirit.realm >= GOLDEN_CORE_REALM) fresh.body.unlocked = true;
       fresh.equipment = { ...emptyEquipment(), ...(fresh.equipment || {}) };
       Object.keys(fresh.equipment).forEach(id => { fresh.equipment[id] = { owned: false, level: 0, ...(fresh.equipment[id] || {}) }; });
       fresh.meridians.opened = fresh.meridians.opened || {};
@@ -645,6 +614,9 @@
         setTimeout(() => showToast(`While you were away, ${Math.floor(away / 60)} min passed in quiet meditation.`), 700);
       }
       ensureDaily(fresh);
+      // Persist the normalized/migrated save immediately so a reload cannot
+      // apply the version migration twice.
+      try { localStorage.setItem(SAVE_KEY, JSON.stringify(fresh)); } catch { /* storage may be unavailable */ }
       return fresh;
     } catch { return defaultState(); }
   }
@@ -665,7 +637,7 @@
   function legacyStageToSpirit(stage) {
     const n = Math.max(0, Number(stage) || 0);
     if (n <= 0) return { realm: 0, stage: 0 };
-    if (n < 10) return { realm: 0, stage: Math.min(9, n - 1) };
+    if (n < 10) return { realm: 1, stage: Math.min(9, n - 1) };
     let entry = legacyRealmStarts[0];
     for (const candidate of legacyRealmStarts) if (n >= candidate[0]) entry = candidate;
     const within = Math.max(0, n - entry[0]);
@@ -682,22 +654,25 @@
     if (!s.body || typeof s.body !== 'object') s.body = { realm: 0, stage: 0, unlocked: false, breaks: 0, criticals: 0, failures: 0, bonuses: { hp: 0, attack: 0, guard: 0 } };
     if (!s.origin || typeof s.origin !== 'object') s.origin = { unlocked: false, level: 0, name: 'Beyond the Origin' };
     s.spirit.realm = clamp(Math.floor(Number(s.spirit.realm) || 0), 0, spiritRealms.length - 1);
-    s.spirit.stage = clamp(Math.floor(Number(s.spirit.stage) || 0), 0, 9);
+    s.spirit.stage = s.spirit.realm === 0 ? 0 : clamp(Math.floor(Number(s.spirit.stage) || 0), 0, 9);
     s.body.realm = clamp(Math.floor(Number(s.body.realm) || 0), 0, bodyRealms.length - 1);
     s.body.stage = clamp(Math.floor(Number(s.body.stage) || 0), 0, 9);
     s.spirit.bonuses = { qi: Number(s.spirit.bonuses?.qi) || 0, spell: Number(s.spirit.bonuses?.spell) || 0, dao: Number(s.spirit.bonuses?.dao) || 0 };
     s.body.bonuses = { hp: Number(s.body.bonuses?.hp) || 0, attack: Number(s.body.bonuses?.attack) || 0, guard: Number(s.body.bonuses?.guard) || 0 };
     ['breaks', 'criticals', 'failures'].forEach(k => { s.spirit[k] = Number(s.spirit[k]) || 0; s.body[k] = Number(s.body[k]) || 0; });
-    if (s.spirit.realm >= 2) s.body.unlocked = true;
+    if (s.spirit.realm >= GOLDEN_CORE_REALM) s.body.unlocked = true;
     s.origin.level = clamp(Math.floor(Number(s.origin.level) || 0), 0, 10);
     s.origin.unlocked = !!s.origin.unlocked;
   }
   function syncCultivation(s = state) {
     normalizeCultivation(s);
     s.stage = legacyForSpirit(s.spirit.realm, s.spirit.stage);
-    if (s.spirit.realm >= 2) s.body.unlocked = true;
+    if (s.spirit.realm >= GOLDEN_CORE_REALM) s.body.unlocked = true;
   }
-  function spiritTitle(s = state) { return `${spiritRealms[s.spirit.realm].name} ${ROMAN[s.spirit.stage]}`; }
+  function spiritTitle(s = state) {
+    const realm = spiritRealms[s.spirit.realm];
+    return realm.noStages ? realm.name : `${realm.name} ${ROMAN[s.spirit.stage]}`;
+  }
   function bodyTitle(s = state) { return s.body.unlocked ? `${bodyRealms[s.body.realm].name} ${ROMAN[s.body.stage]}` : 'Locked'; }
   function currentBand(stage) {
     if (stage !== undefined && stage !== null) {
@@ -716,6 +691,7 @@
     return `${spiritRealms[mapped.realm].name} ${ROMAN[mapped.stage]}`;
   }
   function nextSpiritTitle(s = state) {
+    if (s.spirit.realm === 0) return 'Qi Condensation I';
     if (s.spirit.stage < 9) return `${spiritRealms[s.spirit.realm].name} ${ROMAN[s.spirit.stage + 1]}`;
     const next = s.spirit.realm + 1;
     return next < spiritRealms.length ? `${spiritRealms[next].name} I` : 'Beyond the Origin';
@@ -733,13 +709,15 @@
   function stageCost(path = 'spirit', s = state) {
     const c = pathCultivation(path, s);
     const base = path === 'body' ? 90 : 120;
-    return Math.round(base * Math.pow(1.085, c.realm * 10 + c.stage) * Math.pow(1.22, c.realm));
+    // Each stage grows 6%; each full realm adds another 14% multiplier.
+    return Math.round(base * Math.pow(1.06, c.realm * 10 + c.stage) * Math.pow(1.14, c.realm));
   }
   function breakthroughCost(path = 'spirit', s = state) {
     const c = pathCultivation(path, s);
     const nextRealm = Math.min((path === 'body' ? bodyRealms : spiritRealms).length - 1, c.realm + 1);
     const base = path === 'body' ? 90 : 120;
-    const at = base * Math.pow(1.085, nextRealm * 10) * Math.pow(1.22, nextRealm);
+    // A major breakthrough costs three times the first stage of the next realm.
+    const at = base * Math.pow(1.06, nextRealm * 10) * Math.pow(1.14, nextRealm);
     return Math.round(at * 3);
   }
   function nextPathCost(path = 'spirit', s = state) {
@@ -759,7 +737,7 @@
     return clamp(s.body.realm * .012 + s.body.stage * .0015 + s.body.bonuses.guard * .003, 0, .35);
   }
   function maybeUnlockBody(quiet = false) {
-    if (state.body.unlocked || state.spirit.realm < 2) return false;
+    if (state.body.unlocked || state.spirit.realm < GOLDEN_CORE_REALM) return false;
     state.body.unlocked = true;
     state.body.realm = 0; state.body.stage = 0;
     if (!quiet) notify('The body path awakens · Golden Core I reached. Begin at Mortal Body I.', 'breakthrough');
@@ -843,7 +821,7 @@
     return Math.round(luck * 10) / 10;
   }
   function qiBase(s = state) {
-    return 2.5 + (s.stage || 0) * .28 + (s.upgrades?.sutra || 0) * .8 + (s.pathLevels?.spirit || 0) * .4 + (s.pathLevels?.qi || 0) * .24 + pathTreeBonus('qiFlat', s);
+    return 2.5 + (s.stage || 0) * .28 + (s.upgrades?.sutra || 0) * .8 + (s.spirit?.realm || 0) * .4;
   }
   function rateFor(s = state) {
     const base = qiBase(s);
@@ -852,7 +830,7 @@
       + rootBonus('qi', s) + daoLevel('water', s) * .03 + meridianBonus('qi', s) + beastBonus('qi', s)
       + artifactBonus('qi', s) + rebirthUpgrade('qi', s) * .1 + (s.rebirth?.world || 0) * .2
       + buildingLevel('meditation', s) * .03 + (ev?.buff === 'qi' ? .5 : 0)
-      + pathTreeBonus('qiPct', s) + daoTreeBonus('qi', s) + sectBlessing('qi', s) * .25
+      + daoTreeBonus('qi', s) + sectBlessing('qi', s) * .25
       + spiritQiBonus(s) + (s.origin?.level || 0) * .05;
     return base * mult * (s.active ? 1 : .35);
   }
@@ -861,7 +839,7 @@
     const flat = gearStat('attack', s) + (w?.totalAttack || 0) + bodyAttackBonus(s);
     const mult = 1 + sectData(s).attack + (s.sectRank || 0) * .03 + rootBonus('attack', s) + daoLevel('sword', s) * .04
       + daoLevel('fire', s) * .04 + beastBonus('attack', s) + artifactBonus('attack', s) + rebirthUpgrade('attack', s) * .08 + (s.rebirth?.world || 0) * .15
-      + buildingLevel('armory', s) * .02 + pathTreeBonus('attackPct', s) + daoTreeBonus('attack', s) + sectBlessing('attack', s) * .15
+      + buildingLevel('armory', s) * .02 + daoTreeBonus('attack', s) + sectBlessing('attack', s) * .15
       + (s.origin?.level || 0) * .08;
     return Math.round((base + flat) * mult);
   }
@@ -880,18 +858,18 @@
     return rank ? 1 + (rank - 1) * .18 : 1;
   }
   function maxHpFor(s = state) {
-    const body = 1 + (s.stage || 0) + (s.upgrades?.body || 0) * 2 + (s.pathLevels?.body || 0) * 3;
-    const base = 60 + body * 5 + (s.pathLevels?.body || 0) * 12 + (s.sectRank || 0) * 10 + gearStat('health', s) + bodyHpBonus(s);
-    return Math.round(base * (1 + rootBonus('hp', s) + beastBonus('hp', s) + artifactBonus('hp', s) + daoLevel('life', s) * .03 + (s.rebirth?.world || 0) * .1 + pathTreeBonus('hpPct', s) + (s.origin?.level || 0) * .04));
+    const body = 1 + (s.stage || 0) + (s.upgrades?.body || 0) * 2 + (s.body?.realm || 0) * 3;
+    const base = 60 + body * 5 + (s.sectRank || 0) * 10 + gearStat('health', s) + bodyHpBonus(s);
+    return Math.round(base * (1 + rootBonus('hp', s) + beastBonus('hp', s) + artifactBonus('hp', s) + daoLevel('life', s) * .03 + (s.rebirth?.world || 0) * .1 + (s.origin?.level || 0) * .04));
   }
   function guardFor(s = state) {
-    return Math.floor((s.pathLevels?.body || 0) / 2 + gearStat('guard', s) + meridianBonus('guard', s) + rootBonus('guard', s) + artifactBonus('guard', s) + beastBonus('guard', s) + daoLevel('life', s) * .4 + pathTreeBonus('guard', s) + bodyGuardBonus(s));
+    return Math.floor(gearStat('guard', s) + meridianBonus('guard', s) + rootBonus('guard', s) + artifactBonus('guard', s) + beastBonus('guard', s) + daoLevel('life', s) * .4 + bodyGuardBonus(s));
   }
   function harvestMult(s = state) {
     return 1 + (s.upgrades?.alchemy || 0) * .03 + rootBonus('herb', s) + daoLevel('life', s) * .04 + buildingLevel('garden', s) * .05 + beastBonus('herb', s) + (currentEvent(s)?.buff === 'herb' ? .5 : 0);
   }
   function daoGainMult(id, s = state) {
-    let m = 1 + (s.upgrades?.dao || 0) * .06 + buildingLevel('library', s) * .1 + rebirthUpgrade('dao', s) * .15 + (currentEvent(s)?.buff === 'dao' ? .5 : 0) + pathTreeBonus('daoPct', s) + spiritDaoBonus(s);
+    let m = 1 + (s.upgrades?.dao || 0) * .06 + buildingLevel('library', s) * .1 + rebirthUpgrade('dao', s) * .15 + (currentEvent(s)?.buff === 'dao' ? .5 : 0) + spiritDaoBonus(s);
     const root = rootData(s);
     const affinity = { fire: 'fire', water: 'water', wood: 'life', metal: 'sword', thunder: 'lightning', ice: 'water', wind: 'space' }[root?.id];
     if (affinity === id) m += .5;
@@ -904,29 +882,32 @@
     return clamp(Math.round(base - (def.rarity === 'Mythical' ? 20 : def.rarity === 'Epic' ? 10 : 0)), 5, 92);
   }
   function spiritBreakChance(s = state) {
-    let ch = 52
-      + (s.upgrades?.body || 0) * 2
-      + buildingLevel('formation', s) * 2.2
-      + (s.breakBuff || 0)
+    // Every modifier is applied once. Technique, formation, pill, root,
+    // meridians, Dao insight and spirit control are distinct sources.
+    const control = 1 + s.spirit.realm * 2 + s.spirit.stage + (s.upgrades?.sutra || 0) * 1.5;
+    const ch = 50
+      + Math.min(10, control * .35)                                  // spirit attributes
+      + Math.min(12, daoLevel('water', s) * 1.4 + totalMastery(s) * .25) // Dao comprehension
+      + (s.upgrades?.body || 0) * 2                                  // Jade Body Tempering
+      + buildingLevel('formation', s) * 2.2                          // Formation Hall
+      + (s.breakBuff || 0)                                           // Tribulation Pill
       + rootBonus('break', s) * 100
       + meridianBonus('break', s) * 100
-      + pathTreeBonus('breakPct', s)
       + daoTreeBonus('break', s)
       + sectBlessing('break', s) * 5
-      + Math.min(10, (s.pathLevels?.spirit || 0) * .7)
-      + Math.min(12, daoLevel('water', s) * 1.4 + totalMastery(s) * .25)
-      - s.spirit.realm * 2.5;
+      - s.spirit.realm * 2.2;                                        // realm resistance
     return Math.round(clamp(ch, 20, 95));
   }
   function bodyBreakChance(s = state) {
-    let ch = 50
-      + (s.upgrades?.body || 0) * 3.2
-      + Math.min(14, (s.pathLevels?.body || 0) * .9)
+    // Body attributes, technique, meridians and sect support each contribute once.
+    const control = s.body.realm * 2 + s.body.stage + s.body.bonuses.hp + s.body.bonuses.attack + s.body.bonuses.guard;
+    const ch = 48
+      + Math.min(10, control * .6)                                  // body attributes
+      + (s.upgrades?.body || 0) * 3.2                                // Body Tempering Technique
       + Math.min(10, openedMeridians(s) * .9)
       + buildingLevel('formation', s) * 1.4
       + sectBlessing('break', s) * 4
-      + Math.min(8, s.body.bonuses.guard * .5)
-      - s.body.realm * 2.4;
+      - s.body.realm * 2.2;                                         // realm resistance
     return Math.round(clamp(ch, 20, 95));
   }
   function breakChance(s = state) { return spiritBreakChance(s); }
@@ -972,19 +953,6 @@
   }
   function allDaoLevels(s = state) { return daoPaths.map(d => daoLevel(d.id, s)); }
   function totalMastery(s = state) { return allDaoLevels(s).reduce((a, b) => a + b, 0); }
-  function pathTreeActive(pathId, node, s = state) {
-    return (s.pathLevels?.[pathId] || 0) >= node.lvl;
-  }
-  function pathTreeBonus(key, s = state) {
-    let sum = 0;
-    Object.entries(pathTrees).forEach(([pathId, tree]) => {
-      tree.nodes.forEach(node => { if (pathTreeActive(pathId, node, s)) sum += node.bonus?.[key] || 0; });
-    });
-    return sum;
-  }
-  function pathTreeNodes(pathId, s = state) {
-    return (pathTrees[pathId]?.nodes || []).filter(n => pathTreeActive(pathId, n, s)).length;
-  }
   function daoTreeNodes(s = state) {
     return daoMasteryNodes.filter(n => totalMastery(s) >= n.total).length;
   }
@@ -1004,7 +972,7 @@
     return 1;
   }
   function spiritPowerMult(s = state) {
-    return 1 + pathTreeBonus('spiritPct', s) + (s.root?.type === 'divine' ? .05 : 0) + spiritSpellBonus(s) + (s.origin?.level || 0) * .06;
+    return 1 + (s.root?.type === 'divine' ? .05 : 0) + spiritSpellBonus(s) + (s.origin?.level || 0) * .06;
   }
   function tipAttr(text) { return ` data-tip="${String(text).replace(/"/g, '&quot;')}"`; }
   function notify(text, kind = 'info', silent = false) {
@@ -1151,7 +1119,8 @@
     aid('stones', nfmt(state.stones));
     aid('realmName', spiritTitle());
     const stageEl = $('stageBadge');
-    if (stageEl) stageEl.innerHTML = `${spiritRealms[state.spirit.realm].cn} <span>${ROMAN[state.spirit.stage]}</span>`;
+    const spiritRealm = spiritRealms[state.spirit.realm];
+    if (stageEl) stageEl.innerHTML = spiritRealm.noStages ? spiritRealm.cn : `${spiritRealm.cn} <span>${ROMAN[state.spirit.stage]}</span>`;
     aid('qiText', nfmt(qi)); aid('qiGoal', nfmt(goal));
     const fill = $('qiFill'); if (fill) fill.style.width = `${Math.min(100, qi / goal * 100)}%`;
     aid('qiPercent', `${Math.min(100, Math.floor(qi / goal * 100))}%`);
@@ -1161,13 +1130,13 @@
     $('meditateBtn')?.classList.toggle('meditating', state.active);
     const canBreak = state.qi >= goal && !spiritMaxed();
     if ($('breakthroughBtn')) $('breakthroughBtn').disabled = !canBreak;
-    aid('breakBtnLabel', spiritMaxed() ? 'Spirit path complete' : state.spirit.stage < 9 ? 'Advance Spirit' : 'Break Through');
+    aid('breakBtnLabel', spiritMaxed() ? 'Spirit path complete' : state.spirit.realm === 0 ? 'Begin Cultivation' : state.spirit.stage < 9 ? 'Advance Spirit' : 'Break Through');
     aid('breakHint', spiritMaxed()
       ? (bodyMaxed() ? 'THE HIDDEN REALM AWAITS' : 'COMPLETE THE BODY PATH')
-      : canBreak ? (state.spirit.stage < 9 ? 'READY · GUARANTEED STAGE ADVANCE' : `READY · ${spiritBreakChance()}% SUCCESS · TRIBULATION`) : `${nfmt(Math.max(0, goal - qi))} QI TO THE THRESHOLD`);
+      : canBreak ? (state.spirit.realm === 0 ? 'READY · AWAKEN TO QI CONDENSATION I' : state.spirit.stage < 9 ? 'READY · GUARANTEED STAGE ADVANCE' : `READY · ${spiritBreakChance()}% SUCCESS · TRIBULATION`) : `${nfmt(Math.max(0, goal - qi))} QI TO THE THRESHOLD`);
     const control = Math.max(1, 1 + state.spirit.realm * 2 + state.spirit.stage + state.upgrades.sutra * 2 + daoLevel('water') * 2);
-    const spirit = Math.max(1, 1 + state.spirit.realm * 2 + Math.floor(state.spirit.stage / 2) + state.upgrades.array * 2 + state.pathLevels.spirit * 3 + totalMastery() * 2);
-    const body = Math.max(1, state.body.unlocked ? 1 + state.body.realm * 2 + state.body.stage + state.upgrades.body * 2 + state.pathLevels.body * 3 + openedMeridians() * 2 : 1);
+    const spirit = Math.max(1, 1 + state.spirit.realm * 5 + Math.floor(state.spirit.stage / 2) + state.upgrades.array * 2 + totalMastery() * 2);
+    const body = Math.max(1, state.body.unlocked ? 1 + state.body.realm * 5 + state.body.stage + state.upgrades.body * 2 + openedMeridians() * 2 : 1);
     aid('sectRankLabel', sectRanks[state.sectRank]?.name || sectRanks[0].name);
     aid('sectName', sectData().name);
     [['control', control], ['spirit', spirit], ['body', body], ['luck', luckFor()]].forEach(([key, val]) => {
@@ -1217,9 +1186,9 @@
     const el = $('realmPath'); if (!el) return;
     el.classList.add('long');
     el.innerHTML = spiritRealms.map((r, i) => {
-      const passed = state.spirit.realm > i || (state.spirit.realm === i && state.spirit.stage >= 0);
+      const passed = state.spirit.realm > i;
       const current = state.spirit.realm === i;
-      return `<div class="realm-step ${passed ? 'passed' : ''} ${current ? 'current' : ''}"><span class="realm-node">${passed ? '✦' : '·'}</span><span>${r.name}</span></div>`;
+      return `<div class="realm-step ${passed ? 'passed' : ''} ${current ? 'current' : ''}"><span class="realm-node">${passed ? '✦' : current ? '◉' : '·'}</span><span>${r.name}</span></div>`;
     }).join('');
   }
   function pathCardHtml(path) {
@@ -1228,13 +1197,20 @@
     const realms = isBody ? bodyRealms : spiritRealms;
     const realm = realms[data.realm];
     const locked = isBody && !data.unlocked;
+    const isMortal = !isBody && data.realm === 0;
     const cost = nextPathCost(path);
     const pct = Math.min(100, state.qi / cost * 100);
-    const atPeak = data.stage >= 9;
+    const atPeak = !isMortal && data.stage >= 9;
     const complete = isBody ? bodyMaxed() : spiritMaxed();
     const chance = isBody ? bodyBreakChance() : spiritBreakChance();
     const canPay = state.qi >= cost && !complete;
     const nextLabel = complete ? 'Beyond the Origin' : isBody ? nextBodyTitle() : nextSpiritTitle();
+    const realmLine = isBody
+      ? `Realm ${data.realm + 1} of 15 · Stage ${ROMAN[data.stage]} of X`
+      : isMortal ? 'Initial state · No stages · Awakens into Qi Condensation I'
+        : `Realm ${data.realm} of 15 · Stage ${ROMAN[data.stage]} of X`;
+    const title = locked ? 'Body Path Sealed' : isMortal ? 'Mortal' : `${realm.name} <em>${ROMAN[data.stage]}</em>`;
+    const pill = locked ? 'LOCKED' : isMortal ? 'MORTAL' : complete ? 'PATH COMPLETE' : atPeak ? 'STAGE X · BREAKTHROUGH' : 'CULTIVATING';
     const stats = isBody
       ? [['MAX HEALTH', `+${nfmt(bodyHpBonus())}`, 'Permanent health from tempering the vessel.'],
          ['PHYSICAL ATTACK', `+${nfmt(Math.round(bodyAttackBonus() * 10) / 10)}`, 'Flat attack added to every physical strike.'],
@@ -1245,7 +1221,10 @@
          ['DAO INSIGHT', `+${Math.round(spiritDaoBonus() * 100)}%`, 'Deepens all Dao comprehension gains.'],
          ['SPIRIT CONTROL', `${nfmt(Math.round(1 + data.realm * 2 + data.stage + state.upgrades.sutra * 1.5))}`, 'Raises spiritual precision and breakthrough poise.']];
     const statHtml = stats.map(([label, value, tip]) => `<span class="cult-stat"${tipAttr(tip)}><small>${label}</small><b>${value}</b></span>`).join('');
-    const stageDots = ROMAN.map((num, i) => `<span class="stage-pip ${i < data.stage ? 'done' : i === data.stage ? 'current' : ''}" title="Stage ${num}">${num}</span>`).join('');
+    const stageDots = isMortal
+      ? '<span class="stage-pip current mortal-pip">Awakening · no stages</span>'
+      : ROMAN.map((num, i) => `<span class="stage-pip ${i < data.stage ? 'done' : i === data.stage ? 'current' : ''}" title="Stage ${num}">${num}</span>`).join('');
+    const progressLabel = complete ? 'FINAL REALM COMPLETE' : isMortal ? 'QI TO AWAKEN INTO QI CONDENSATION' : atPeak ? 'MAJOR BREAKTHROUGH REQUIREMENT' : `QI TO REACH STAGE ${ROMAN[data.stage + 1]}`;
     const breakthroughBonus = isBody
       ? `Body breakthroughs grant permanent health, attack and guard. Critical success doubles the tempering reward.`
       : `Spirit breakthroughs grant permanent qi flow, spell power and Dao insight, plus meridian points and realm keys.`;
@@ -1254,26 +1233,26 @@
         <span class="cult-seal">${locked ? '鎖' : realm.seal}</span>
         <div class="cult-card-title">
           <div class="eyebrow">${isBody ? 'BODY CULTIVATION' : 'SPIRIT CULTIVATION'}</div>
-          <h2>${locked ? 'Body Path Sealed' : `${realm.name} <em>${ROMAN[data.stage]}</em>`}</h2>
-          <small>${locked ? 'Unlocks at Golden Core I' : `Realm ${data.realm + 1} of 15 · Stage ${ROMAN[data.stage]} of X`}</small>
+          <h2>${title}</h2>
+          <small>${locked ? 'Unlocks at Golden Core I' : realmLine}</small>
         </div>
-        <span class="cult-pill ${isBody ? 'body' : 'spirit'}">${locked ? 'LOCKED' : complete ? 'PATH COMPLETE' : atPeak ? 'STAGE X · BREAKTHROUGH' : 'CULTIVATING'}</span>
+        <span class="cult-pill ${isBody ? 'body' : 'spirit'}">${pill}</span>
       </div>
       ${locked ? `<div class="cult-locked">
         <span class="lock-mark">鎖</span>
         <div><b>The mortal vessel waits.</b><p>Body cultivation awakens when spirit cultivation reaches <b>Golden Core I</b>. Both paths share the same qi; the body path will begin at Mortal Body I.</p>
-        <div class="cult-progress-label"><span>SPIRIT PROGRESS TO GOLDEN CORE</span><b>${spiritTitle()} · Realm ${state.spirit.realm + 1}/3</b></div>
-        <div class="qi-track"><div class="qi-fill body-fill" style="width:${Math.min(100, state.spirit.realm / 2 * 100)}%"></div></div></div>
+        <div class="cult-progress-label"><span>SPIRIT PROGRESS TO GOLDEN CORE</span><b>${spiritTitle()} · ${state.spirit.realm} / ${GOLDEN_CORE_REALM}</b></div>
+        <div class="qi-track"><div class="qi-fill body-fill" style="width:${Math.min(100, state.spirit.realm / GOLDEN_CORE_REALM * 100)}%"></div></div></div>
       </div>` : `<div class="cult-stage-track">${stageDots}</div>
-      <div class="cult-progress-label"><span>${complete ? 'FINAL REALM COMPLETE' : atPeak ? 'MAJOR BREAKTHROUGH REQUIREMENT' : `QI TO REACH STAGE ${ROMAN[data.stage + 1]}`}</span><b>${complete ? 'STAGE X OF X' : `${nfmt(Math.floor(state.qi))} / ${nfmt(cost)} qi`}</b></div>
+      <div class="cult-progress-label"><span>${progressLabel}</span><b>${complete ? 'STAGE X OF X' : `${nfmt(Math.floor(state.qi))} / ${nfmt(cost)} qi`}</b></div>
       <div class="qi-track"><div class="qi-fill ${isBody ? 'body-fill' : ''}" style="width:${complete ? 100 : pct}%"></div></div>
-      <div class="cult-next-line"><span>NEXT · <b>${nextLabel}</b></span><span>${complete ? 'waiting at the summit' : atPeak ? `${chance}% success` : 'guaranteed'}</span></div>
+      <div class="cult-next-line"><span>NEXT · <b>${nextLabel}</b></span><span>${complete ? 'waiting at the summit' : atPeak ? `${chance}% success` : isMortal ? 'guaranteed awakening' : 'guaranteed'}</span></div>
       <div class="cult-actions">
         ${complete
           ? `<button class="action-btn ${isBody ? 'body-advance-btn' : 'gold'}" disabled>${isBody ? 'The body path is complete' : 'The spirit path is complete'}<span>${isBody && !spiritMaxed() ? 'continue spirit' : !isBody && !bodyMaxed() ? 'continue body' : 'Beyond the Origin'}</span></button>`
           : atPeak
           ? `<button class="action-btn ${isBody ? 'body-break-btn' : 'gold'}" data-action="${isBody ? 'open-body-break' : 'open-spirit-break'}" ${canPay ? '' : 'disabled'}>${isBody ? 'Begin body tempering trial' : 'Face the heavenly tribulation'}<span>${nfmt(cost)} qi · ${chance}%</span></button>`
-          : `<button class="action-btn ${isBody ? 'body-advance-btn' : 'gold'}" data-action="${isBody ? 'advance-body' : 'advance-spirit'}" ${canPay ? '' : 'disabled'}>Advance to ${ROMAN[data.stage + 1]}<span>${nfmt(cost)} qi</span></button>`}
+          : `<button class="action-btn ${isBody ? 'body-advance-btn' : 'gold'}" data-action="${isBody ? 'advance-body' : 'advance-spirit'}" ${canPay ? '' : 'disabled'}>${isMortal ? 'Awaken · Qi Condensation I' : `Advance to ${ROMAN[data.stage + 1]}`}<span>${nfmt(cost)} qi</span></button>`}
       </div>
       <div class="cult-stats">${statHtml}</div>
       <p class="cult-bonus">${breakthroughBonus}</p>`}
@@ -1318,11 +1297,14 @@
     const root = rootData(), weapon = equippedWeapon(), comp = activeBeast();
     const goal = requirement(), pct = Math.min(100, state.qi / goal * 100);
     const equippedCount = Object.values(state.equipment || {}).filter(g => g.owned).length + (weapon ? 1 : 0) + (state.forge.equippedArtifacts || []).filter(Boolean).length;
-    const treeTotal = pathTreeNodes('body') + pathTreeNodes('spirit') + pathTreeNodes('qi');
+    const spiritRealm = spiritRealms[state.spirit.realm];
+    const spiritLine = spiritRealm.noStages
+      ? `Mortal · initial state · ${worldName()}`
+      : `Realm ${state.spirit.realm} / 15 · Stage ${ROMAN[state.spirit.stage]} · ${worldName()}`;
     el.innerHTML = `<div class="panel-heading"><div><div class="eyebrow">CULTIVATOR RECORD</div><h3>Character sheet</h3></div><span class="live-chip"><i></i>LIVE</span></div>
       <div class="char-realm">
-        <div class="char-seal"${tipAttr(TIP.realm)}>${spiritRealms[state.spirit.realm].cn}</div>
-        <div class="char-realm-copy"><small>SPIRIT CULTIVATION</small><b>${spiritTitle()}</b><span>Realm ${state.spirit.realm + 1} / 15 · Stage ${ROMAN[state.spirit.stage]} · ${worldName()}</span></div>
+        <div class="char-seal"${tipAttr(TIP.realm)}>${spiritRealm.cn}</div>
+        <div class="char-realm-copy"><small>SPIRIT CULTIVATION</small><b>${spiritTitle()}</b><span>${spiritLine}</span></div>
         <div class="char-realm-progress"${tipAttr('Shared qi accumulated toward the next spirit stage or breakthrough.')}><small>NEXT SPIRIT THRESHOLD</small><b>${nfmt(Math.floor(state.qi))} / ${nfmt(goal)}</b><div class="mini-track"><i style="width:${pct}%"></i></div></div>
       </div>
       <div class="char-realm-sub">
@@ -1347,7 +1329,6 @@
       <div class="char-stats compact">
         ${statTile('DAO LEVELS', `${totalMastery()} / 60`, `${TIP.dao} ${daoTreeNodes()} of ${daoMasteryNodes.length} harmony nodes awakened.`)}
         ${statTile('MERIDIANS', `${openedMeridians()} / ${meridianList.length}`, TIP.meridians)}
-        ${statTile('PATH NODES', `${treeTotal} / 18`, TIP.path)}
         ${statTile('SPIRIT POWER', `+${Math.round((spiritPowerMult() - 1) * 100)}%`, TIP.spiritPower)}
         ${statTile('COMPANIONS', Object.keys(state.taming.beasts).length, TIP.companion)}
         ${statTile('ARENA', state.arena?.rank <= 10 ? `#${state.arena.rank}` : '—', 'Your seat in the Sect Arena. Win duels in the Sect Hall to climb the ladder and claim the champion’s laurel.')}
@@ -1359,7 +1340,7 @@
         <span${tipAttr(TIP.companion)}><i>${comp ? comp.icon : '獸'}</i><small>COMPANION</small><b>${comp ? comp.name : 'None'}</b></span>
         <span${tipAttr('Your sect rank grants permanent bonuses and unlocks armory gear and sect buildings.')}><i>${sectData().seal}</i><small>SECT</small><b>${sectRanks[state.sectRank]?.name || 'Outer Disciple'}</b></span>
       </div>
-      <div class="char-actions"><button class="action-btn" data-view="paths">Grow foundations</button><button class="action-btn" data-view="dao">Inner Dao</button><button class="action-btn" data-view="codex" data-tab-view="codex" data-action="tab" data-tab="collections">Collections</button></div>`;
+      <div class="char-actions"><button class="action-btn" data-view="cultivate">Open cultivation</button><button class="action-btn" data-view="dao">Inner Dao</button><button class="action-btn" data-view="codex" data-tab-view="codex" data-action="tab" data-tab="collections">Collections</button></div>`;
   }
   function renderNotifications() {
     const el = $('notificationPanel'); if (!el) return;
@@ -1409,64 +1390,18 @@
     el.innerHTML = `<div class="panel-heading"><div><div class="eyebrow">THE QUIET ROAD</div><h3>No active story quests</h3></div></div><p class="small-note">New wanderers and old debts will find you as your cultivation deepens.</p>`;
   }
   function renderSubView() {
-    const map = { paths: renderPaths, dao: renderDao, combat: renderCombat, sect: renderSect, techniques: renderTechniques, expeditions: renderExpeditions, alchemy: renderAlchemy, inherit: renderInheritance, forge: renderForge, fate: renderFate, ascension: renderAscension, codex: renderCodex };
+    const map = { dao: renderDao, combat: renderCombat, sect: renderSect, techniques: renderTechniques, expeditions: renderExpeditions, alchemy: renderAlchemy, inherit: renderInheritance, forge: renderForge, fate: renderFate, ascension: renderAscension, codex: renderCodex };
     if (map[activeView]) map[activeView]();
   }
   function setView(view) {
+    if (view === 'paths') view = 'cultivate';
     activeView = view;
     document.querySelectorAll('.view').forEach(el => el.classList.toggle('active', el.id === `view-${view}`));
     document.querySelectorAll('.nav-item, .mobile-nav button').forEach(el => el.classList.toggle('active', el.dataset.view === view));
-    const names = { cultivate: 'CULTIVATION GROVE', paths: 'THREE CULTIVATION PATHS', dao: 'INNER DAO', combat: 'SPIRIT BEAST GROUNDS', sect: 'AZURE CLOUD SECT', techniques: 'SECT LIBRARY', expeditions: 'BEYOND THE SECT', alchemy: 'ALCHEMY PAVILION', inherit: 'ANCIENT INHERITANCE', forge: 'THE REFINING FORGE', fate: 'FATE & FORTUNE', ascension: 'REINCARNATION & ASCENSION', codex: 'THE IMMORTAL CODEX' };
+    const names = { cultivate: 'CULTIVATION GROVE', dao: 'INNER DAO', combat: 'SPIRIT BEAST GROUNDS', sect: 'AZURE CLOUD SECT', techniques: 'SECT LIBRARY', expeditions: 'BEYOND THE SECT', alchemy: 'ALCHEMY PAVILION', inherit: 'ANCIENT INHERITANCE', forge: 'THE REFINING FORGE', fate: 'FATE & FORTUNE', ascension: 'REINCARNATION & ASCENSION', codex: 'THE IMMORTAL CODEX' };
     if ($('crumbTitle')) $('crumbTitle').textContent = names[view] || names.cultivate;
     closeMobileNav();
     render(); window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  /* ---------------- PATHS & PROGRESSION TREES ---------------- */
-  function pathTreeHtml(pathId) {
-    const tree = pathTrees[pathId];
-    const level = state.pathLevels[pathId] || 0;
-    const nextLvl = tree.nodes.find(n => level < n.lvl)?.lvl;
-    const nodes = tree.nodes.map((node, i) => {
-      const active = level >= node.lvl;
-      const next = !active && node.lvl === nextLvl;
-      return `<div class="tree-node ${active ? 'active' : next ? 'next' : 'locked'}" style="--accent:${tree.accent}"${tipAttr(`${node.name} · Rank ${node.lvl}: ${node.desc}`)}>
-        <span class="tree-dot">${active ? '✓' : node.lvl}</span>
-        <div><b>${node.name}</b><small>Rank ${node.lvl} · ${node.desc}</small></div>
-        ${active ? '<em>OPEN</em>' : next ? `<em>${node.lvl - level} RANK${node.lvl - level === 1 ? '' : 'S'} AWAY</em>` : ''}
-      </div>`;
-    }).join('');
-    return `<div class="path-tree" style="--accent:${tree.accent}">
-      <div class="path-tree-head"><span class="tree-seal">${tree.seal}</span><div><h3>${tree.name}</h3><small>RANK ${level} · ${pathTreeNodes(pathId)} / ${tree.nodes.length} NODES</small></div></div>
-      <p>${tree.desc}</p>
-      <div class="tree-track">${nodes}</div>
-    </div>`;
-  }
-  function renderPaths() {
-    const bodyLevel = state.pathLevels.body, spiritLevel = state.pathLevels.spirit, qiLevel = state.pathLevels.qi;
-    const bodyCost = 50 + bodyLevel * 45, spiritCost = 50 + spiritLevel * 45, qiCost = 40 + qiLevel * 35;
-    const cards = [
-      { id: 'body', name: 'Body cultivation', seal: '體', eyebrow: 'THE IRON VESSEL', desc: 'Temper bone, blood, and breath. Body ranks increase health and empower crushing physical strikes.', level: bodyLevel, cost: bodyCost, action: 'Temper the body', good: state.qi >= bodyCost && state.stones >= 5, cls: 'body-path', label: 'BODY REALM' },
-      { id: 'spirit', name: 'Soul cultivation', seal: '神', eyebrow: 'THE IMMORTAL SPIRIT', desc: 'Expand your sea of consciousness. Soul ranks strengthen spiritual arts, insight and breakthroughs.', level: spiritLevel, cost: spiritCost, action: 'Refine the soul', good: state.qi >= spiritCost && state.stones >= 5, cls: 'spirit-path', label: 'SOUL REALM' },
-      { id: 'qi', name: 'Qi cultivation', seal: '氣', eyebrow: 'THE FLOWING BREATH', desc: 'Refine the quality of your qi. Qi ranks deepen meditation, stone trickles and meridian recovery.', level: qiLevel, cost: qiCost, action: 'Circulate the qi', good: state.qi >= qiCost && state.stones >= 8, cls: 'qi-path', label: 'QI REALM' }
-    ];
-    const cardHtml = cards.map(c => `<article class="path-card ${c.cls}"><div class="path-seal">${c.seal}</div><div class="eyebrow">${c.eyebrow}</div><h2>${c.name}</h2><p>${c.desc}</p><div class="path-level">${c.label} <b>Rank ${c.level}</b></div><div class="inventory-row"${tipAttr(TIP.path)}><span>Training requirement</span><b>${nfmt(c.cost)} qi · ${c.id === 'qi' ? 8 : 5} stones</b></div><button class="action-btn" data-action="train-path" data-id="${c.id}" ${c.good ? '' : 'disabled'}>${c.action}</button><small class="subtle">Every 5 ranks grants 1 meridian point. Milestones open permanently at ranks 2, 4, 6, 9, 12 and 15.</small></article>`).join('');
-    const daoBranches = daoPaths.map(d => {
-      const lv = daoLevel(d.id);
-      return `<div class="dao-branch" style="--dao:${d.color}"${tipAttr(`${d.name} · Level ${lv} / 10. ${d.passive}. ${d.ability}`)}><span class="dao-branch-seal">${d.seal}</span><div class="dao-branch-body"><div><b>${d.name}</b><small>LV ${lv} / 10 · ${masteryName(lv).toUpperCase()}</small></div>${progressLine(lv, 10)}<div class="dao-stars">${[3, 6, 9].map(n => `<span class="${lv >= n ? 'on' : ''}">${lv >= n ? '✦' : '·'} <small>Lv ${n}</small></span>`).join('')}</div></div></div>`;
-    }).join('');
-    const harmony = daoMasteryNodes.map(n => `<div class="harmony-node ${totalMastery() >= n.total ? 'active' : ''}"${tipAttr(n.desc)}><span>${totalMastery() >= n.total ? '✦' : n.total}</span><div><b>${n.name}</b><small>${n.total} total Dao levels · ${n.desc}</small></div></div>`).join('');
-    const twinCards = [
-      { path: 'spirit', data: state.spirit, realm: spiritRealms[state.spirit.realm], title: spiritTitle(), next: nextSpiritTitle(), cost: nextPathCost('spirit'), locked: false },
-      { path: 'body', data: state.body, realm: bodyRealms[state.body.realm], title: state.body.unlocked ? bodyTitle() : 'Sealed', next: state.body.unlocked ? nextBodyTitle() : 'Golden Core I', cost: state.body.unlocked ? nextPathCost('body') : 0, locked: !state.body.unlocked }
-    ].map(c => `<article class="twin-path-card ${c.path} ${c.locked ? 'locked' : ''}"><span class="twin-seal">${c.locked ? '鎖' : c.realm.seal}</span><div><div class="eyebrow">${c.path === 'spirit' ? 'SPIRIT CULTIVATION' : 'BODY CULTIVATION'}</div><h3>${c.title}</h3><p>${c.locked ? 'Unlocks when spirit cultivation reaches Golden Core I.' : `Next · ${c.next} · ${nfmt(c.cost)} qi`}</p></div><button class="action-btn" data-view="cultivate">${c.locked ? 'View spirit path' : 'Open cultivation'}</button></article>`).join('');
-    $('view-paths').innerHTML = `${subHead('TWIN ROADS TO IMMORTALITY', 'Cultivation paths', 'Refine the spirit and temper the body as two independent realms. Both spend the same qi, but each breakthrough is faced alone.', '☯')}
-      <article class="content-panel twin-cultivation-panel"><div class="panel-heading"><div><div class="eyebrow">THE TWO GREAT ROADS</div><h2>Spirit and body</h2></div><span class="stat-pill gold">SHARED QI · ${nfmt(Math.floor(state.qi))}</span></div><p>Spirit cultivation governs qi flow, spell power and Dao insight. Body cultivation governs health, physical attack, guard and damage resistance. Stages I–IX are guaranteed qi upgrades; stage X opens a major breakthrough.</p><div class="twin-path-grid">${twinCards}</div></article>
-      <div class="path-choice-grid three">${cardHtml}</div>
-      <div class="tree-grid">${pathTreeHtml('body')}${pathTreeHtml('spirit')}${pathTreeHtml('qi')}</div>
-      <article class="content-panel"><div class="eyebrow">THE INNER DAO TREE · ${totalMastery()} / 60 LEVELS</div><h2>Six laws, one understanding</h2><p>Every Dao is a branch of the same tree. Levels 3, 6 and 9 awaken milestones within each law. When your total mastery reaches 6, 12, 18, 24 and 30, harmony nodes open across every path.</p><div class="dao-tree">${daoBranches}</div><div class="harmony-track">${harmony}</div></article>
-      <article class="content-panel path-note"><div class="eyebrow">YOUR FOUNDATION</div><h2>No path is a dead end</h2><p>Body realm progression raises health, physical damage, guard and resistance. Spirit realm progression deepens qi flow, spell power, spiritual control and Dao comprehension. Foundation training below adds another permanent layer to both.</p><p class="small-note">Base qi growth: ${qiBase().toFixed(1)} qi/sec. Your shared reservoir is ${nfmt(Math.floor(state.qi))} qi.</p><div class="feature-stats"><span>SPIRIT REALM <b>${spiritTitle()}</b></span><span>BODY REALM <b>${state.body.unlocked ? bodyTitle() : 'Sealed'}</b></span><span>BODY RANK <b>${bodyLevel}</b></span><span>SOUL RANK <b>${spiritLevel}</b></span><span>QI RANK <b>${qiLevel}</b></span><span>QI FLOW <b>${rateFor().toFixed(1)} / sec</b></span></div></article>
-      <article class="content-panel"><div class="eyebrow">TWO KINDS OF BREAKTHROUGH</div><h2>Lightning and iron</h2><p>Spirit breakthroughs are heavenly tribulations shaped by Dao comprehension, tribulation pills and the Formation Hall. Body breakthroughs are endurance trials shaped by body attributes and the Jade Body Tempering technique. Both succeed between 20% and 95%; failure leaves you at stage X and scatters 10% of your qi.</p><div class="stat-pills"><span class="stat-pill gold">Spirit chance · ${state.spirit.stage >= 9 ? `${spiritBreakChance()}%` : 'at stage X'}</span><span class="stat-pill ${state.body.unlocked ? 'green' : 'red'}">Body chance · ${!state.body.unlocked ? 'sealed' : state.body.stage >= 9 ? `${bodyBreakChance()}%` : 'at stage X'}</span><span class="stat-pill">Meridian points · ${state.meridians.points}</span><span class="stat-pill violet">Dao insight · ${state.daoPoints}</span></div></article>`;
   }
 
   /* ---------------- TECHNIQUES ---------------- */
@@ -1590,7 +1525,7 @@
   }
   function renderHuntPanel() {
     const enemy = state.enemy, spell = currentSpell();
-    const enemyCard = enemy ? `<div class="enemy-card"><div class="enemy-glyph">${enemy.icon}</div><div class="enemy-info"><div class="eyebrow">${sects[enemy.sect]?.name || 'WILDERNESS'} ENCOUNTER · ${enemy.elite ? 'ELITE · ' : ''}REALM ${enemy.level || state.stage + 1}</div><h2>${enemy.name}</h2><div class="health-label"><span>HEALTH</span><b>${Math.max(0, Math.ceil(enemy.hp))} / ${enemy.maxHp}</b></div><div class="health-track"><i style="width:${Math.max(0, enemy.hp / enemy.maxHp * 100)}%"></i></div></div></div><div class="combat-actions"><button class="action-btn body-strike" data-action="attack" data-style="body">Body strike · ${attackDamage(3 + state.pathLevels.body * 4 + state.stage)}–${attackDamage(7 + state.pathLevels.body * 5 + state.stage)} dmg</button><button class="action-btn spirit-strike" data-action="attack" data-style="spirit" ${state.qi < 8 ? 'disabled' : ''}>Spirit art · ${spiritStrike(6 + state.pathLevels.spirit * 5 + state.stage)}–${spiritStrike(12 + state.pathLevels.spirit * 6 + state.stage)} dmg · 8 qi</button><button class="action-btn sect-spell" data-action="cast-spell" ${state.qi < spell.cost ? 'disabled' : ''}>${spell.seal} ${spell.name} · ${spiritStrike(spell.damage + state.pathLevels.spirit * 4 + state.stage)} dmg · ${spell.cost} qi</button>${artButtons()}<button class="action-btn" data-action="flee">Retreat</button></div>` : `<div class="encounter-empty"><div class="empty-mark">⚔</div><h2>The forest is quiet—for now.</h2><p>Seek a ${sectData().name} spirit beast to test your cultivation. Victory earns spirit stones, sect merit, and a chance at rare ingredients, eggs and map fragments.</p><button class="action-btn" data-action="seek-enemy">Seek a spirit beast</button></div>`;
+    const enemyCard = enemy ? `<div class="enemy-card"><div class="enemy-glyph">${enemy.icon}</div><div class="enemy-info"><div class="eyebrow">${sects[enemy.sect]?.name || 'WILDERNESS'} ENCOUNTER · ${enemy.elite ? 'ELITE · ' : ''}REALM ${enemy.level || state.stage + 1}</div><h2>${enemy.name}</h2><div class="health-label"><span>HEALTH</span><b>${Math.max(0, Math.ceil(enemy.hp))} / ${enemy.maxHp}</b></div><div class="health-track"><i style="width:${Math.max(0, enemy.hp / enemy.maxHp * 100)}%"></i></div></div></div><div class="combat-actions"><button class="action-btn body-strike" data-action="attack" data-style="body">Body strike · ${attackDamage(3 + state.body.realm * 4 + state.stage)}–${attackDamage(7 + state.body.realm * 5 + state.stage)} dmg</button><button class="action-btn spirit-strike" data-action="attack" data-style="spirit" ${state.qi < 8 ? 'disabled' : ''}>Spirit art · ${spiritStrike(6 + state.spirit.realm * 5 + state.stage)}–${spiritStrike(12 + state.spirit.realm * 6 + state.stage)} dmg · 8 qi</button><button class="action-btn sect-spell" data-action="cast-spell" ${state.qi < spell.cost ? 'disabled' : ''}>${spell.seal} ${spell.name} · ${spiritStrike(spell.damage + state.spirit.realm * 4 + state.stage)} dmg · ${spell.cost} qi</button>${artButtons()}<button class="action-btn" data-action="flee">Retreat</button></div>` : `<div class="encounter-empty"><div class="empty-mark">⚔</div><h2>The forest is quiet—for now.</h2><p>Seek a ${sectData().name} spirit beast to test your cultivation. Victory earns spirit stones, sect merit, and a chance at rare ingredients, eggs and map fragments.</p><button class="action-btn" data-action="seek-enemy">Seek a spirit beast</button></div>`;
     const hpPercent = Math.max(0, state.hp / state.maxHp * 100);
     return `<div class="subview-layout"><div class="subview-main"><article class="content-panel combat-panel"><div class="eyebrow">${enemy ? 'ACTIVE BATTLE' : 'READY YOURSELF'}</div>${enemyCard}</article>
       <article class="content-panel"><div class="eyebrow">YOUR VITALITY</div><h2>${Math.ceil(state.hp)} / ${state.maxHp} health</h2><div class="health-track player-health"><i style="width:${hpPercent}%"></i></div><p class="combat-tip">Body strikes are free and scale with body cultivation. Spirit arts spend 8 qi. Weapon abilities, Dao passives and your bonded companion all join the attack. A prepared healing pill restores health.</p></article></div>
@@ -1631,7 +1566,7 @@
       const def = worldBosses.find(b => b.id === active.id);
       const pct = active.hp / active.maxHp * 100;
       const log = (active.log || []).slice(-4).map(l => `<div>${l}</div>`).join('');
-      battle = `<article class="boss-battle"><div class="boss-head"><div class="boss-glyph">${def?.icon || '魔'}</div><div><small>WORLD BOSS · TIER ${def?.tier || 1}</small><h3>${def?.name || 'Unknown'}</h3><div class="health-label"><span>HEALTH</span><b>${Math.max(0, Math.ceil(active.hp))} / ${active.maxHp}</b></div><div class="health-track"><i style="width:${clamp(pct, 0, 100)}%"></i></div></div></div><p class="boss-ability">${def?.trait || ''}</p><div class="boss-actions"><button class="action-btn body-strike" data-action="boss-attack" data-style="body">Body strike · ${attackDamage(4 + state.pathLevels.body * 4 + state.stage)} dmg</button><button class="action-btn spirit-strike" data-action="boss-attack" data-style="spirit" ${state.qi < 10 ? 'disabled' : ''}>Spirit art · 10 qi</button><button class="action-btn sect-spell" data-action="boss-spell" ${state.qi < currentSpell().cost ? 'disabled' : ''}>${currentSpell().seal} ${currentSpell().name} · ${currentSpell().cost} qi</button>${state.activeArts.map(id => { const a = martialArts.find(x => x.id === id); return a ? `<button class="action-btn" data-action="boss-art" data-id="${a.id}" ${state.qi < a.qi ? 'disabled' : ''}>${a.seal} ${a.name} · ${a.qi} qi</button>` : ''; }).join('')}<button class="action-btn danger" data-action="boss-retreat">Retreat</button></div><div class="battle-log">${log || '<div>The ancient beast regards you without fear.</div>'}</div></article>`;
+      battle = `<article class="boss-battle"><div class="boss-head"><div class="boss-glyph">${def?.icon || '魔'}</div><div><small>WORLD BOSS · TIER ${def?.tier || 1}</small><h3>${def?.name || 'Unknown'}</h3><div class="health-label"><span>HEALTH</span><b>${Math.max(0, Math.ceil(active.hp))} / ${active.maxHp}</b></div><div class="health-track"><i style="width:${clamp(pct, 0, 100)}%"></i></div></div></div><p class="boss-ability">${def?.trait || ''}</p><div class="boss-actions"><button class="action-btn body-strike" data-action="boss-attack" data-style="body">Body strike · ${attackDamage(4 + state.body.realm * 4 + state.stage)} dmg</button><button class="action-btn spirit-strike" data-action="boss-attack" data-style="spirit" ${state.qi < 10 ? 'disabled' : ''}>Spirit art · 10 qi</button><button class="action-btn sect-spell" data-action="boss-spell" ${state.qi < currentSpell().cost ? 'disabled' : ''}>${currentSpell().seal} ${currentSpell().name} · ${currentSpell().cost} qi</button>${state.activeArts.map(id => { const a = martialArts.find(x => x.id === id); return a ? `<button class="action-btn" data-action="boss-art" data-id="${a.id}" ${state.qi < a.qi ? 'disabled' : ''}>${a.seal} ${a.name} · ${a.qi} qi</button>` : ''; }).join('')}<button class="action-btn danger" data-action="boss-retreat">Retreat</button></div><div class="battle-log">${log || '<div>The ancient beast regards you without fear.</div>'}</div></article>`;
     }
     const cards = worldBosses.map((b, i) => {
       const unlocked = state.world.tier >= b.tier;
@@ -1778,7 +1713,7 @@
           <div class="duelist rival"><span class="duelist-seal">${def?.seal || '?'}</span><div><small>RANK ${def?.rank || '?'} · ${def?.title || ''}</small><b>${def?.name || 'Unknown'}</b><div class="health-track"><i style="width:${pct}%"></i></div><span>${nfmt(Math.max(0, battle.hp))} / ${nfmt(battle.maxHp)} health</span></div></div>
         </div>
         <p class="boss-ability">${def?.trait || ''}</p>
-        <div class="boss-actions"><button class="action-btn body-strike" data-action="arena-attack" data-style="body">Body strike · ${attackDamage(3 + state.pathLevels.body * 4 + state.stage)}–${attackDamage(7 + state.pathLevels.body * 5 + state.stage)} dmg</button><button class="action-btn spirit-strike" data-action="arena-attack" data-style="spirit" ${state.qi < 10 ? 'disabled' : ''}>Spirit art · 10 qi</button><button class="action-btn sect-spell" data-action="arena-spell" ${state.qi < currentSpell().cost ? 'disabled' : ''}>${currentSpell().seal} ${currentSpell().name} · ${currentSpell().cost} qi</button>${state.activeArts.map(id => { const a = martialArts.find(x => x.id === id); return a ? `<button class="action-btn" data-action="arena-art" data-id="${a.id}" ${state.qi < a.qi ? 'disabled' : ''}>${a.seal} ${a.name} · ${a.qi} qi</button>` : ''; }).join('')}<button class="action-btn danger" data-action="arena-retreat">Yield</button></div>
+        <div class="boss-actions"><button class="action-btn body-strike" data-action="arena-attack" data-style="body">Body strike · ${attackDamage(3 + state.body.realm * 4 + state.stage)}–${attackDamage(7 + state.body.realm * 5 + state.stage)} dmg</button><button class="action-btn spirit-strike" data-action="arena-attack" data-style="spirit" ${state.qi < 10 ? 'disabled' : ''}>Spirit art · 10 qi</button><button class="action-btn sect-spell" data-action="arena-spell" ${state.qi < currentSpell().cost ? 'disabled' : ''}>${currentSpell().seal} ${currentSpell().name} · ${currentSpell().cost} qi</button>${state.activeArts.map(id => { const a = martialArts.find(x => x.id === id); return a ? `<button class="action-btn" data-action="arena-art" data-id="${a.id}" ${state.qi < a.qi ? 'disabled' : ''}>${a.seal} ${a.name} · ${a.qi} qi</button>` : ''; }).join('')}<button class="action-btn danger" data-action="arena-retreat">Yield</button></div>
         <div class="battle-log arena-log">${log}</div></article>`;
     }
     const ladder = arenaRivals.map(def => {
@@ -1879,10 +1814,10 @@
     if (style === 'spirit') {
       if (state.qi < 10) return showToast('You need 10 qi to form a spirit art.');
       state.qi -= 10;
-      base = spiritStrike(7 + state.pathLevels.spirit * 5 + state.stage + Math.random() * (7 + state.pathLevels.spirit));
+      base = spiritStrike(7 + state.spirit.realm * 5 + state.stage + Math.random() * (7 + state.spirit.realm));
       arenaHit(base, 'Your spirit art');
     } else {
-      base = attackDamage(3 + state.pathLevels.body * 4 + state.stage + Math.random() * (5 + state.pathLevels.body));
+      base = attackDamage(3 + state.body.realm * 4 + state.stage + Math.random() * (5 + state.body.realm));
       arenaHit(base, 'Your body strike');
     }
   }
@@ -1892,7 +1827,7 @@
     if (state.qi < spell.cost) return showToast(`You need ${spell.cost} qi to cast ${spell.name}.`);
     state.qi -= spell.cost;
     if (spell.heal) state.hp = Math.min(state.maxHp, state.hp + spell.heal);
-    arenaHit(spiritStrike(spell.damage + state.pathLevels.spirit * 4 + state.stage), spell.name);
+    arenaHit(spiritStrike(spell.damage + state.spirit.realm * 4 + state.stage), spell.name);
   }
   function arenaArt(id) {
     if (!state.arena.battle) return;
@@ -1901,7 +1836,7 @@
     state.qi -= art.qi;
     if (art.effect === 'heal') state.hp = Math.min(state.maxHp, state.hp + (art.heal || 20));
     if (art.effect === 'crit') state.breakBuff = (state.breakBuff || 0) + 3;
-    arenaHit(spiritStrike(art.damage * artDamageMult(art.id) + state.pathLevels.spirit * 4 + state.stage), art.name);
+    arenaHit(spiritStrike(art.damage * artDamageMult(art.id) + state.spirit.realm * 4 + state.stage), art.name);
   }
   function defeatArenaRival(def) {
     const first = !(state.arena.defeated[def.id] > 0);
@@ -2003,7 +1938,7 @@
     return `<div class="subview-layout"><div class="subview-main"><article class="content-panel"><div class="eyebrow">MERIDIAN NETWORK · POINTS ${state.meridians.points}</div><h2>Open the channels of the body</h2><p>Meridians are permanent. Each opened channel grants a stat bonus; completing sets of four grants additional circulation bonuses. Major breakthroughs grant meridian points.</p><div class="meridian-grid">${cards}</div></article>
     <article class="content-panel circulation-bonus"><h3>Circulation bonuses</h3><p>As the network opens, the body begins to circulate qi without conscious effort.</p><div class="daily-challenge-list">${setRows}</div></article></div>
     <aside class="subview-aside"><article class="feature-card"><div class="eyebrow">MERIDIAN MAP</div><h3>${opened} / ${meridianList.length} channels open</h3><p>Special vessels — Ren, Du, Dai and Chong — require both a high realm and a Dao level. They are the true gates of immortal anatomy.</p><div class="feature-stats"><span>MERIDIAN POINTS <b>${state.meridians.points}</b></span><span>OPEN <b>${opened}</b></span><span>BREAKTHROUGH <b>${breakChance()}%</b></span></div></article>
-    <article class="content-panel"><div class="eyebrow">GAINING POINTS</div><h2>Where points come from</h2><p>Every breakthrough grants 1 meridian point; major realm breakthroughs grant 2. The Meridian Opening Pill grants 1 more. Every fifth path rank also grants 1.</p></article></aside></div>`;
+    <article class="content-panel"><div class="eyebrow">GAINING POINTS</div><h2>Where points come from</h2><p>Every breakthrough grants 1 meridian point; major realm breakthroughs grant 2. The Meridian Opening Pill grants 1 more.</p></article></aside></div>`;
   }
   function renderDaoPaths() {
     const cards = daoPaths.map(d => {
@@ -2054,7 +1989,7 @@
     let battle = '';
     if (rb && realmDef) {
       const log = (rb.log || []).slice(-5).map(l => `<div>${l}</div>`).join('');
-      battle = `<article class="boss-battle"><div class="boss-head"><div class="boss-glyph">${realmDef.boss.icon}</div><div><small>SECRET REALM · ${realmDef.name.toUpperCase()}</small><h3>${realmDef.boss.name}</h3><div class="health-label"><span>HEALTH</span><b>${Math.max(0, Math.ceil(rb.hp))} / ${rb.maxHp}</b></div><div class="health-track"><i style="width:${clamp(rb.hp / rb.maxHp * 100, 0, 100)}%"></i></div></div></div><p class="boss-ability">${realmDef.boss.trait}</p><div class="boss-actions"><button class="action-btn body-strike" data-action="realm-attack" data-style="body">Body strike · ${attackDamage(4 + state.pathLevels.body * 4 + state.stage)} dmg</button><button class="action-btn spirit-strike" data-action="realm-attack" data-style="spirit" ${state.qi < 10 ? 'disabled' : ''}>Spirit art · 10 qi</button><button class="action-btn sect-spell" data-action="realm-spell" ${state.qi < currentSpell().cost ? 'disabled' : ''}>${currentSpell().seal} ${currentSpell().name} · ${currentSpell().cost} qi</button>${state.activeArts.map(id => { const a = martialArts.find(x => x.id === id); return a ? `<button class="action-btn" data-action="realm-art" data-id="${a.id}" ${state.qi < a.qi ? 'disabled' : ''}>${a.seal} ${a.name} · ${a.qi} qi</button>` : ''; }).join('')}<button class="action-btn danger" data-action="realm-retreat">Withdraw</button></div><div class="battle-log">${log || '<div>The realm closes behind you. Something ancient stirs.</div>'}</div></article>`;
+      battle = `<article class="boss-battle"><div class="boss-head"><div class="boss-glyph">${realmDef.boss.icon}</div><div><small>SECRET REALM · ${realmDef.name.toUpperCase()}</small><h3>${realmDef.boss.name}</h3><div class="health-label"><span>HEALTH</span><b>${Math.max(0, Math.ceil(rb.hp))} / ${rb.maxHp}</b></div><div class="health-track"><i style="width:${clamp(rb.hp / rb.maxHp * 100, 0, 100)}%"></i></div></div></div><p class="boss-ability">${realmDef.boss.trait}</p><div class="boss-actions"><button class="action-btn body-strike" data-action="realm-attack" data-style="body">Body strike · ${attackDamage(4 + state.body.realm * 4 + state.stage)} dmg</button><button class="action-btn spirit-strike" data-action="realm-attack" data-style="spirit" ${state.qi < 10 ? 'disabled' : ''}>Spirit art · 10 qi</button><button class="action-btn sect-spell" data-action="realm-spell" ${state.qi < currentSpell().cost ? 'disabled' : ''}>${currentSpell().seal} ${currentSpell().name} · ${currentSpell().cost} qi</button>${state.activeArts.map(id => { const a = martialArts.find(x => x.id === id); return a ? `<button class="action-btn" data-action="realm-art" data-id="${a.id}" ${state.qi < a.qi ? 'disabled' : ''}>${a.seal} ${a.name} · ${a.qi} qi</button>` : ''; }).join('')}<button class="action-btn danger" data-action="realm-retreat">Withdraw</button></div><div class="battle-log">${log || '<div>The realm closes behind you. Something ancient stirs.</div>'}</div></article>`;
     }
     const cards = secretRealms.map(r => {
       const cleared = state.realms.cleared[r.id] || 0;
@@ -2176,9 +2111,9 @@
       const cost = u.level + 1;
       return `<article class="feature-card-lite"><div class="eyebrow">${u.seal} · RANK ${u.level}</div><h3>${u.name}</h3><p>${u.desc}</p><small>Next rank · ${cost} reincarnation point${cost === 1 ? '' : 's'}</small><button class="action-btn" data-action="rebirth-upgrade" data-id="${u.id}" ${state.rebirth.points >= cost ? '' : 'disabled'}>Deepen the soul</button></article>`;
     }).join('');
-    $('view-ascension').innerHTML = `${subHead('THE WHEEL AND THE HIGHER SKY', 'Reincarnation & ascension', 'Death is a door, not an ending. Carry your permanent strength into a new life, or climb to a higher world.', '仙')}<div class="subview-layout"><div class="subview-main"><article class="content-panel"><div class="eyebrow">THE WHEEL TURNS</div><h2>${world}</h2><p>Reincarnation strips away realm, qi and mortal standing, but the root, meridians, Dao, beasts, inheritances and forged weapons remain. Ascension carries you to a higher world with all your strength intact.</p><div class="feature-stats"><span>REBIRTHS <b>${state.rebirth.count || 0}</b></span><span>POINTS <b>${state.rebirth.points || 0}</b></span><span>NEXT LIFE VALUE <b>${points}</b></span><span>WORLD BONUS <b>+${(state.rebirth.world || 0) * 20}% qi · +${(state.rebirth.world || 0) * 15}% attack</b></span></div><div class="inline-actions"><button class="action-btn gold" data-action="reincarnate" ${state.spirit.realm >= 4 ? '' : 'disabled'}>${state.spirit.realm >= 4 ? `Reincarnate · earn ${points} points` : 'Reach Soul Transformation to reincarnate'}</button><button class="action-btn" data-action="ascend-world" ${state.spirit.realm >= 9 && (state.rebirth.world || 0) < worldNames.length - 1 ? '' : 'disabled'}>${(state.rebirth.world || 0) >= worldNames.length - 1 ? 'The highest sky' : state.spirit.realm >= 9 ? 'Ascend to the next world' : 'Reach True Immortal to ascend'}</button></div></article>
+    $('view-ascension').innerHTML = `${subHead('THE WHEEL AND THE HIGHER SKY', 'Reincarnation & ascension', 'Death is a door, not an ending. Carry your permanent strength into a new life, or climb to a higher world.', '仙')}<div class="subview-layout"><div class="subview-main"><article class="content-panel"><div class="eyebrow">THE WHEEL TURNS</div><h2>${world}</h2><p>Reincarnation strips away realm, qi and mortal standing, but the root, meridians, Dao, beasts, inheritances and forged weapons remain. Ascension carries you to a higher world with all your strength intact.</p><div class="feature-stats"><span>REBIRTHS <b>${state.rebirth.count || 0}</b></span><span>POINTS <b>${state.rebirth.points || 0}</b></span><span>NEXT LIFE VALUE <b>${points}</b></span><span>WORLD BONUS <b>+${(state.rebirth.world || 0) * 20}% qi · +${(state.rebirth.world || 0) * 15}% attack</b></span></div><div class="inline-actions"><button class="action-btn gold" data-action="reincarnate" ${state.spirit.realm >= 5 ? '' : 'disabled'}>${state.spirit.realm >= 5 ? `Reincarnate · earn ${points} points` : 'Reach Soul Transformation to reincarnate'}</button><button class="action-btn" data-action="ascend-world" ${state.spirit.realm >= 10 && (state.rebirth.world || 0) < worldNames.length - 1 ? '' : 'disabled'}>${(state.rebirth.world || 0) >= worldNames.length - 1 ? 'The highest sky' : state.spirit.realm >= 10 ? 'Ascend to the next world' : 'Reach True Immortal to ascend'}</button></div></article>
       <article class="content-panel"><div class="eyebrow">SOUL UPGRADES</div><h2>Strengthen what death cannot take</h2><p>Reincarnation points are permanent. Spend them here; the cost rises with every rank.</p><div class="feature-grid">${upgrades}</div></article>
-      <article class="content-panel"><div class="eyebrow">WHAT REMAINS</div><h2>The immortal ledger</h2><p>Roots, meridians, Dao insight, beast bonds, inheritances, artifacts, forged weapons, achievements, sect buildings and world boss records persist through reincarnation. Realm, qi, stones, paths, mission progress and daily practice begin again.</p></article></div>
+      <article class="content-panel"><div class="eyebrow">WHAT REMAINS</div><h2>The immortal ledger</h2><p>Roots, meridians, Dao insight, beast bonds, inheritances, artifacts, forged weapons, achievements, sect buildings and world boss records persist through reincarnation. Realm, qi, stones, mission progress and daily practice begin again.</p></article></div>
       <aside class="subview-aside"><article class="feature-card"><div class="eyebrow">ASCENSION</div><h3>${state.rebirth.world >= worldNames.length - 1 ? 'Beyond the heavens' : `Next world · ${worldNames[(state.rebirth.world || 0) + 1]}`}</h3><p>Each higher world grants +20% qi and +15% attack permanently. Ascension requires <b>True Immortal I</b> in spirit cultivation.</p><div class="feature-stats"><span>SPIRIT <b>${spiritTitle()}</b></span><span>BODY <b>${state.body.unlocked ? bodyTitle() : 'Sealed'}</b></span><span>DAO LEVELS <b>${totalMastery()}</b></span><span>BOSSES <b>${state.stats.bosses || 0}</b></span></div></article>
       <article class="content-panel"><div class="eyebrow">DEATH IS A DOOR</div><h2>Not an ending</h2><p>The wheel does not judge. It simply turns. Carry what you have learned, and the next life begins closer to the sky.</p></article></aside></div>`;
   }
@@ -2261,7 +2196,8 @@
       const spiritRows = spiritRealms.map((r, i) => {
         const passed = state.spirit.realm > i;
         const current = state.spirit.realm === i;
-        return `<div class="codex-realm ${passed ? 'unlocked' : ''} ${current ? 'current' : ''}"><div class="codex-node">${passed ? '✦' : current ? state.spirit.stage + 1 : '·'}</div><div><h3>${r.name} <small>${r.cn}</small></h3><p>${r.desc}</p></div><small>${current ? `STAGE ${ROMAN[state.spirit.stage]}` : passed ? 'PASSED' : 'UNDISCOVERED'}</small></div>`;
+        const stateLabel = current ? (r.noStages ? 'INITIAL' : `STAGE ${ROMAN[state.spirit.stage]}`) : passed ? 'PASSED' : 'UNDISCOVERED';
+        return `<div class="codex-realm ${passed ? 'unlocked' : ''} ${current ? 'current' : ''}"><div class="codex-node">${passed ? '✦' : current ? (r.noStages ? '凡' : state.spirit.stage + 1) : '·'}</div><div><h3>${r.name} <small>${r.cn}</small></h3><p>${r.desc}</p></div><small>${stateLabel}</small></div>`;
       }).join('');
       const bodyRows = bodyRealms.map((r, i) => {
         const passed = state.body.unlocked && state.body.realm > i;
@@ -2271,11 +2207,11 @@
       const origin = state.origin?.unlocked ? `<article class="content-panel origin-codex"><div class="eyebrow gold-text">THE HIDDEN FINAL REALM</div><h2>Beyond the Origin</h2><p>Spirit and body have both reached their final stage. The third progression stands outside the fifteen realms, measured in Origin Steps I–X.</p><div class="inventory-row"><span>Origin step</span><b>${state.origin.level} / 10</b></div></article>` : '';
       const goal = nextPathCost('spirit');
       body = `<div class="subview-layout"><div class="subview-main">
-        <article class="content-panel"><div class="eyebrow">SPIRIT CULTIVATION · 15 REALMS</div><h2>The immortal spirit</h2><p>Every spirit realm holds ten Roman stages. Stages I–IX are guaranteed qi upgrades; stage X opens a heavenly tribulation and the next realm. Spirit power governs qi flow, spell damage and Dao insight.</p><div class="codex-list">${spiritRows}</div></article>
+        <article class="content-panel"><div class="eyebrow">SPIRIT CULTIVATION · MORTAL + 15 REALMS</div><h2>The immortal spirit</h2><p>Mortal is the initial state and carries no Roman stages. Each of the fifteen cultivation realms above it holds ten stages I–X: stages I–IX are guaranteed qi upgrades, while stage X opens a heavenly tribulation into the next realm. Spirit power governs qi flow, spell damage and Dao insight.</p><div class="codex-list">${spiritRows}</div></article>
         <article class="content-panel"><div class="eyebrow">BODY CULTIVATION · 15 REALMS</div><h2>The tempered vessel</h2><p>${state.body.unlocked ? 'The body path is awake. Its stages share your qi but advance independently, each one hardening health, attack, guard and resistance.' : 'The body path remains sealed until spirit cultivation reaches <b>Golden Core I</b>. It will then begin at Mortal Body I.'}</p><div class="codex-list">${bodyRows}</div></article>
         ${origin}</div>
         <aside class="subview-aside"><article class="feature-card"><div class="eyebrow">CODEX OF THE SELF</div><h3>${worldName()}</h3><p>Your root, Dao, meridians and companions all appear in the other pages of this codex. Some knowledge is earned only by living.</p><div class="feature-stats"><span>SPIRIT <b>${spiritTitle()}</b></span><span>BODY <b>${state.body.unlocked ? bodyTitle() : 'Sealed'}</b></span><span>SHARED QI <b>${nfmt(state.qi)}</b></span></div></article>
-        <article class="content-panel"><div class="eyebrow">THE NEXT SPIRIT THRESHOLD</div><h2>${nextSpiritTitle()}</h2><p>${nfmt(goal)} qi are required. ${state.spirit.stage >= 9 ? `A heavenly tribulation waits at this gate · ${spiritBreakChance()}% success.` : 'The stage advance is guaranteed once the qi is spent.'}</p><div class="inventory-row"><span>Body next</span><b>${state.body.unlocked ? `${nextBodyTitle()} · ${nfmt(nextPathCost('body'))} qi` : 'Golden Core I'}</b></div></article></aside></div>`;
+        <article class="content-panel"><div class="eyebrow">THE NEXT SPIRIT THRESHOLD</div><h2>${nextSpiritTitle()}</h2><p>${nfmt(goal)} qi are required. ${state.spirit.realm === 0 ? 'The first awakening is a guaranteed qi upgrade into Qi Condensation I.' : state.spirit.stage >= 9 ? `A heavenly tribulation waits at this gate · ${spiritBreakChance()}% success.` : 'The stage advance is guaranteed once the qi is spent.'}</p><div class="inventory-row"><span>Body next</span><b>${state.body.unlocked ? `${nextBodyTitle()} · ${nfmt(nextPathCost('body'))} qi` : 'Golden Core I'}</b></div></article></aside></div>`;
     }
     $('view-codex').innerHTML = `${subHead('THE IMMORTAL CODEX', 'Codex', 'Realms, achievements, story quests and the record of your long road.', '▤')}
       ${tabs('codex', [['realms', 'Realms'], ['collections', 'Collections'], ['achievements', 'Achievements'], ['quests', 'Story quests'], ['records', 'Records']])}${body}`;
@@ -2376,6 +2312,19 @@
 
   /* ---------------- BREAKTHROUGH ---------------- */
   function advanceSpirit() {
+    if (state.spirit.realm === 0) {
+      const cost = stageCost('spirit');
+      if (state.qi < cost) return showToast(`You need ${nfmt(cost)} qi to awaken your spirit.`);
+      state.qi -= cost;
+      state.spirit.realm = 1;
+      state.spirit.stage = 0;
+      syncCultivation();
+      maybeUnlockBody();
+      notify(`Spirit cultivation awakened · ${spiritTitle()} reached.`, 'breakthrough');
+      showToast('The first breath enters your meridians · Qi Condensation I.');
+      save(); render();
+      return;
+    }
     if (state.spirit.stage >= 9) return openSpiritBreakthrough();
     const cost = stageCost('spirit');
     if (state.qi < cost) return showToast(`You need ${nfmt(cost)} qi to advance.`);
@@ -2513,7 +2462,7 @@
     const chance = bodyBreakChance();
     const success = Math.random() * 100 < chance;
     let critical = false;
-    if (success) critical = Math.random() < clamp(.1 + (state.pathLevels?.body || 0) * .008 + openedMeridians() * .004, .1, .3);
+    if (success) critical = Math.random() < clamp(.1 + state.body.realm * .008 + openedMeridians() * .004, .1, .3);
     finishBodyBreakthrough(success, critical);
   }
   function attemptBreak() { attemptSpiritBreak(); }
@@ -2623,7 +2572,7 @@
     if (evaded) {
       showToast(`${source} dealt ${hit.damage}${hit.crit ? ' critical' : ''} damage · you evaded the retaliation.`);
     } else {
-      let taken = Math.max(1, enemy.damage - guardFor() - Math.floor(state.pathLevels.body / 2));
+      let taken = Math.max(1, enemy.damage - guardFor() - Math.floor(state.body.realm / 2));
       taken = Math.max(1, Math.round(taken * (1 - bodyDamageReduction())));
       if (enemy.weaken) { taken = Math.max(1, Math.floor(taken * .6)); enemy.weaken = false; }
       state.hp = Math.max(0, state.hp - taken);
@@ -2644,10 +2593,10 @@
     if (style === 'spirit') {
       if (state.qi < 8) return showToast('You need 8 qi to form a spirit art.');
       state.qi -= 8;
-      base = spiritStrike(6 + state.pathLevels.spirit * 5 + state.stage + Math.random() * (7 + state.pathLevels.spirit));
+      base = spiritStrike(6 + state.spirit.realm * 5 + state.stage + Math.random() * (7 + state.spirit.realm));
       damageEnemy(base, 'Your spirit art');
     } else {
-      base = attackDamage(3 + state.pathLevels.body * 4 + state.stage + Math.random() * (5 + state.pathLevels.body));
+      base = attackDamage(3 + state.body.realm * 4 + state.stage + Math.random() * (5 + state.body.realm));
       damageEnemy(base, 'Your body strike');
     }
   }
@@ -2657,7 +2606,7 @@
     if (state.qi < spell.cost) return showToast(`You need ${spell.cost} qi to cast ${spell.name}.`);
     state.qi -= spell.cost;
     if (spell.heal) state.hp = Math.min(state.maxHp, state.hp + spell.heal);
-    damageEnemy(spiritStrike(spell.damage + state.pathLevels.spirit * 4 + state.stage), spell.name);
+    damageEnemy(spiritStrike(spell.damage + state.spirit.realm * 4 + state.stage), spell.name);
   }
   function useArt(id) {
     if (!state.enemy) return;
@@ -2666,7 +2615,7 @@
     state.qi -= art.qi;
     if (art.effect === 'heal') state.hp = Math.min(state.maxHp, state.hp + (art.heal || 20));
     if (art.effect === 'crit') state.breakBuff = (state.breakBuff || 0) + 3;
-    damageEnemy(spiritStrike(art.damage * artDamageMult(art.id) + state.pathLevels.spirit * 4 + state.stage), art.name);
+    damageEnemy(spiritStrike(art.damage * artDamageMult(art.id) + state.spirit.realm * 4 + state.stage), art.name);
   }
   function flee() { state.enemy = null; showToast('You retreat safely from the encounter.'); save(); render(); }
 
@@ -2686,8 +2635,8 @@
     if (style === 'spirit') {
       if (state.qi < 10) return showToast('You need 10 qi for a spirit art.');
       state.qi -= 10;
-      base = spiritStrike(8 + state.pathLevels.spirit * 5 + state.stage + Math.random() * (8 + state.pathLevels.spirit));
-    } else base = attackDamage(4 + state.pathLevels.body * 4 + state.stage + Math.random() * (6 + state.pathLevels.body));
+      base = spiritStrike(8 + state.spirit.realm * 5 + state.stage + Math.random() * (8 + state.spirit.realm));
+    } else base = attackDamage(4 + state.body.realm * 4 + state.stage + Math.random() * (6 + state.body.realm));
     damageBoss(base, style === 'spirit' ? 'Your spirit art' : 'Your body strike');
   }
   function bossSpell() {
@@ -2696,14 +2645,14 @@
     if (state.qi < spell.cost) return showToast(`You need ${spell.cost} qi to cast ${spell.name}.`);
     state.qi -= spell.cost;
     if (spell.heal) state.hp = Math.min(state.maxHp, state.hp + spell.heal);
-    damageBoss(spiritStrike(spell.damage + state.pathLevels.spirit * 4 + state.stage), spell.name);
+    damageBoss(spiritStrike(spell.damage + state.spirit.realm * 4 + state.stage), spell.name);
   }
   function bossArt(id) {
     const art = martialArts.find(a => a.id === id); if (!art) return;
     if (state.qi < art.qi) return showToast(`You need ${art.qi} qi for ${art.name}.`);
     state.qi -= art.qi;
     if (art.effect === 'heal') state.hp = Math.min(state.maxHp, state.hp + (art.heal || 20));
-    damageBoss(spiritStrike(art.damage * artDamageMult(art.id) + state.pathLevels.spirit * 4 + state.stage), art.name);
+    damageBoss(spiritStrike(art.damage * artDamageMult(art.id) + state.spirit.realm * 4 + state.stage), art.name);
   }
   function damageBoss(base, source) {
     const active = state.world.active; if (!active) return;
@@ -2775,8 +2724,8 @@
     if (style === 'spirit') {
       if (state.qi < 10) return showToast('You need 10 qi for a spirit art.');
       state.qi -= 10;
-      base = spiritStrike(8 + state.pathLevels.spirit * 5 + state.stage + Math.random() * (8 + state.pathLevels.spirit));
-    } else base = attackDamage(4 + state.pathLevels.body * 4 + state.stage + Math.random() * (6 + state.pathLevels.body));
+      base = spiritStrike(8 + state.spirit.realm * 5 + state.stage + Math.random() * (8 + state.spirit.realm));
+    } else base = attackDamage(4 + state.body.realm * 4 + state.stage + Math.random() * (6 + state.body.realm));
     damageRealm(base, style === 'spirit' ? 'Your spirit art' : 'Your body strike');
   }
   function realmSpell() {
@@ -2785,14 +2734,14 @@
     if (state.qi < spell.cost) return showToast(`You need ${spell.cost} qi to cast ${spell.name}.`);
     state.qi -= spell.cost;
     if (spell.heal) state.hp = Math.min(state.maxHp, state.hp + spell.heal);
-    damageRealm(spiritStrike(spell.damage + state.pathLevels.spirit * 4 + state.stage), spell.name);
+    damageRealm(spiritStrike(spell.damage + state.spirit.realm * 4 + state.stage), spell.name);
   }
   function realmArt(id) {
     const art = martialArts.find(a => a.id === id); if (!art) return;
     if (state.qi < art.qi) return showToast(`You need ${art.qi} qi for ${art.name}.`);
     state.qi -= art.qi;
     if (art.effect === 'heal') state.hp = Math.min(state.maxHp, state.hp + (art.heal || 20));
-    damageRealm(spiritStrike(art.damage * artDamageMult(art.id) + state.pathLevels.spirit * 4 + state.stage), art.name);
+    damageRealm(spiritStrike(art.damage * artDamageMult(art.id) + state.spirit.realm * 4 + state.stage), art.name);
   }
   function damageRealm(base, source) {
     const rb = state.realms.boss; if (!rb) return;
@@ -3156,7 +3105,7 @@
     state.origin = origin || { unlocked: false, level: 0, name: 'Beyond the Origin' };
     state.completedTrips = 0; state.trip = null; state.upgrades = { sutra: 0, array: 0, body: 0, beast: 0, alchemy: 0, fortune: 0, dao: 0 };
     state.boosts = 0; state.breakBuff = 0; state.dailyClaimed = false; state.dailyDate = 0; state.daily = { date: 0, list: [] };
-    state.pathLevels = { body: 0, spirit: 0, qi: 0 }; state.enemy = null; state.tripToday = 0;
+    state.enemy = null; state.tripToday = 0;
     state.herbs = { herb: 0, root: 0, flower: 0, ore: 0, essence: 0, crystal: 0, beastCore: 0, voidDust: 0, relic: 0 };
     state.sectRep = 0; state.sectRank = 0; state.mission = null; state.wins = 0;
     state.realms.boss = null; state.world.active = null; state.quests.active = null; state.quests.progress = {};
@@ -3165,9 +3114,9 @@
     ensureDaily();
   }
   function reincarnate() {
-    if (state.spirit.realm < 4) return showToast('You must reach Soul Transformation to reincarnate.');
+    if (state.spirit.realm < 5) return showToast('You must reach Soul Transformation to reincarnate.');
     const points = rebirthPointsFor();
-    openModal('輪', 'THE WHEEL TURNS', 'Reincarnate?', `You will lose realm, qi, spirit stones, paths, missions and daily progress. Your root, meridians, Dao, beasts, inheritances, artifacts, weapons and achievements remain.<br><br>You will gain <b>${points} reincarnation point${points === 1 ? '' : 's'}</b>.`, `<button class="secondary-btn" data-action="close-modal">Not yet</button><button class="primary-btn" data-action="reincarnate-confirm">Step into the wheel</button>`);
+    openModal('輪', 'THE WHEEL TURNS', 'Reincarnate?', `You will lose realm, qi, spirit stones, missions and daily progress. Your root, meridians, Dao, beasts, inheritances, artifacts, weapons and achievements remain.<br><br>You will gain <b>${points} reincarnation point${points === 1 ? '' : 's'}</b>.`, `<button class="secondary-btn" data-action="close-modal">Not yet</button><button class="primary-btn" data-action="reincarnate-confirm">Step into the wheel</button>`);
   }
   function reincarnateConfirm() {
     closeModal();
@@ -3181,7 +3130,7 @@
     openModal('輪', 'A NEW LIFE BEGINS', 'The wheel releases you', `You wake beneath the same mountain with a smaller body and an older soul.<br><br><b>+${points} reincarnation points</b> · ${state.stones} spirit stones to begin again.`, '<button class="primary-btn" data-action="close-modal">Walk the road again</button>');
   }
   function ascendWorld() {
-    if (state.spirit.realm < 9) return showToast('You must reach True Immortal to ascend.');
+    if (state.spirit.realm < 10) return showToast('You must reach True Immortal to ascend.');
     if ((state.rebirth.world || 0) >= worldNames.length - 1) return showToast('There is no higher world left to climb.');
     openModal('仙', 'THE HIGHER SKY', 'Ascend beyond this world?', `You will leave the ${worldNames[state.rebirth.world || 0]} for the <b>${worldNames[(state.rebirth.world || 0) + 1]}</b>.<br><br>Realm, qi, stones and mortal progress reset, but every permanent system remains. The new world grants a permanent <b>+20% qi and +15% attack</b>.`, '<button class="secondary-btn" data-action="close-modal">Remain here</button><button class="primary-btn" data-action="ascend-confirm">Ascend</button>');
   }
@@ -3327,16 +3276,6 @@
     }
     dailyStep('brew'); questStep('brew');
     showToast(`${recipe.name} prepared · ${recipe.effect}`);
-    save(); render();
-  }
-  function trainPath(id) {
-    if (!['body', 'spirit', 'qi'].includes(id)) return;
-    const level = state.pathLevels[id], cost = id === 'qi' ? 40 + level * 35 : 50 + level * 45;
-    const stones = id === 'qi' ? 8 : 5;
-    if (state.qi < cost || state.stones < stones) return showToast('You need more qi and spirit stones to train.');
-    state.qi -= cost; state.stones -= stones; state.pathLevels[id] = level + 1;
-    if ((level + 1) % 5 === 0) state.meridians.points = (state.meridians.points || 0) + 1;
-    showToast(id === 'body' ? 'Your body grows more resilient.' : id === 'spirit' ? 'Your spiritual sea expands; meditation flows faster.' : 'Your qi grows clearer and more abundant.');
     save(); render();
   }
   function joinSect(id) {
@@ -3585,7 +3524,6 @@
       case 'select-region': selectRegion(id); break;
       case 'survey-region': surveyRegion(id); break;
       case 'brew': brew(id); break;
-      case 'train-path': trainPath(id); break;
       case 'seek-enemy': seekEnemy(); break;
       case 'attack': attackEnemy(button.dataset.style); break;
       case 'cast-spell': castSectSpell(); break;
@@ -3708,7 +3646,6 @@
     if (state.active) state.medSeconds += 1;
     state.stoneClock = (state.stoneClock || 0) + 1;
     if (state.stoneClock >= 8) { state.stoneClock -= 8; state.stones += 1; }
-    if ((pathTreeBonus('stonesPer') || 0) > 0 && state.totalSeconds % 20 === 0) state.stones += pathTreeBonus('stonesPer');
     if ((state.upgrades.array || 0) > 0 && state.totalSeconds % 20 === 0) state.stones += state.upgrades.array;
     const inBattle = !!state.enemy || !!state.world.active || !!state.realms.boss;
     if (!inBattle && daoLevel('water') >= 3) state.hp = Math.min(state.maxHp, state.hp + state.maxHp * .01);

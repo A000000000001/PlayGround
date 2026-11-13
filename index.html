@@ -21,7 +21,6 @@
       <div class="sect-label">YOUR SANCTUARY</div>
       <nav class="main-nav" aria-label="Main navigation">
         <button class="nav-item active" data-view="cultivate"><span class="nav-icon">◉</span><span>Cultivate</span><span class="nav-dot"></span></button>
-        <button class="nav-item" data-view="paths"><span class="nav-icon">☯</span><span>Cultivation Paths</span></button>
         <button class="nav-item" data-view="dao"><span class="nav-icon">道</span><span>Inner Dao</span><span class="nav-dot hidden" id="daoDot"></span></button>
         <button class="nav-item" data-view="combat"><span class="nav-icon">⚔</span><span>Spirit Beasts</span></button>
         <button class="nav-item" data-view="sect"><span class="nav-icon">青</span><span>Sect Hall</span></button>
@@ -75,7 +74,7 @@
               <div class="streak s1"></div><div class="streak s2"></div>
             </div>
             <div class="hero-content">
-              <div class="realm-line"><div><div class="eyebrow">CURRENT REALM</div><h2 id="realmName">Mortal</h2></div><div class="stage-badge" id="stageBadge">凡人 <span>01</span></div></div>
+              <div class="realm-line"><div><div class="eyebrow">CURRENT REALM</div><h2 id="realmName">Mortal</h2></div><div class="stage-badge" id="stageBadge">凡人</div></div>
               <div class="progress-label"><span>QI ACCUMULATED</span><b><span id="qiText">0</span><i> / </i><span id="qiGoal">100</span></b></div>
               <div class="qi-track"><div class="qi-fill" id="qiFill"></div><span class="qi-glint"></span></div>
               <div class="qi-foot"><span><i class="tiny-spark">✦</i> <b id="qiRate">0.8</b> qi / sec</span><span id="qiPercent">0%</span></div>
@@ -120,7 +119,6 @@
         <article class="panel challenge-panel" id="questTracker"></article>
       </section>
 
-      <section class="view subview" id="view-paths"></section>
       <section class="view subview" id="view-dao"></section>
       <section class="view subview" id="view-combat"></section>
       <section class="view subview" id="view-sect"></section>
@@ -136,7 +134,7 @@
     </main>
   </div>
   <nav class="mobile-nav" aria-label="Mobile navigation">
-    <button class="active" data-view="cultivate"><i>◉</i>Home</button><button data-view="paths"><i>☯</i>Paths</button><button data-view="dao"><i>道</i>Dao</button><button data-view="combat"><i>⚔</i>Beasts</button><button data-view="sect"><i>青</i>Sect</button><button data-view="techniques"><i>卷</i>Arts</button><button data-view="expeditions"><i>⌁</i>Travel</button><button data-view="alchemy"><i>⚗</i>Alchemy</button><button data-view="inherit"><i>傳</i>Legacy</button><button data-view="forge"><i>⚒</i>Forge</button><button data-view="fate"><i>✦</i>Fate</button><button data-view="ascension"><i>仙</i>Ascend</button><button data-view="codex"><i>▤</i>Codex</button>
+    <button class="active" data-view="cultivate"><i>◉</i>Home</button><button data-view="dao"><i>道</i>Dao</button><button data-view="combat"><i>⚔</i>Beasts</button><button data-view="sect"><i>青</i>Sect</button><button data-view="techniques"><i>卷</i>Arts</button><button data-view="expeditions"><i>⌁</i>Travel</button><button data-view="alchemy"><i>⚗</i>Alchemy</button><button data-view="inherit"><i>傳</i>Legacy</button><button data-view="forge"><i>⚒</i>Forge</button><button data-view="fate"><i>✦</i>Fate</button><button data-view="ascension"><i>仙</i>Ascend</button><button data-view="codex"><i>▤</i>Codex</button>
   </nav>
   <div class="nav-scrim" id="navScrim" hidden></div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
