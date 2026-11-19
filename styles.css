@@ -988,3 +988,54 @@ body.focus-mode .banner-row,body.focus-mode .challenge-panel,body.focus-mode .no
   .trial-text{font-size:20px;bottom:15%}
   .realm-path.long{grid-template-columns:repeat(16,minmax(68px,1fr))}
 }
+
+/* ---------------- BLESSED LAND, DISCIPLES, COMPANIONS, SIGN-IN ---------------- */
+.abode-grid,.companion-grid,.disciple-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin-top:13px}
+.abode-card,.companion-card,.disciple-card{border:1px solid var(--line);border-radius:8px;background:#fffefa;padding:14px;display:flex;flex-direction:column;gap:8px}
+.abode-card.locked-card{opacity:.55;background:#faf9f3}
+.abode-card.built{border-color:#d9e6d7;background:linear-gradient(160deg,#fffefa,#f6faf2)}
+.abode-head,.companion-head,.disciple-head{display:flex;align-items:center;gap:10px}
+.abode-head h3,.companion-head h3,.disciple-head h3{font:600 14px var(--serif);margin:0;color:var(--ink)}
+.abode-head small,.companion-head small,.disciple-head small{display:block;color:var(--muted);font-size:7px;letter-spacing:.7px;margin-top:2px}
+.abode-seal,.companion-seal,.disciple-seal{width:38px;height:38px;flex-shrink:0;border-radius:50%;display:grid;place-items:center;background:var(--jade-pale);color:var(--jade);font:19px 'Ma Shan Zheng',cursive}
+.companion-seal{background:var(--gold-pale);color:var(--gold)}
+.disciple-seal{background:#eef2e6;color:#6b7f4c}
+.abode-head>div,.companion-head>div,.disciple-head>div{flex:1;min-width:0}
+.companion-head .stat-pill,.disciple-head .stat-pill{grid-column:auto;margin-top:0;justify-self:auto}
+.abode-card p,.companion-card p,.disciple-card p{margin:0;color:#7b877e;font-size:9px;line-height:1.55}
+.abode-effect{font-size:8px;font-weight:700;color:var(--jade);letter-spacing:.4px}
+.abode-store{display:grid;gap:3px}
+.abode-store small{color:var(--muted);font-size:7px;letter-spacing:.4px}
+.abode-cost{font-size:7.5px;color:#948a6a;letter-spacing:.3px}
+.abode-card .action-btn,.companion-card .action-btn,.disciple-card .action-btn{margin-top:auto;width:100%}
+.abode-bank{display:flex;flex-wrap:wrap;align-items:center;gap:10px 20px;margin-top:13px}
+.abode-bank>span{display:grid;gap:3px}
+.abode-bank small{color:var(--muted);font-size:7px;letter-spacing:.7px}
+.abode-bank b{font:600 16px var(--serif);color:var(--ink)}
+.abode-bank .action-btn{width:auto;margin:0 0 0 auto}
+.companion-card.active{border-color:#d9c98f;box-shadow:0 6px 20px rgba(189,151,81,.14);background:linear-gradient(160deg,#fffefa,#fbf6e8)}
+.companion-bonus{font-size:8px;color:#5c7b64;line-height:1.5;border-top:1px solid #eef0e8;padding-top:7px}
+.companion-actions,.disciple-actions{display:flex;gap:6px;margin-top:auto}
+.companion-actions .action-btn,.disciple-actions .action-btn{flex:1;width:auto;margin:0}
+.disciple-apt{font-size:7px;letter-spacing:.5px;color:var(--muted)}
+.disciple-apt b{color:var(--gold);letter-spacing:1px;font-size:10px}
+.disciple-output{display:flex;justify-content:space-between;align-items:center;gap:8px;background:#f7f9f1;border-radius:5px;padding:7px 9px;font-size:7px;letter-spacing:.4px;color:var(--muted)}
+.disciple-output b{color:var(--jade);font-size:8.5px;letter-spacing:0}
+.disciple-tasks{display:flex;gap:5px}
+.task-chip{width:30px;height:30px;border-radius:6px;border:1px solid #e3e7dc;background:#fbfcf7;color:#7d8a74;font:15px 'Ma Shan Zheng',cursive;cursor:pointer;transition:.15s}
+.task-chip:hover{border-color:#b9cbb4}
+.task-chip.active{background:var(--jade);border-color:var(--jade);color:#fff}
+.action-btn.danger{border-color:#e6c7bd;background:#fdf4f1;color:#a9604a}
+.empty-tab .action-btn{width:auto;margin-top:13px}
+.checkin-strip{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin:11px 0}
+.checkin-day{border:1px solid var(--line);border-radius:6px;background:#fbfaf4;padding:7px 4px;display:grid;gap:4px;text-align:center}
+.checkin-day small{font-size:6px;letter-spacing:.6px;color:var(--muted)}
+.checkin-day b{font-size:7px;font-weight:600;color:#7c8778;line-height:1.3}
+.checkin-day.claimed{background:var(--jade-pale);border-color:#cfe4d4}
+.checkin-day.claimed b{color:var(--jade);font-size:12px}
+.checkin-day.current{border-color:var(--gold);box-shadow:0 0 0 2px rgba(189,151,81,.16)}
+.checkin-day.current b{color:#9a7b36}
+.checkin-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:8px;color:#8b948b}
+.text-link{border:0;background:none;color:var(--jade);font-size:8px;font-weight:700;cursor:pointer;padding:2px 0}
+.text-link:disabled{color:#b6bcb2;cursor:default}
+@media(max-width:720px){.abode-grid,.companion-grid,.disciple-grid{grid-template-columns:1fr}.abode-bank .action-btn{margin:0;width:100%}.checkin-strip{grid-template-columns:repeat(4,minmax(0,1fr))}}
