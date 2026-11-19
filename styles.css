@@ -376,6 +376,22 @@
 .empty-tab p{font-size:10px;line-height:1.6;margin:0 auto;max-width:390px}
 .subtle{color:#939b91;font-size:8px;line-height:1.5}
 .gold-text{color:#9a7d3c;font-weight:700}
+.red-text{color:#a85a4a;font-weight:700}
+.break-mods{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px 12px;margin:12px auto 9px;max-width:360px;text-align:left}
+.break-mod{display:flex;justify-content:space-between;gap:8px;font-size:8px;letter-spacing:.3px;color:#7d897f;border-bottom:1px dotted #e6e2d4;padding:3px 0}
+.break-mod b{color:#4f7a60;font-weight:700;white-space:nowrap}
+.break-mod.neg b{color:#a85a4a}
+.cult-status-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:12px;padding:12px 15px;border:1px solid #e7d9c8;background:#fbf5ea;border-radius:8px}
+.cult-status-row>span{display:flex;flex-direction:column;gap:2px;font-size:9px;color:#7d6a52;flex:1;min-width:160px}
+.cult-status-row b{font-size:10px;letter-spacing:.6px;color:#8a5a3a}
+.cult-status-row small{font-size:8px;color:#9b8a70}
+.cult-status-row .hazard-deviation b{color:#8a4f56}
+.cult-status-row .action-btn{margin-left:auto}
+.cult-hazards{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.cult-hazards span{font-size:8px;letter-spacing:.4px;padding:3px 7px;border-radius:999px;background:#f7eee1;border:1px solid #ead9c2;color:#8a5a3a;font-weight:700}
+.cult-hazards .hazard-deviation{background:#f7e9ec;border-color:#e7cdd3;color:#8a4f56}
+.modal{box-sizing:border-box}
+@media(max-width:560px){.modal{padding:26px 18px}.break-mods{grid-template-columns:1fr;max-width:none}.modal-actions{flex-wrap:wrap}.modal-actions button{flex:1 1 100%;min-width:0}.cult-status-row>span{min-width:0}}
 .small-note{margin-top:9px;font-size:8px;line-height:1.55;color:#90988d}
 .action-btn.gold{background:#fbf3dc;border-color:#e5d6ac;color:#8f7440}
 .action-btn.gold:hover{background:#f7ecc9;border-color:#cbb87d}
