@@ -55,10 +55,23 @@
   // Minor and major breakthroughs share one calculation. Only the base chance,
   // qi cost and recovery time differ between the two kinds.
   const BREAK_RULES = {
-    minor: { base: 72, cooldown: 20, xpGain: 1, label: 'Minor breakthrough' },
-    major: { base: 45, cooldown: 60, xpGain: 2, label: 'Major breakthrough' }
+    minor: { base: 72, cooldown: 0, xpGain: 1, label: 'Minor breakthrough' },
+    major: { base: 49, cooldown: 60, xpGain: 2, label: 'Major breakthrough' }
   };
   const BREAK_XP_BONUS = 5;
+  // Idle/offline cultivation earns this share of the meditating rate.
+  const OFFLINE_RATE = .7;
+  // Positive pill toxicity is scaled by this factor; cleansing remains unscaled.
+  const PILL_TOXICITY_SCALE = .85;
+  // Qi multipliers soften above +350% bonus (4.5x) and approach a 10x ceiling
+  // before late-game systems (Origin, rebirth) multiply on top.
+  const QI_SOFT_DR_START = 4.5;
+  const QI_SOFT_CAP = 10;
+  function softCapQiMult(raw) {
+    if (raw <= QI_SOFT_DR_START) return raw;
+    const room = QI_SOFT_CAP - QI_SOFT_DR_START;
+    return QI_SOFT_DR_START + room * (1 - Math.exp(-(raw - QI_SOFT_DR_START) / room));
+  }
   const worldNames = ['Mortal Realm', 'Immortal Realm', 'Celestial Realm', 'Primordial Void'];
 
   const techniques = [
@@ -86,7 +99,7 @@
   const recipes = [
     { id: 'qiPill', name: 'Qi-Gathering Pill', seal: '丹', desc: 'A warm current of essence, carefully sealed in jade.', cost: 12, ingredients: { herb: 2, root: 1 }, effect: 'Instantly gain 45 qi.', type: 'qi', amount: 45, unlockStage: 0, unlockBrews: 0 },
     { id: 'focusTea', name: 'Stillwater Tea', seal: '茶', desc: 'A fragrant infusion that steadies the wandering mind.', cost: 10, ingredients: { herb: 3 }, effect: 'Restore 40 health and gain 30 qi.', type: 'heal', amount: 40, unlockStage: 0, unlockBrews: 0 },
-    { id: 'cleansingTea', name: 'Cleansing Tea', seal: '清', desc: 'A bitter, clear brew that washes pill residue from the meridians and quiets a shaken heart.', cost: 28, ingredients: { herb: 3, root: 1 }, effect: 'Clear qi deviation and reduce pill toxicity by 30.', type: 'cleanse', amount: 30, unlockStage: 0, unlockBrews: 0 },
+    { id: 'cleansingTea', name: 'Cleansing Tea', seal: '清', desc: 'A bitter, clear brew that washes pill residue from the meridians and quiets a shaken heart.', cost: 28, ingredients: { herb: 3, root: 1 }, effect: 'Clear qi deviation and reduce pill toxicity by 40.', type: 'cleanse', amount: 40, unlockStage: 0, unlockBrews: 0 },
     { id: 'bodyPill', name: 'Ironroot Elixir', seal: '根', desc: 'A bitter tonic that fortifies the meridians.', cost: 18, ingredients: { root: 3 }, effect: 'Permanently gain +8% qi / sec.', type: 'boost', amount: .08, unlockStage: 0, unlockBrews: 0 },
     { id: 'fortune', name: 'Fortune Incense', seal: '香', desc: 'Auspicious smoke that draws spirit stones and gathers qi.', cost: 10, ingredients: { herb: 1, flower: 1 }, effect: 'Gain 1,000 spirit stones and 1,000 qi.', type: 'fortune', amount: 1000, unlockStage: 0, unlockBrews: 0 },
     { id: 'beastFeast', name: 'Spirit Beast Feast', seal: '飼', desc: 'A fragrant meal that strengthens a bonded companion.', cost: 22, ingredients: { herb: 2, root: 1 }, effect: 'Gain 3 beast food.', type: 'food', amount: 3, unlockStage: 3, unlockBrews: 1 },
@@ -531,9 +544,9 @@
     stones: 'Spirit stones are the common currency of the cultivation world. They buy techniques, equipment, alchemy ingredients and forge work.',
     tokens: 'Sect tokens are earned through missions, bosses and duties. Spend them in the Armory, Vault and sect halls.',
     merit: 'Sect merit measures your service. Enough merit promotes your rank, which grants permanent attack, qi and health bonuses.',
-    rate: 'Qi per second. Meditation raises this to its full value; idle cultivation receives 35%. Base qi grows with realm, techniques, roots and the Clear Heart Sutra.',
-    breakthrough: 'The chance that a breakthrough succeeds. Minor and major breakthroughs share one calculation, from a 10% minimum to a 95% maximum. Failure keeps your stage, consumes 20% of the qi cost, grants breakthrough insight and starts a recovery cooldown. Realm keys can be offered at major breakthroughs for +12%.',
-    toxicity: 'Pill toxicity (dan du) builds when you consume breakthrough pills. Every 5 toxicity lowers breakthrough chance by 1%, and it fades by 1 point every 15 seconds. Cleansing Tea removes 30.',
+    rate: 'Qi per second. Meditation raises this to its full value; idle or offline cultivation receives 70%. Base qi grows with realm, techniques, roots and the Clear Heart Sutra. Stacking qi bonuses soften after +350% total and approach a 10× ceiling before Origin and rebirth multiply on top.',
+    breakthrough: 'The chance that a breakthrough succeeds. Minor and major breakthroughs share one calculation, from a 10% minimum to a 95% maximum. Failure keeps your stage, consumes 20% of the qi cost, grants breakthrough insight, and (for major breakthroughs) starts a recovery cooldown. Realm keys can be offered at major breakthroughs for +12%.',
+    toxicity: 'Pill toxicity (dan du) builds when you consume breakthrough pills. Every 5 toxicity lowers breakthrough chance by 1%, and it fades by 1 point every 15 seconds. Cleansing Tea removes 40.',
     deviation: 'Qi deviation (zou huo ru mo) follows a failed breakthrough. Each stack reduces qi gathering by 8% for three minutes, up to three stacks. Cleansing Tea clears it.',
     attack: 'The damage of a body strike before variance. It combines your weapon, gear, sect, root, Dao, companion, artifacts, body cultivation and spirit power.',
     guard: 'Flat damage reduction against physical retaliation. Some bosses pierce or ignore guard.',
@@ -676,8 +689,9 @@
         const rate = rateFor(fresh);
         fresh.qiToday += fresh.active ? away * rate : 0;
         fresh.medSeconds += fresh.active ? away : 0;
-        fresh.qi += away * (fresh.active ? rate : .5);
-        fresh.totalQi += away * (fresh.active ? rate : .5);
+        // rateFor already applies OFFLINE_RATE when the player was not meditating.
+        fresh.qi += away * rate;
+        fresh.totalQi += away * rate;
         fresh.stones += Math.floor(away / 8);
         fresh.dailyDate = dayIndex(fresh);
         ensureDaily(fresh);
@@ -836,14 +850,14 @@
   function bodyMaxed(s = state) { return !!s.body.unlocked && s.body.realm >= bodyRealms.length - 1 && s.body.stage >= 9; }
   function stageCost(path = 'spirit', s = state) {
     const c = pathCultivation(path, s);
-    const base = path === 'body' ? 90 : 120;
+    const base = path === 'body' ? 102 : 120;
     // Each stage grows 6%; each full realm adds another 14% multiplier.
     return Math.round(base * Math.pow(1.06, c.realm * 10 + c.stage) * Math.pow(1.14, c.realm));
   }
   function breakthroughCost(path = 'spirit', s = state) {
     const c = pathCultivation(path, s);
     const nextRealm = Math.min((path === 'body' ? bodyRealms : spiritRealms).length - 1, c.realm + 1);
-    const base = path === 'body' ? 90 : 120;
+    const base = path === 'body' ? 102 : 120;
     // A major breakthrough costs three times the first stage of the next realm.
     const at = base * Math.pow(1.06, nextRealm * 10) * Math.pow(1.14, nextRealm);
     return Math.round(at * 3);
@@ -949,18 +963,22 @@
     return Math.round(luck * 10) / 10;
   }
   function qiBase(s = state) {
-    return 2.5 + (s.stage || 0) * .28 + (s.upgrades?.sutra || 0) * .8 + (s.spirit?.realm || 0) * .4;
+    return 3.4 + (s.stage || 0) * .28 + (s.upgrades?.sutra || 0) * .8 + (s.spirit?.realm || 0) * .4;
   }
   function rateFor(s = state) {
     const base = qiBase(s);
     const ev = currentEvent(s);
-    const mult = 1 + (s.boosts || 0) + gearStat('qi', s) + sectData(s).qi + (s.sectRank || 0) * .02
+    // Standard stacking bonuses are soft-capped after +350% total bonus.
+    const standard = 1 + (s.boosts || 0) + gearStat('qi', s) + sectData(s).qi + (s.sectRank || 0) * .02
       + rootBonus('qi', s) + daoLevel('water', s) * .03 + meridianBonus('qi', s) + beastBonus('qi', s)
-      + artifactBonus('qi', s) + rebirthUpgrade('qi', s) * .1 + (s.rebirth?.world || 0) * .2
+      + artifactBonus('qi', s)
       + buildingLevel('meditation', s) * .03 + (ev?.buff === 'qi' ? .5 : 0)
       + daoTreeBonus('qi', s) + sectBlessing('qi', s) * .25
-      + spiritQiBonus(s) + (s.origin?.level || 0) * .05 + companionBonus('qi', s);
-    return base * mult * (s.active ? 1 : .35) * (1 - deviationStacks(s) * .08);
+      + spiritQiBonus(s) + companionBonus('qi', s);
+    // Very late systems (rebirth, Origin) multiply on top of the soft cap.
+    const late = 1 + rebirthUpgrade('qi', s) * .1 + (s.rebirth?.world || 0) * .2 + (s.origin?.level || 0) * .05;
+    const mult = softCapQiMult(standard) * late;
+    return base * mult * (s.active ? 1 : OFFLINE_RATE) * (1 - deviationStacks(s) * .08);
   }
   function attackDamage(base, s = state) {
     const w = equippedWeapon(s);
@@ -1051,7 +1069,7 @@
     const foundation = rootBonus('break', s) * 100 + meridianBonus('break', s) * 100 + daoTreeBonus('break', s) + sectBlessing('break', s) * 5;
     const entries = [
       { label: 'Base chance', value: rules.base },
-      { label: 'Realm resistance', value: -c.realm * (kind === 'major' ? 2.2 : .7) },
+      { label: 'Realm resistance', value: -c.realm * (kind === 'major' ? 1.7 : .7) },
       { label: 'Cultivation control', value: Math.min(10, control * .4) },
       { label: 'Path insight', value: support },
       { label: 'Technique', value: (s.upgrades?.body || 0) * (path === 'body' ? 3.2 : 2) },
@@ -1245,7 +1263,7 @@
     state.luckBonus = (state.luckBonus || 0) + (reward.luck || reward.luckBonus || 0);
     state.taming.food = (state.taming.food || 0) + (reward.food || 0);
     Object.keys(ingredients).forEach(key => { if (reward[key] && state.herbs[key] !== undefined) state.herbs[key] += reward[key]; });
-    if (reward.breakBuff) { state.breakBuff = (state.breakBuff || 0) + reward.breakBuff; addToxicity(8); }
+    if (reward.breakBuff) { state.breakBuff = (state.breakBuff || 0) + reward.breakBuff; addToxicity(8 * PILL_TOXICITY_SCALE); }
     if (reward.egg) addEgg(reward.egg);
     if (reward.fragments) state.fate.fragments = (state.fate.fragments || 0) + reward.fragments;
     if (reward.qi) { state.qi += reward.qi; state.totalQi += reward.qi; state.qiToday += reward.qi; }
@@ -1340,7 +1358,7 @@
       ? (bodyMaxed()
         ? 'Eternal Dao Ancestor X and Eternal Godbody X. Both roads have reached their final stage, and a hidden path now waits beyond the charted Dao.'
         : `Eternal Dao Ancestor X has been reached. The spirit road is complete; ${state.body.unlocked ? `continue body cultivation from ${bodyTitle()}` : 'the body path awaits its awakening at Golden Core I'}.`)
-      : `${nfmt(goal)} qi is required for a ${spiritKind} breakthrough from ${spiritTitle()} to ${nextSpiritTitle()} · ${spiritChance}% success${spiritCooldown > 0 ? ` · recovering ${spiritCooldown}s` : ''}. Failure consumes ${nfmt(Math.round(goal * .2))} qi, grants insight and starts a ${BREAK_RULES[spiritKind].cooldown}s recovery.`);
+      : `${nfmt(goal)} qi is required for a ${spiritKind} breakthrough from ${spiritTitle()} to ${nextSpiritTitle()} · ${spiritChance}% success${spiritCooldown > 0 ? ` · recovering ${spiritCooldown}s` : ''}. Failure consumes ${nfmt(Math.round(goal * .2))} qi and grants insight${BREAK_RULES[spiritKind].cooldown > 0 ? `, then starts a ${BREAK_RULES[spiritKind].cooldown}s recovery` : ''}.`);
     aid('nextProgress', spiritDone ? `${spiritTitle()} · final stage` : `${nfmt(qi)} / ${nfmt(goal)} qi`);
     const nextFill = $('nextFill'); if (nextFill) nextFill.style.width = spiritDone ? '100%' : `${Math.min(100, state.qi / goal * 100)}%`;
     aid('techCount', `${Object.values(state.upgrades).filter(v => v > 0).length + state.activeArts.length}/${techniques.length + martialArts.length}`);
@@ -1409,7 +1427,7 @@
       : ROMAN.map((num, i) => `<span class="stage-pip ${i < data.stage ? 'done' : i === data.stage ? 'current' : ''}" title="Stage ${num}">${num}</span>`).join('');
     const progressLabel = complete ? 'FINAL REALM COMPLETE' : isMortal ? 'QI TO AWAKEN INTO QI CONDENSATION' : atPeak ? 'MAJOR BREAKTHROUGH REQUIREMENT' : `MINOR BREAKTHROUGH TO STAGE ${ROMAN[data.stage + 1]}`;
     const rules = BREAK_RULES[kind];
-    const breakthroughBonus = `${kind === 'major' ? 'Major' : 'Minor'} breakthrough · ${chance}% success with ${xp ? `+${xp * BREAK_XP_BONUS}% failure insight` : 'no failure insight yet'}. ${kind === 'major' ? 'A realm key can be offered for +12%. ' : ''}Success grants permanent ${isBody ? 'health, attack and guard' : 'qi flow, spell power and Dao insight'}; critical success doubles the reward. Failure keeps your stage, consumes ${nfmt(Math.round(cost * .2))} qi, grants +${rules.xpGain} insight, adds a qi-deviation stack and starts a ${rules.cooldown}s recovery.${tox ? ` Pill toxicity ${tox} lowers success by ${Math.floor(tox * .2)}%.` : ''}${dev ? ` Qi deviation ${dev} lowers qi gathering by ${dev * 8}%.` : ''}`;
+    const breakthroughBonus = `${kind === 'major' ? 'Major' : 'Minor'} breakthrough · ${chance}% success with ${xp ? `+${xp * BREAK_XP_BONUS}% failure insight` : 'no failure insight yet'}. ${kind === 'major' ? 'A realm key can be offered for +12%. ' : ''}Success grants permanent ${isBody ? 'health, attack and guard' : 'qi flow, spell power and Dao insight'}; critical success doubles the reward. Failure keeps your stage, consumes ${nfmt(Math.round(cost * .2))} qi, grants +${rules.xpGain} insight, adds a qi-deviation stack${rules.cooldown > 0 ? ` and starts a ${rules.cooldown}s recovery` : ''}.${tox ? ` Pill toxicity ${tox} lowers success by ${Math.floor(tox * .2)}%.` : ''}${dev ? ` Qi deviation ${dev} lowers qi gathering by ${dev * 8}%.` : ''}`;
     return `<article class="cultivation-card ${isBody ? 'body-card' : 'spirit-card'} ${locked ? 'locked' : ''}">
       <div class="cult-card-head">
         <span class="cult-seal">${locked ? '鎖' : realm.seal}</span>
@@ -2743,7 +2761,7 @@
         <article class="content-panel"><div class="eyebrow">BODY CULTIVATION · 15 REALMS</div><h2>The tempered vessel</h2><p>${state.body.unlocked ? 'The body path is awake. Its stages share your qi but advance independently, each one hardening health, attack, guard and resistance.' : 'The body path remains sealed until spirit cultivation reaches <b>Golden Core I</b>. It will then begin at Mortal Body I.'}</p><div class="codex-list">${bodyRows}</div></article>
         ${origin}</div>
         <aside class="subview-aside"><article class="feature-card"><div class="eyebrow">CODEX OF THE SELF</div><h3>${worldName()}</h3><p>Your root, Dao, meridians and companions all appear in the other pages of this codex. Some knowledge is earned only by living.</p><div class="feature-stats"><span>SPIRIT <b>${spiritTitle()}</b></span><span>BODY <b>${state.body.unlocked ? bodyTitle() : 'Sealed'}</b></span><span>SHARED QI <b>${nfmt(state.qi)}</b></span></div></article>
-        <article class="content-panel"><div class="eyebrow">THE NEXT SPIRIT THRESHOLD</div><h2>${nextSpiritTitle()}</h2><p>${nfmt(goal)} qi are required. ${state.spirit.realm === 0 ? `Awakening is a minor breakthrough with ${spiritBreakChance()}% success.` : state.spirit.stage >= 9 ? `A major breakthrough waits at this gate · ${spiritBreakChance()}% success.` : `A minor breakthrough waits at this gate · ${spiritBreakChance()}% success.`} Failure consumes 20% of the qi cost, grants insight, adds a qi-deviation stack and starts a recovery cooldown. Major breakthroughs may offer a realm key for +12%; breakthrough pills build toxicity that lowers success until it fades.</p><div class="inventory-row"><span>Body next</span><b>${state.body.unlocked ? `${nextBodyTitle()} · ${nfmt(nextPathCost('body'))} qi` : 'Golden Core I'}</b></div><div class="inventory-row"><span>Pill toxicity</span><b>${Math.round(toxicityNow())} / 100</b></div><div class="inventory-row"><span>Qi deviation</span><b>${deviationStacks() ? `${deviationStacks()} stacks · ${deviationLeft()}s` : 'Clear'}</b></div></article></aside></div>`;
+        <article class="content-panel"><div class="eyebrow">THE NEXT SPIRIT THRESHOLD</div><h2>${nextSpiritTitle()}</h2><p>${nfmt(goal)} qi are required. ${state.spirit.realm === 0 ? `Awakening is a minor breakthrough with ${spiritBreakChance()}% success.` : state.spirit.stage >= 9 ? `A major breakthrough waits at this gate · ${spiritBreakChance()}% success.` : `A minor breakthrough waits at this gate · ${spiritBreakChance()}% success.`} Failure consumes 20% of the qi cost, grants insight, adds a qi-deviation stack; major breakthroughs also start a recovery cooldown. Major breakthroughs may offer a realm key for +12%; breakthrough pills build toxicity that lowers success until it fades.</p><div class="inventory-row"><span>Body next</span><b>${state.body.unlocked ? `${nextBodyTitle()} · ${nfmt(nextPathCost('body'))} qi` : 'Golden Core I'}</b></div><div class="inventory-row"><span>Pill toxicity</span><b>${Math.round(toxicityNow())} / 100</b></div><div class="inventory-row"><span>Qi deviation</span><b>${deviationStacks() ? `${deviationStacks()} stacks · ${deviationLeft()}s` : 'Clear'}</b></div></article></aside></div>`;
     }
     $('view-codex').innerHTML = `${subHead('THE IMMORTAL CODEX', 'Codex', 'Realms, achievements, story quests and the record of your long road.', '▤')}
       ${tabs('codex', [['realms', 'Realms'], ['collections', 'Collections'], ['achievements', 'Achievements'], ['quests', 'Story quests'], ['records', 'Records']])}${body}`;
@@ -2882,7 +2900,11 @@
       : `permanent qi flow, spell power and Dao insight${criticalRewardText()}`;
     const mods = parts.entries.map(e => `<span class="break-mod ${e.value < 0 ? 'neg' : ''}"><small>${e.label}</small><b>${breakModifierText(e.value)}</b></span>`).join('');
     const capNote = parts.capped === 'high' ? ' · capped at 95%' : parts.capped === 'low' ? ' · floored at 10%' : '';
-    const hazardNote = [tox ? `Pill toxicity ${tox} (−${Math.floor(tox * .2)}%)` : '', dev ? `Qi deviation ${dev} (−${dev * 8}% qi)` : ''].filter(Boolean).join(' · ');
+    const toxPenalty = Math.floor(tox * .2);
+    const hazardBlock = (tox || dev) ? `<div class="break-hazard">
+      ${tox ? `<div class="hazard-row"><span class="hazard-label">丹毒 · PILL TOXICITY</span><b>${tox} / 100 · −${toxPenalty}% success</b></div><div class="hazard-meter"><i style="width:${clamp(tox, 0, 100)}%"></i></div><small>Fades 1 point every 15s · Cleansing Tea removes 40</small>` : ''}
+      ${dev ? `<div class="hazard-row dev"><span class="hazard-label">心魔 · QI DEVIATION</span><b>${dev} stack${dev === 1 ? '' : 's'} · −${dev * 8}% qi</b></div>` : ''}
+    </div>` : '';
     const keyNote = canOfferKey
       ? (keyHeld > 0
         ? `Bottleneck treasure: offer <b>1 realm key</b> (${keyHeld} held) for <b>+12%</b> → <b>${keyChance}%</b>. The key is consumed on the attempt.`
@@ -2891,9 +2913,9 @@
     openModal(seal, `${isBody ? 'BODY' : 'SPIRIT'} ${kind === 'major' ? 'MAJOR BREAKTHROUGH' : 'MINOR BREAKTHROUGH'}`, `${current} → ${next}`,
       `${flavour}<br><br>Required qi: <b>${nfmt(cost)}</b> · Success chance: <b>${chance}%</b>${capNote}
       <span class="break-mods">${mods}</span>
-      ${hazardNote ? `<span class="red-text">${hazardNote}</span><br>` : ''}
+      ${hazardBlock}
       ${keyNote ? `<span class="gold-text">${keyNote}</span><br>` : ''}
-      <br>Success advances you and grants ${reward}. Failure keeps your current stage, consumes <b>20% of the qi cost (${nfmt(Math.round(cost * .2))})</b>, grants <b>+${rules.xpGain} breakthrough insight</b> (+${rules.xpGain * BREAK_XP_BONUS}% next attempt), adds a <b>qi-deviation stack</b> (−8% qi for 3 min) and starts a <b>${rules.cooldown}s recovery</b>.`,
+      <br>Success advances you and grants ${reward}. Failure keeps your current stage, consumes <b>20% of the qi cost (${nfmt(Math.round(cost * .2))})</b>, grants <b>+${rules.xpGain} breakthrough insight</b> (+${rules.xpGain * BREAK_XP_BONUS}% next attempt) and adds a <b>qi-deviation stack</b> (−8% qi for 3 min)${rules.cooldown > 0 ? ` and starts a <b>${rules.cooldown}s recovery</b>` : ''}.`,
       `<button class="secondary-btn" data-action="close-modal">Not yet</button>${canOfferKey && keyHeld > 0 ? `<button class="secondary-btn key-btn" data-action="attempt-${path}-break" data-key="1">Offer key · ${keyChance}%</button>` : ''}<button class="primary-btn" data-action="attempt-${path}-break">${kind === 'major' ? 'Face the breakthrough' : 'Attempt breakthrough'} · ${chance}%</button>`);
   }
   function criticalRewardText() { return '; critical success doubles the reward'; }
@@ -2998,7 +3020,7 @@
       state.deviationUntil = Date.now() + 180000;
       const title = isBody ? bodyTitle() : spiritTitle();
       if (isBody) bodyTemperEffect(false, 'THE BODY YIELDS'); else tribulationEffect(false, 'THE HEAVENS REFUSE');
-      notify(`${kind} ${isBody ? 'body' : 'spirit'} breakthrough failed · ${title} remains · ${nfmt(spent)} qi consumed · +${rules.xpGain} insight (+${rules.xpGain * BREAK_XP_BONUS}% next attempt) · ${rules.cooldown}s recovery · qi deviation ${state.deviationStacks} stack${state.deviationStacks === 1 ? '' : 's'}${keyUsed ? ' · realm key consumed' : ''}.`, 'info');
+      notify(`${kind} ${isBody ? 'body' : 'spirit'} breakthrough failed · ${title} remains · ${nfmt(spent)} qi consumed · +${rules.xpGain} insight (+${rules.xpGain * BREAK_XP_BONUS}% next attempt)${rules.cooldown > 0 ? ` · ${rules.cooldown}s recovery` : ''} · qi deviation ${state.deviationStacks} stack${state.deviationStacks === 1 ? '' : 's'}${keyUsed ? ' · realm key consumed' : ''}.`, 'info');
       showToast(`The breakthrough fails. ${nfmt(spent)} qi is spent, insight rises, and qi deviation ${state.deviationStacks} slows your gathering for 3 min.`);
       save(); render();
     }
@@ -3615,7 +3637,7 @@
     if (grant.rootEssence) state.root.essence += grant.rootEssence;
     if (grant.food) state.taming.food += grant.food;
     if (grant.luck) state.luckBonus = (state.luckBonus || 0) + grant.luck;
-    if (grant.breakBuff) { state.breakBuff = (state.breakBuff || 0) + grant.breakBuff; addToxicity(8); }
+    if (grant.breakBuff) { state.breakBuff = (state.breakBuff || 0) + grant.breakBuff; addToxicity(8 * PILL_TOXICITY_SCALE); }
     Object.keys(ingredients).forEach(k => { if (grant[k] && state.herbs[k] !== undefined) state.herbs[k] += grant[k]; });
     addFateLog(`Merchant · purchased ${item.name} for ${item.cost} stones.`);
     showToast(`Purchased ${item.name}.`);
@@ -3807,12 +3829,12 @@
       case 'fortune': state.stones += amt; state.qi += amt; state.qiToday += amt; state.totalQi += amt; break;
       case 'food': state.taming.food += recipe.amount; break;
       case 'meridian': state.meridians.points = (state.meridians.points || 0) + recipe.amount; break;
-      case 'break': state.breakBuff = (state.breakBuff || 0) + recipe.amount; addToxicity(10); break;
+      case 'break': state.breakBuff = (state.breakBuff || 0) + recipe.amount; addToxicity(10 * PILL_TOXICITY_SCALE); break;
       case 'cleanse': state.deviationStacks = 0; state.deviationUntil = 0; addToxicity(-recipe.amount); break;
       case 'luck': state.luckBonus = (state.luckBonus || 0) + recipe.amount; break;
       case 'dao': daoPaths.forEach(d => { state.dao[d.id].xp += recipe.amount * daoGainMult(d.id) * potency; }); break;
       case 'rootEssence': state.root.essence = (state.root.essence || 0) + amt; break;
-      case 'heaven': state.qi += amt; state.qiToday += amt; state.totalQi += amt; state.breakBuff = (state.breakBuff || 0) + 25; addToxicity(15); break;
+      case 'heaven': state.qi += amt; state.qiToday += amt; state.totalQi += amt; state.breakBuff = (state.breakBuff || 0) + 25; addToxicity(15 * PILL_TOXICITY_SCALE); break;
       case 'rebirth': state.rebirth.points = (state.rebirth.points || 0) + recipe.amount; break;
     }
     dailyStep('brew'); questStep('brew');
