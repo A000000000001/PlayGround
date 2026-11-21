@@ -1039,3 +1039,13 @@ body.focus-mode .banner-row,body.focus-mode .challenge-panel,body.focus-mode .no
 .text-link{border:0;background:none;color:var(--jade);font-size:8px;font-weight:700;cursor:pointer;padding:2px 0}
 .text-link:disabled{color:#b6bcb2;cursor:default}
 @media(max-width:720px){.abode-grid,.companion-grid,.disciple-grid{grid-template-columns:1fr}.abode-bank .action-btn{margin:0;width:100%}.checkin-strip{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+/* ---------------- BREAKTHROUGH HAZARDS ---------------- */
+.break-hazard{margin:12px 0 4px;padding:11px 13px;border:1px solid #ecd3c9;border-radius:7px;background:#fdf5f1;display:grid;gap:7px}
+.hazard-row{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:8px;color:#9a6a56}
+.hazard-label{letter-spacing:.6px;font-weight:700;color:#a9604a}
+.hazard-row b{color:#8d4f3c;font-size:8.5px}
+.hazard-row.dev b{color:#8a6a3a}
+.hazard-meter{height:7px;border-radius:6px;background:#f0e2d9;overflow:hidden}
+.hazard-meter i{display:block;height:100%;background:linear-gradient(90deg,#c98a6e,#a9604a);border-radius:6px}
+.break-hazard small{font-size:7px;color:#a88b7d;letter-spacing:.2px}
